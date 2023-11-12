@@ -1,5 +1,5 @@
 # getfactors
-buggy source code to factor integers
+buggy source code to factor integers with compiler errors
 
 I worked for 21 years to find a constructive proof that P = NP. I have reached my psychological and physiological limits, but I achieved my goal.
 
