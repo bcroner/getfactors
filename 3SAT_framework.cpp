@@ -778,7 +778,7 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
             c->bits[c->ad_sz + i] = create_bit(&idx);
         }
 
-        // sign-extend trunction
+        // sign-extend truncation
         int idx = itmd_c->bits[itmd_c->bd_sz + itmd_c->ad_sz - 1]->id;
         c->bits[c->ad_sz + c->bd_sz - 1] = create_bit(&idx);
     }
