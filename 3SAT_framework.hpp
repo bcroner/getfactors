@@ -4,7 +4,7 @@
 #ifndef __3SATFRAMEWORK_H__
 #define __3SATFRAMEWORK_H__
 
-#include "../tiny-bignum-c/bn.h"
+//#include "../tiny-bignum-c/bn.h"
 
 
 struct nlist { /* table entry: */
@@ -92,15 +92,19 @@ char* dec_div(int* num_parm, char* name, dec * c, dec * a, dec * b);
 
 char* dec_sqrt(int* num_parm, char* name, dec* c, dec* a);
 
-void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
+//void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
 
 inline int octal_from_char(char c);
 
-void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
+//void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
 
 inline int decimal_from_char(char c);
 
-void bignum_from_str_dec(bn* c_bn, char* c_str, int len);
+inline int int_from_hex_char(char c);
+
+inline char hex_char_from_int(int a);
+
+//void bignum_from_str_dec(bn* c_bn, char* c_str, int len);
 
 int** input_from_char_buf(int* num_parm, char* buf_3sat, int* k);
 

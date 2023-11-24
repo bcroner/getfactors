@@ -873,6 +873,55 @@ inline int octal_from_char(char c) {
     }
 }
 
+inline int int_from_hex_char(char c) {
+
+    if (c >= 'A' && c <= 'F')
+        c = c + ('a' - 'A');
+
+    switch (c) {
+    case '0': return 0;
+    case '1': return 1;
+    case '2': return 2;
+    case '3': return 3;
+    case '4': return 4;
+    case '5': return 5;
+    case '6': return 6;
+    case '7': return 7;
+    case '8': return 8;
+    case '9': return 9;
+    case 'a': return 10;
+    case 'b': return 11;
+    case 'c': return 12;
+    case 'd': return 13;
+    case 'e': return 14;
+    case 'f': return 15;
+    default: return 0;
+    }
+}
+
+inline char hex_char_from_int(int a) {
+    switch (a) {
+    case 0: return '0';
+    case 1: return '1';
+    case 2: return '2';
+    case 3: return '3';
+    case 4: return '4';
+    case 5: return '5';
+    case 6: return '6';
+    case 7: return '7';
+    case 8: return '8';
+    case 9: return '9';
+    case 10: return 'a';
+    case 11: return 'b';
+    case 12: return 'c';
+    case 13: return 'd';
+    case 14: return 'e';
+    case 15: return 'f';
+    default: return '0';
+    }
+}
+
+/*
 void bignum_from_str_oct(bn* c_bn, char* c_str, int len) {
 
     int start = octal_from_char(c_str[len - 1]);
@@ -902,6 +951,7 @@ void bignum_from_str_oct(bn* c_bn, char* c_str, int len) {
     }
 
 }
+*/
 
 inline int decimal_from_char(char c) {
 
@@ -920,6 +970,7 @@ inline int decimal_from_char(char c) {
     }
 }
 
+/*
 void bignum_from_str_dec(bn* c_bn, char* c_str, int len) {
 
     int start = decimal_from_char(c_str[len - 1]);
@@ -949,6 +1000,8 @@ void bignum_from_str_dec(bn* c_bn, char* c_str, int len) {
     }
 
 }
+
+*/
 
 int** input_from_char_buf(int * num_parm, char * buf_3sat, int buf_3sat_sz, int * k) {
 
@@ -987,41 +1040,76 @@ int** input_from_char_buf(int * num_parm, char * buf_3sat, int buf_3sat_sz, int 
 
 char* dec_to_str(bool * decodable_buf, dec * a, int * str_sz) {
 
-    bool* bool_buf = new bool[a->sz];
+    int* bool_buf = new int[a->sz + (a->bd_sz % 4 == 0 ? 0 : 4 - a->bd_sz % 4) + (a->ad_sz % 4 == 0 ? 0 : 4 - a->ad_sz % 4)];
+
+    // find first nonzero bit
+
+    int first_nonzero = 0;
+    while (!decodable_buf[first_nonzero])
+        first_nonzero++;
+
+    // pad with zeros for multiple of 4
+    if (a->bd_sz > 0)
+        for (int i = 0; i < a->bd_sz % 4; i++)
+            bool_buf[i] = 0;
+
+    // copy over boolean bits
 
     for (int i = 0; i < a->sz; i++)
-        bool_buf[i] = decodable_buf[a->bits[i]->id];
+        bool_buf[a->bd_sz % 4 + i] = decodable_buf[a->bits[i]->id] ? 1 : 0;
+    
+    // pad with 0s to make multiple of 4
+    for (int i = 0; i < a->ad_sz % 4; i++)
+        bool_buf[a->bd_sz % 4 + a->sz + i + 1] = 0;
 
-    int first_true_bit_pos = a->sz - 1;
+    int num_hex_bd = a->bd_sz == 0 ? 1 : a->bd_sz / 4 + (a->bd_sz % 4 == 0 ? 0 : 1);
+    int num_hex_ad = a->ad_sz / 4 + (a->ad_sz % 4 == 0 ? 0 : 1);
 
-    // get rid of leading false values
+    * str_sz = num_hex_bd + (num_hex_ad == 0 ? 0 : 1 + num_hex_ad) + 1;
+    char* ret_str = new char[*str_sz];
+    
+    int first_bits = a->bd_sz % 4;
+    int last_bits = a->ad_sz % 4;
 
-    for (first_true_bit_pos = a->sz - 1; first_true_bit_pos > 0 && !bool_buf[first_true_bit_pos]; first_true_bit_pos--)
-        ;
+    int hexbits[4];
 
-    bn* num_bn = new bn();
-    bignum_from_int(num_bn, 0);
-    bn* pow_bn = new bn();
-    bignum_init(pow_bn);
-    bn* two_bn = new bn();
-    bignum_from_int(two_bn, 2);
+    // position in return string
+    int ret_str_pos = 0;
 
-    for (int i = first_true_bit_pos; i >= 0; i--) {
-        bn* pow_val_bn = new bn();
-        bignum_from_int(pow_val_bn, i);
-        bignum_pow(two_bn, pow_val_bn, pow_bn);
-        bn* sum_bn = new bn();
-        bignum_from_int(sum_bn, 0);
-        if (bool_buf[i]) {
-            bignum_add(num_bn, pow_bn, sum_bn);
-            bignum_assign(num_bn, sum_bn);
-        }
+    // create a 0 if number is below 1
+
+    if (a->bd_sz == 0) {
+        ret_str[ret_str_pos] = '0';
+        ret_str_pos++;
     }
 
-    *str_sz = first_true_bit_pos / 4 + 2;
+    // do the before-the-decimal part
 
-    char* ret_str = new char[*str_sz];
-    bignum_to_string(num_bn, ret_str, *str_sz);
+    while (ret_str_pos < num_hex_bd) {
+
+        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
+
+        for (int i = 0; i < 4; i++)
+            hexbits[i] = bool_buf[first_bits + (ret_str_pos + 1) * 4 - i];
+        ret_str[ret_str_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+
+        ret_str_pos++;
+    }
+
+    // do the after-the-decimal part
+
+    int ad_hex_pos = 0;
+
+    while (ad_hex_pos < num_hex_ad) {
+
+        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
+
+        for (int i = 0; i < 4; i++)
+            hexbits[i] = bool_buf[num_hex_bd * 4 + ( ad_hex_pos + 1) * 4 - i];
+        ret_str[ret_str_pos + ad_hex_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+
+        ad_hex_pos++;
+    }
 
     return ret_str;
 }
@@ -1031,86 +1119,54 @@ char* get_factors(char* c_str, int c_str_buf_sz) {
     if (c_str == NULL or c_str == "")
         return NULL;
 
-    int num_parm = 2; // TRUE_3SAT is reserved for true, while FALSE_3SAT is false
+    int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
-    bn* c_bn = new bn();
+    // get length of c_str
+    int strln = 0;
+    for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
+        ;
+    if (strln < c_str_buf_sz && c_str[strln] == '\0')
+        strln--;
 
-    if (c_str[0] == 0 && (c_str[1] == 'x' or c_str[1] == 'X'))
-        bignum_from_str_dec(c_bn, c_str, strnlen_s(c_str, c_str_buf_sz));
-    else if ((c_str[0] == 0) && (c_str[1] != 'x' || c_str[1] != 'X'))
-        bignum_from_str_oct(c_bn, c_str, strnlen_s(c_str, c_str_buf_sz));
-    else if (c_str[0] != 0)
-        bignum_from_str_dec(c_bn, c_str, strnlen_s(c_str, c_str_buf_sz));
-
-    bn* mask = new bn();
-    int mask_str_sz = strnlen_s(c_str, c_str_buf_sz) + 1;
-    char* mask_str = new char[mask_str_sz];
-
-    for (int i = 0; i < strnlen_s(c_str, c_str_buf_sz) - 1; i++)
-        mask_str[i] = '0';
-    mask_str[strnlen_s(c_str, c_str_buf_sz) - 1] = '1';
-    char nullchar = '\0';
-    mask_str[strnlen_s(c_str, c_str_buf_sz)] = nullchar;
-
-    bignum_from_str_dec(mask, mask_str, mask_str_sz);
-
-    bn* bn_two = new bn();
-    bignum_from_int(bn_two, 2);
-
-    bn* mod_result = new bn();
-    bignum_init(mod_result);
-
-    // get number of bits
-
-    bn* rslt = new bn();
-    bignum_init(rslt);
-    bn* cur = new bn();
-    bignum_assign(cur, c_bn);
-
-    int bit_count = 0;
-    for (bit_count = 0; !bignum_is_zero(cur); bit_count++) {
-        bignum_div(cur, bn_two, rslt);
-        bignum_assign(cur, rslt);
-    }
-
-    char* bit_buffer = new char[bit_count + 1];
-
-    int bit_pos = 0;
-
-    while (! bignum_is_zero(c_bn)) {
-        bignum_mod(c_bn, bn_two, mod_result); /* c = a % b */
-        if (bignum_is_zero(mod_result))
-            bit_buffer[bit_pos] = 'F';
-        else
-            bit_buffer[bit_pos] = 'T';
-
-        bn* b = new bn();
-        bignum_init(b);
-
-        bignum_rshift(c_bn, b, 1);
-
-        delete c_bn;
-        c_bn = b;
-
-        bit_pos++;
-    }
-    bit_buffer[bit_pos] = '\0';
+    int bit_count = strln * 4;
 
     dec* c_equals = new dec();
     c_equals->sz = bit_count + 1;
     c_equals->ad_sz = 0;
-    c_equals->bd_sz = bit_count + 1;
+    c_equals->bd_sz =  + 1;
     c_equals->bits = new bit * [bit_count + 1];
 
     int tf = FALSE_3SAT;
+    c_equals->bits[0] = create_bit(&tf);
 
-    int i;
-    for (i = 0; i < bit_count; i++) {
-        tf = bit_buffer[bit_count - i] == 'T' ? TRUE_3SAT : FALSE_3SAT;
-        c_equals->bits[i] = create_bit(&tf);
+    for (int i = 0; i <= strln; i++) {
+
+        // decode the hex into bits
+
+        int hexbits[4];
+        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
+
+        int hexval = int_from_hex_char ( c_str[i] );
+
+        if (hexval >= 8) {
+            hexbits[3] = 1;
+            hexval = hexval - 8;
+        }
+        if (hexval >= 4) {
+            hexbits[2] = 1;
+            hexval = hexval - 4;
+        }
+        if (hexval >= 2) {
+            hexbits[1] = 1;
+            hexval = hexval - 2;
+        }
+        hexbits[0] = hexval;
+
+        for (int j = 0; j < 4; j++) {
+            tf = hexbits[3 - j] == 1 ? TRUE_3SAT : FALSE_3SAT;
+            c_equals->bits[1 + i*4 + j] = create_bit(&tf);
+        }
     }
-    tf = FALSE_3SAT;
-    c_equals->bits[i] = create_bit(&tf);
 
     dec* c = NULL;
 
