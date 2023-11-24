@@ -1182,17 +1182,17 @@ char* get_factors(char* c_str, int c_str_buf_sz) {
     b->bd_sz = bit_count;
     b->bits = new bit * [bit_count];
 
-    for (int i = 0; i < bit_count; i++)
+    tf = FALSE_3SAT;
+    a->bits[0] = create_bit(&tf);
+
+    for (int i = 1; i < bit_count; i++)
         a->bits[i] = create_bit(&num_parm);
 
     tf = FALSE_3SAT;
-    a->bits[i] = create_bit(&tf);
+    b->bits[0] = create_bit(&tf);
 
-    for (int i = 0; i < bit_count; i++)
+    for (int i = 1; i < bit_count; i++)
         b->bits[i] = create_bit(&num_parm);
-
-    tf = FALSE_3SAT;
-    b->bits[i] = create_bit(&tf);
 
     char mp_str[15];
     sprintf_s(mp_str, 15, "mp");
