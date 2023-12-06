@@ -1073,8 +1073,10 @@ char* dec_to_str(bool * decodable_buf, dec * a, int * str_sz) {
     for (int i = 0; i <= last_nonzero_offs - first_nonzero_offs; i++) {
         if (a->bits[first_nonzero_offs + i]->id == TRUE_3SAT)
             bool_buf[lpad + i] = 1;
-        else
+        else if (a->bits[first_nonzero_offs + i]->id == FALSE_3SAT)
             bool_buf[lpad + i] = 0;
+        else
+            bool_buf[lpad + i] = decodable_buf[a->bits[first_nonzero_offs + i]->id - 2];
     }
     
     // rpad with 0s to make multiple of 4
