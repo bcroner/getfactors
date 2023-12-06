@@ -1040,64 +1040,82 @@ int** input_from_char_buf(int * num_parm, char * buf_3sat, int buf_3sat_sz, int 
 
 char* dec_to_str(bool * decodable_buf, dec * a, int * str_sz) {
 
-    int* bool_buf = new int[a->sz + (a->bd_sz % 4 == 0 ? 0 : 4 - a->bd_sz % 4) + (a->ad_sz % 4 == 0 ? 0 : 4 - a->ad_sz % 4)];
+    // rtrim trailing zeros and calculate rpad out to a multiple of 4
+    int last_nonzero_offs = 0;
+    while (last_nonzero_offs < a->ad_sz && !a->bits[a->sz - last_nonzero_offs - 1])
+        last_nonzero_offs++;
 
-    // find first nonzero bit
+    int rpad = last_nonzero_offs < a->ad_sz - 1 ? 4 - (a->ad_sz - last_nonzero_offs - 1) % 4 : 0;
 
-    int first_nonzero = 0;
-    while (!decodable_buf[first_nonzero])
-        first_nonzero++;
+    // find first nonzero bit and calculate lpad out to a multiple of 4
+    int first_nonzero_offs = 0;
+    while (first_nonzero_offs < a->bd_sz && !decodable_buf[first_nonzero_offs])
+        first_nonzero_offs++;
 
-    // pad with zeros for multiple of 4
-    if (a->bd_sz > 0)
-        for (int i = 0; i < a->bd_sz % 4; i++)
-            bool_buf[i] = 0;
+    int lpad = first_nonzero_offs < a->bd_sz ? 4 - (first_nonzero_offs % 4) : 4;
+
+    // calculate size of the buffer
+
+    int bool_buf_ad_sz = a->ad_sz - last_nonzero_offs + rpad ;
+    int bool_buf_bd_sz = a->bd_sz - first_nonzero_offs + lpad ;
+    int bool_buf_sz = bool_buf_ad_sz + bool_buf_bd_sz;
+
+    // instantiate boolean buffer
+
+    int* bool_buf = new int[bool_buf_sz];
+
+    // lpad with zeros for multiple of 4
+    for (int i = 0; i < lpad; i++)
+        bool_buf[i] = 0;
 
     // copy over boolean bits
 
-    for (int i = 0; i < a->sz; i++)
-        bool_buf[a->bd_sz % 4 + i] = decodable_buf[a->bits[i]->id] ? 1 : 0;
+    for (int i = 0; i <= last_nonzero_offs - first_nonzero_offs; i++) {
+        if (a->bits[first_nonzero_offs + i]->id == TRUE_3SAT)
+            bool_buf[lpad + i] = 1;
+        else
+            bool_buf[lpad + i] = 0;
+    }
     
-    // pad with 0s to make multiple of 4
-    for (int i = 0; i < a->ad_sz % 4; i++)
-        bool_buf[a->bd_sz % 4 + a->sz + i + 1] = 0;
+    // rpad with 0s to make multiple of 4
+    for (int i = 0; i < rpad; i++)
+        bool_buf[lpad + (last_nonzero_offs - first_nonzero_offs) + i] = 0;
 
-    int num_hex_bd = a->bd_sz == 0 ? 1 : a->bd_sz / 4 + (a->bd_sz % 4 == 0 ? 0 : 1);
-    int num_hex_ad = a->ad_sz / 4 + (a->ad_sz % 4 == 0 ? 0 : 1);
+    int num_hex_bd = bool_buf_bd_sz / 4;
+    int num_hex_ad = bool_buf_ad_sz / 4;
 
-    * str_sz = num_hex_bd + (num_hex_ad == 0 ? 0 : 1 + num_hex_ad) + 1;
+    * str_sz = num_hex_bd + num_hex_ad + (num_hex_ad == 0 ? 0 : 1) + 1;
     char* ret_str = new char[*str_sz];
     
-    int first_bits = a->bd_sz % 4;
-    int last_bits = a->ad_sz % 4;
-
     int hexbits[4];
 
     // position in return string
     int ret_str_pos = 0;
 
-    // create a 0 if number is below 1
-
-    if (a->bd_sz == 0) {
-        ret_str[ret_str_pos] = '0';
-        ret_str_pos++;
-    }
-
     // do the before-the-decimal part
 
-    while (ret_str_pos < num_hex_bd) {
+    int bd_hex_pos = 0;
+
+    while (bd_hex_pos < num_hex_bd) {
 
         hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
 
         for (int i = 0; i < 4; i++)
-            hexbits[i] = bool_buf[first_bits + (ret_str_pos + 1) * 4 - i];
+            hexbits[3 - i] = bool_buf[bd_hex_pos * 4 + i];
         ret_str[ret_str_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+        
+        bd_hex_pos++;
+        ret_str_pos++;
+    }
 
+    // fill in decimal point if needed
+
+    if (num_hex_ad > 0) {
+        ret_str[ret_str_pos] = '.';
         ret_str_pos++;
     }
 
     // do the after-the-decimal part
-
     int ad_hex_pos = 0;
 
     while (ad_hex_pos < num_hex_ad) {
@@ -1105,11 +1123,16 @@ char* dec_to_str(bool * decodable_buf, dec * a, int * str_sz) {
         hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
 
         for (int i = 0; i < 4; i++)
-            hexbits[i] = bool_buf[num_hex_bd * 4 + ( ad_hex_pos + 1) * 4 - i];
+            hexbits[3 - i] = bool_buf[num_hex_bd * 4 + ad_hex_pos * 4 + i];
         ret_str[ret_str_pos + ad_hex_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
 
         ad_hex_pos++;
+        ret_str_pos++;
     }
+
+    // null-terminate return string
+
+    ret_str[ret_str_pos] = '\0';
 
     return ret_str;
 }
