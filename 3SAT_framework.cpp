@@ -41,7 +41,7 @@ dec* create_dec(int * num_parm, char* name_parm, int bd_sz_parm, int ad_sz_parm)
 
 // c = a and b: (~a or ~b or c) (a or ~c) (b or ~c)
 
-char* and_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
+char* and_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b, int *len_para) {
 
     c = create_bit(num_parm);
     char* ret = new char[128];
@@ -63,7 +63,12 @@ char* and_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
     for (int i = 0; i < 3; i++) {
         sprintf_s(&(ret[len]), 128-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -71,7 +76,7 @@ char* and_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
 
 // c = a nand b: (~a or ~b or ~c) (a or c) (b or c)
 
-char* nand_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
+char* nand_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b, int *len_para) {
 
     c = create_bit(num_parm);
     char* ret = new char[128];
@@ -93,7 +98,12 @@ char* nand_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
     for (int i = 0; i < 3; i++) {
         sprintf_s(&ret[len], 128-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -101,7 +111,7 @@ char* nand_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
 
 // c = a or b: (a or b or ~c) (~a or c) (~b or c)
 
-char* or_3sat(int * num_parm , char* name, bit* c, bit *a, bit* b) {
+char* or_3sat(int * num_parm , char* name, bit* c, bit *a, bit* b, int *len_para) {
 
     c = create_bit(num_parm);
     char* ret = new char[128];
@@ -123,7 +133,12 @@ char* or_3sat(int * num_parm , char* name, bit* c, bit *a, bit* b) {
     for (int i = 0; i < 3; i++) {
         sprintf_s(&ret[len], 128-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -131,7 +146,7 @@ char* or_3sat(int * num_parm , char* name, bit* c, bit *a, bit* b) {
 
 // c = a nor b: (a or b or c) (~a or ~c) (~b or ~c)
 
-char* nor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
+char* nor_3sat(int* num_parm, char* name, bit* c, bit* a, bit* b, int* len_para) {
 
     c = create_bit(num_parm);
     char* ret = new char[128];
@@ -153,7 +168,12 @@ char* nor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
     for (int i = 0; i < 3; i++) {
         sprintf_s(&(ret[len]), 128-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -161,7 +181,7 @@ char* nor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
 
 // c = not a: (~a or ~c) (a or c)
 
-char* not_3sat(int * num_parm, char* name, bit* c, bit* a) {
+char* not_3sat(int * num_parm, char* name, bit* c, bit* a, int *len_para) {
 
     c = create_bit(num_parm);
     char* ret = new char[64];
@@ -181,7 +201,12 @@ char* not_3sat(int * num_parm, char* name, bit* c, bit* a) {
     for (int i = 0; i < 2; i++) {
         sprintf_s(&ret[len], 64-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -189,7 +214,7 @@ char* not_3sat(int * num_parm, char* name, bit* c, bit* a) {
 
 // c = a xor b: (~a or ~b or ~c) (a or b or ~c) (a or ~b or c) (~a or b or c)
 
-char* xor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
+char* xor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b, int *len_para) {
 
     c = create_bit(num_parm);
     char* ret = new char[128];
@@ -206,7 +231,12 @@ char* xor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
     for (int i = 0; i < 4; i++) {
         sprintf_s(&(ret[len]), 128-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -214,7 +244,7 @@ char* xor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
 
 // c = a xnor b: (~a or ~b or c) (a or b or c) (a or ~b or ~c) (~a or b or ~c)
 
-char* xnor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
+char* xnor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b, int *len_para) {
 
     c = create_bit(num_parm);
     char* ret = new char[128];
@@ -231,7 +261,12 @@ char* xnor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
     for (int i = 0; i < 4; i++) {
         sprintf_s(&(ret[len]), 128-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -240,7 +275,7 @@ char* xnor_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
 // bitadd = a + b + cin: cin xor (a xor b) = (~a or ~b or ~c) (a or b or ~c) (a or ~b or c) (~a or b or c)
 // d = cin xor c: (~cin or ~c or ~d) (cin or c or ~d) (cin or ~c or d) (~cin or c or d)
 
-char* bitaddsum_3sat(int * num_parm, char* name, bit* sum, bit* c_in, bit* a, bit* b) {
+char* bitaddsum_3sat(int * num_parm, char* name, bit* sum, bit* c_in, bit* a, bit* b, int *len_para) {
 
     sum = create_bit(num_parm);
     bit * c = create_bit(num_parm);
@@ -263,7 +298,12 @@ char* bitaddsum_3sat(int * num_parm, char* name, bit* sum, bit* c_in, bit* a, bi
     for (int i = 0; i < 8; i++) {
         sprintf_s(&(ret[len]), 256-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -276,7 +316,7 @@ char* bitaddsum_3sat(int * num_parm, char* name, bit* sum, bit* c_in, bit* a, bi
 // (a and b) or (b and cin) = c or d: (c or d or ~f) (~c or f) (~d or f)
 // ((a and b) or (b and cin)) or (a and cin) = f or e: (f or e or ~g) (~f or g) (~e or g)
 
-char* bitaddcout_3sat(int * num_parm, char* name, bit* c_out, bit* c_in, bit* a, bit* b) {
+char* bitaddcout_3sat(int * num_parm, char* name, bit* c_out, bit* c_in, bit* a, bit* b, int *len_para) {
 
     c_out = create_bit(num_parm);
     bit * c = create_bit(num_parm);
@@ -328,7 +368,12 @@ char* bitaddcout_3sat(int * num_parm, char* name, bit* c_out, bit* c_in, bit* a,
     for (int i = 0; i < 15; i++) {
         sprintf_s(&(ret[len]), 512-len, "%s\n", lst[i]);
         len += strnlen_s(lst[i], 32) + strnlen_s("\n", 2);
+        delete lst[i];
     }
+
+    *len_para = len;
+
+    delete lst;
 
     return ret;
 
@@ -336,23 +381,33 @@ char* bitaddcout_3sat(int * num_parm, char* name, bit* c_out, bit* c_in, bit* a,
 
 // implies = a->b: (~a or b)
 
-char* implies_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
+char* implies_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b, int *len_para) {
 
     char* ret = new char[256];
     int pos = 0;
 
     // invert a
 
+    int not_len = 0;
+
     bit* a_inv = NULL;
-    char* not_a_str = not_3sat(num_parm, name, a_inv , a );
+    char* not_a_str = not_3sat(num_parm, name, a_inv , a , &not_len);
     strcpy_s(&(ret[pos]), 256-pos, not_a_str);
-    pos += strnlen_s(not_a_str, 64);
+    pos += not_len;
+
+    delete not_a_str;
 
     // or with b
 
-    char* or_str = or_3sat(num_parm, name, c, a_inv, b);
+    int or_len = 0;
+
+    char* or_str = or_3sat(num_parm, name, c, a_inv, b, &or_len);
     strcpy_s(&(ret[pos]), 256-pos, or_str);
-    pos += strnlen_s(or_str, 128);
+    pos += or_len;
+
+    delete or_str;
+
+    *len_para = not_len + or_len;
 
     return ret;
 
@@ -360,7 +415,7 @@ char* implies_3sat(int * num_parm, char* name, bit* c, bit* a, bit* b) {
 
 // dec_add c = a + b
 
-char* dec_add(int * num_parm, char* name, dec* c, dec* a, dec* b, bool discard_final_c_out) {
+char* dec_add(int * num_parm, char* name, dec* c, dec* a, dec* b, bool discard_final_c_out, int *len_para) {
 
     // find the largest number of bits
 
@@ -457,28 +512,45 @@ char* dec_add(int * num_parm, char* name, dec* c, dec* a, dec* b, bool discard_f
 
     // perform the first addition with a zero for carry_in
 
-    char* sum_str = bitaddsum_3sat(num_parm, name, c->bits [0], c_in, a_mod->bits[0], b_mod->bits[0]);
+    int bitaddsum_3sat_0_len = 0;
+    char* sum_str = bitaddsum_3sat(num_parm, name, c->bits [0], c_in, a_mod->bits[0], b_mod->bits[0], &bitaddsum_3sat_0_len);
     strcpy_s(&(ret[pos]), buf_sz-pos, sum_str);
-    pos += strnlen_s(sum_str, 256);
+    pos += bitaddsum_3sat_0_len;
 
-    char* c_out_str = bitaddcout_3sat(num_parm, name, c_out, c_in, a_mod->bits[0], b_mod->bits[0]);
+    int bitaddcout_3sat_0_len = 0;
+    char* c_out_str = bitaddcout_3sat(num_parm, name, c_out, c_in, a_mod->bits[0], b_mod->bits[0], &bitaddcout_3sat_0_len);
     strcpy_s(&(ret[pos]), buf_sz-pos, c_out_str);
-    pos += strnlen_s(c_out_str, 512);
+    pos += bitaddcout_3sat_0_len;
     delete (c_in);
     c_in = c_out;
 
     // perform all the rest of the additions
 
+    int *bitaddsum_3sat_tt_bits = new int [tt_bits - 1];
+    int *bitaddcout_3sat_tt_bits = new int [tt_bits - 1];
+
     for (int i = 1; i < tt_bits; i++) {
-        sum_str = bitaddsum_3sat(num_parm, name, c->bits [i], c_in , a_mod->bits[i], b_mod->bits[i]);
+
+        bitaddsum_3sat_tt_bits [ i - 1 ] = 0;
+        bitaddcout_3sat_tt_bits[ i - 1 ] = 0;
+
+    }
+
+    for (int i = 1; i < tt_bits; i++) {
+        sum_str = bitaddsum_3sat(num_parm, name, c->bits [i], c_in , a_mod->bits[i], b_mod->bits[i], &(bitaddsum_3sat_tt_bits[i - 1]));
         strcpy_s(&(ret[pos]), 256-pos, sum_str);
-        pos += strnlen_s(sum_str, 256);
-        c_out_str = bitaddcout_3sat(num_parm, name, c_out , c_in, a_mod->bits[i], b_mod->bits[i]);
+        pos += bitaddsum_3sat_tt_bits[i - 1];
+        c_out_str = bitaddcout_3sat(num_parm, name, c_out , c_in, a_mod->bits[i], b_mod->bits[i], &(bitaddcout_3sat_tt_bits[i - 1]));
         strcpy_s(&(ret[pos]), 256-pos, c_out_str);
-        pos += strnlen_s(c_out_str, 512);
+        pos += bitaddcout_3sat_tt_bits[i - 1];
         delete (c_in);
         c_in = c_out;
     }
+
+    *len_para = pos;
+
+    delete bitaddcout_3sat_tt_bits;
+    delete bitaddsum_3sat_tt_bits;
 
     // set the msb of c as the final carry_out value
 
@@ -493,10 +565,15 @@ char* dec_add(int * num_parm, char* name, dec* c, dec* a, dec* b, bool discard_f
 
 // twos_complement = -a
 
-char* twos_comp_3sat(int* num_parm, char* name, dec* c, dec* a) {
+char* twos_comp_3sat(int* num_parm, char* name, dec* c, dec* a, int *len_para) {
 
     char* ret = new char[(64 + 768) * a->sz];
     int pos = 0;
+
+    // create not_3sat_len
+    int* not_3sat_len = new int[a->sz];
+    for (int i = 0; i < a->sz; i++)
+        not_3sat_len[i] = 0;
 
     // invert a
 
@@ -507,9 +584,9 @@ char* twos_comp_3sat(int* num_parm, char* name, dec* c, dec* a) {
     a_inv->bits = new bit * [a_inv->sz]();
     sprintf_s(a_inv->name, "%s_inv", name);
     for (int i = 0; i < a_inv->sz; i++) {
-        char * not_str = not_3sat(num_parm, a_inv->name, a_inv->bits[i], a->bits[i]);
+        char * not_str = not_3sat(num_parm, a_inv->name, a_inv->bits[i], a->bits[i], &(not_3sat_len[i]));
         strcpy_s(&(ret[pos]), (64+768) * a->sz - pos, not_str);
-        pos += strnlen_s(not_str, 64);
+        pos += not_3sat_len[i];
     }
 
     // create one, adjusting for any fractions
@@ -528,9 +605,15 @@ char* twos_comp_3sat(int* num_parm, char* name, dec* c, dec* a) {
 
     // perform the addition discarding the final carry
 
-    char* add_str = dec_add(num_parm, name, c, b, a_inv, true);
+    int add_str_len = 0;
+
+    char* add_str = dec_add(num_parm, name, c, b, a_inv, true, &add_str_len);
 
     strcpy_s(&(ret[pos]), (64 + 768) * a->sz - pos, add_str);
+
+    delete not_3sat_len;
+
+    *len_para = pos + add_str_len;
 
     // return 3sat source
 
@@ -539,7 +622,7 @@ char* twos_comp_3sat(int* num_parm, char* name, dec* c, dec* a) {
 
 // dec_sub c = a + -b
 
-char* dec_sub(int* num_parm, char* name, dec* c, dec* a, dec* b) {
+char* dec_sub(int* num_parm, char* name, dec* c, dec* a, dec* b, int *len_para) {
 
     int buf_sz = (64 + 768) * b->sz + 768 * (a->sz > b->sz ? a->sz : b->sz);
     char* ret = new char[buf_sz];
@@ -549,13 +632,17 @@ char* dec_sub(int* num_parm, char* name, dec* c, dec* a, dec* b) {
     char twos_name[15];
     sprintf_s(twos_name, "%s_twos", b->name);
 
-    char* twos_str = twos_comp_3sat(num_parm, twos_name, twos_b, b);
+    int twos_str_len = 0;
+    char* twos_str = twos_comp_3sat(num_parm, twos_name, twos_b, b, &twos_str_len);
     strcpy_s(&(ret[pos]), buf_sz - pos, twos_str);
-    pos += strnlen_s(twos_str, (64 + 768) * b->sz);
+    pos += twos_str_len;
 
-    char* add_str = dec_add(num_parm, name, c, a, twos_b, false);
+    int add_str_len = 0;
+    char* add_str = dec_add(num_parm, name, c, a, twos_b, false, &add_str_len);
     strcpy_s(&(ret[pos]), buf_sz - pos, add_str);
-    pos += strnlen_s(add_str, 768 * c->sz);
+    pos += add_str_len;
+
+    *len_para = twos_str_len + add_str_len;
 
     return ret;
 
@@ -563,7 +650,7 @@ char* dec_sub(int* num_parm, char* name, dec* c, dec* a, dec* b) {
 
 // force equals
 
-char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq) {
+char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para) {
 
     // c = a xnor b
     // d = and all c bits together
@@ -617,25 +704,33 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq) {
 
     // xnor them all together
 
+    int* xnor_str_len = new int[bd_sz + ad_sz];
+    for (int i = 0; i < bd_sz + ad_sz; i++)
+        xnor_str_len[i] = 0;
+
     char c_name[15];
     sprintf_s(c_name, "%s_c", name);
     dec* c = create_dec(num_parm, c_name, bd_sz, ad_sz);
     for (int i = 0; i < bd_sz + ad_sz; i++) {
-        char* xnor_str = xnor_3sat(num_parm, name, c->bits[i], a_mod->bits[i], b_mod->bits[i]);
+        char* xnor_str = xnor_3sat(num_parm, name, c->bits[i], a_mod->bits[i], b_mod->bits[i], &(xnor_str_len[i]));
         strcpy_s(&(ret[pos]), buf_sz - pos, xnor_str);
-        pos += strnlen_s(xnor_str, 128);
+        pos += xnor_str_len[i];
     }
 
     // and all those xnors together
+
+    int* and_str_len = new int[c->sz];
+    for (int i = 0; i < c->sz; i++)
+        and_str_len[i] = 0;
 
     int id = c->bits[0]->id;
 
     bit* d = create_bit(&id);
     for (int i = 1; i < c->sz; i++) {
         bit* temp = NULL;
-        char* and_str = and_3sat(num_parm, name, temp, d, c->bits[i]);
+        char* and_str = and_3sat(num_parm, name, temp, d, c->bits[i], &(and_str_len[i]));
         strcpy_s(&(ret[pos]), buf_sz - pos, and_str);
-        pos += strnlen_s(and_str, 128);
+        pos += and_str_len[i];
         bit* dump = d;
         d = temp;
         delete dump;
@@ -643,14 +738,21 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq) {
 
     // verify that d xnors with eq (set to either true or false)
 
+    int final_xnor_str_len = 0;
+
     int eq_bit_id = eq ? TRUE_3SAT : FALSE_3SAT;
 
     bit* eq_bit = create_bit(&eq_bit_id);
 
     bit* f = NULL;
-    char* final_xnor_str = xnor_3sat(num_parm, name, f, d, eq_bit);
+    char* final_xnor_str = xnor_3sat(num_parm, name, f, d, eq_bit, &final_xnor_str_len);
     strcpy_s(&(ret[pos]), buf_sz - pos, final_xnor_str);
-    pos += strnlen_s (final_xnor_str, 128);
+    pos += final_xnor_str_len;
+
+    *len_para = pos;
+
+    delete xnor_str_len;
+    delete and_str_len;
 
     return ret;
 
@@ -658,38 +760,15 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq) {
 
 // force not equals
 
-char* not_equals(int* num_parm, char* name, dec* a, dec* b) {
+char* not_equals(int* num_parm, char* name, dec* a, dec* b, int *len_para) {
 
-    return equals(num_parm, name, a, b, false);
-
-}
-
-/*
-// flt_add c = a + b
-
-char* flt_add(char* name, flt* c, flt* a, flt* b, int max_mnt_sz , int max_exp_sz) {
-
-    // convert a and b to dec, add to create c_dec, convert c_dec to c_flt
+    return equals(num_parm, name, a, b, false, len_para);
 
 }
-
-*/
-
-
-/*
-// flt_sub c = a + -b
-
-char* flt_sub(char* name, flt* c, flt* a, flt* b, int max_mnt_sz, int max_exp_sz) {
-
-    // convert a and b to dec, two's complement b, add to create c_dec, convert c_dec to c_flt
-
-}
-
-*/
 
 // dec_mul c = a * b
 
-char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int ad_sz) {
+char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int ad_sz, int *len_para) {
 
     // create the buffer to collect the 3CNF
 
@@ -706,14 +785,28 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
     itmd_c->ad_sz = a->ad_sz + b->ad_sz;
     sprintf_s(itmd_c->name, "%s_itmd_c_%x", name, 0);
 
+    int* and_str_itmd_c = new int[a->sz];
+    for (int i = 0; i < a->sz; i++)
+        and_str_itmd_c[i] = 0;
+
     char bitname[15];
 
     for (int j = 0; j < a->sz; j++) {
         sprintf_s(bitname, "%s_itmd_c_%x_%x", name, 0, j);
-        char* and_str = and_3sat(num_parm, bitname, itmd_c->bits[j], a->bits[j], b->bits[j]);
+        char* and_str = and_3sat(num_parm, bitname, itmd_c->bits[j], a->bits[j], b->bits[j], &(and_str_itmd_c[j]));
         strcpy_s(&(ret[pos]), buf_sz - pos, and_str);
-        pos += strnlen_s(and_str, 128);
+        pos += and_str_itmd_c[i];
     }
+
+    int** and_str_itmd_ab = new int* [b->sz];
+    for (int i = 0; i < b->sz; i++) {
+        and_str_itmd_ab[i] = new int[a->sz];
+        for (int j = 0; j < a->sz; a++)
+            and_str_itmd_ab[i][j] = 0;
+    }
+    int* sum_str_len = new int[b->sz];
+    for (int i = 0; i < b->sz; i++)
+        sum_str_len[i] = 0;
 
     for (int i = 1; i < b->sz; i++) {
         dec* itmd_b = itmd_c;
@@ -729,15 +822,15 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         }
         for (int j = i; j < a->sz + i; j++) {
             sprintf_s(bitname, "%s_itmd_%x_%x", name, i, j);
-            char* and_str = and_3sat(num_parm, bitname, itmd_a->bits[j], a->bits[j], b->bits[j]);
+            char* and_str = and_3sat(num_parm, bitname, itmd_a->bits[j], a->bits[j], b->bits[j], &(and_str_itmd_ab[i][j-i]));
             strcpy_s(&(ret[pos]), buf_sz - pos, and_str);
-            pos += strnlen_s(and_str, 128);
+            pos += and_str_itmd_ab[i][j-i];
         }
         char decname[15];
         sprintf_s(decname, "%s_itmd_s_%x", name, i);
-        char* sum_str = dec_add(num_parm, decname, itmd_c, itmd_a, itmd_b, false);
+        char* sum_str = dec_add(num_parm, decname, itmd_c, itmd_a, itmd_b, false, &(sum_str_len[i]));
         strcpy_s(&(ret[pos]), buf_sz - pos, sum_str);
-        pos += strnlen_s(sum_str, 768 * itmd_c->sz);
+        pos += sum_str_len[i];
     }
 
     // copy itmd_c to c truncated according to bd_sz and ad_sz
@@ -797,13 +890,21 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         }
     }
 
+    delete and_str_itmd_c;
+    for (int i = 0; i < b->sz; i++)
+        delete and_str_itmd_ab[i];
+    delete and_str_itmd_ab;
+    delete sum_str_len;
+
+    *len_para = pos;
+
     return ret;
 
 }
 
 // dec_div: b = c/a; a*b = c
 
-char* dec_div(int* num_parm, char* name, dec* c, dec* a, dec* b) {
+char* dec_div(int* num_parm, char* name, dec* c, dec* a, dec* b, int *len_para) {
 
     // calculate sizes after decimal and before decimal
 
@@ -819,20 +920,33 @@ char* dec_div(int* num_parm, char* name, dec* c, dec* a, dec* b) {
     char calc_name[15];
     sprintf_s(calc_b_name, 15, "%s_div", name);
 
+    int dec_mul_str_len = 0;
+
     dec* itmd_c = create_dec(num_parm, calc_name, c->bd_sz, c->ad_sz);
-    char* ret = dec_mul(num_parm, calc_name, itmd_c, a, b, bd_sz, ad_sz);
+    char* dec_mul_str = dec_mul(num_parm, calc_name, itmd_c, a, b, bd_sz, ad_sz, & dec_mul_str_len);
 
     char calc_eq_name[15];
     sprintf_s(calc_b_name, 15, "%s_div_eq", calc_eq_name);
 
-    equals(num_parm, calc_eq_name, c, itmd_c, true);
+    int equals_str_len = 0;
+
+    char * equals_str = equals(num_parm, calc_eq_name, c, itmd_c, true, &equals_str_len);
+
+    char* ret = new char[dec_mul_str_len + equals_str_len];
+    strcpy_s(&(ret[0]), dec_mul_str_len, dec_mul_str);
+    strcpy_s(&(ret[dec_mul_str_len]), equals_str_len, equals_str);
+
+    *len_para = dec_mul_str_len + equals_str_len;
+
+    delete dec_mul_str;
+    delete equals_str;
 
     return ret;
 }
 
 // dec_sqrt: a = sqrt(c); a*a = c
 
-char* dec_sqrt(int* num_parm, char* name, dec* c, dec* a) {
+char* dec_sqrt(int* num_parm, char* name, dec* c, dec* a, int *len_para) {
     // calculate sizes after decimal and before decimal
 
     int ad_sz = c->ad_sz + c->sz;
@@ -847,13 +961,26 @@ char* dec_sqrt(int* num_parm, char* name, dec* c, dec* a) {
     char calc_c_name[15];
     sprintf_s(calc_a_name, 15, "%s_sqrt", name);
 
+    int dec_mul_str_len = 0;
+
     dec* itmd_c = create_dec(num_parm, calc_a_name, c->bd_sz, c->ad_sz);
-    char* ret = dec_mul(num_parm, calc_c_name, itmd_c, a, a, bd_sz, ad_sz);
+    char* dec_mul_str = dec_mul(num_parm, calc_c_name, itmd_c, a, a, bd_sz, ad_sz, &dec_mul_str_len);
 
     char calc_eq_name[15];
     sprintf_s(calc_eq_name, 15, "%s_sqrt_eq", calc_eq_name);
 
-    equals(num_parm, calc_eq_name, c, itmd_c, true);
+    int equals_str_len = 0;
+
+    char * equals_str = equals(num_parm, calc_eq_name, c, itmd_c, true, & equals_str_len);
+
+    char* ret = new char[dec_mul_str_len + equals_str_len];
+    strcpy_s(&(ret[0]), dec_mul_str_len, dec_mul_str);
+    strcpy_s(&(ret[dec_mul_str_len]), equals_str_len, equals_str);
+
+    *len_para = dec_mul_str_len + equals_str_len;
+
+    delete dec_mul_str;
+    delete equals_str;
 
     return ret;
 }
