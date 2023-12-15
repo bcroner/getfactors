@@ -46,7 +46,8 @@ bool SATSolver_GreaterThan(bool* a, bool* b, int n);
 bool SATSolver_isSat(SATSolver* me, bool arr[]);
 int SATSolver_pow(int base, int chop);
 bool* SATSolver_int2bool(int n_parm, int position);
-void SATSolver_create(SATSolver* me, int** lst, int k_parm, int n_parm, int chop, int pos);
+void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int n_parm);
+void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos);
 void SATSolver_destroy(SATSolver* me);
 
 #endif
