@@ -1266,7 +1266,7 @@ char* dec_to_str(bool * decodable_buf, dec * a, int * str_sz) {
     return ret_str;
 }
 
-char* get_factors(char* c_str, int c_str_buf_sz) {
+char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
 
     if (c_str == NULL or c_str == "")
         return NULL;
@@ -1352,25 +1352,31 @@ char* get_factors(char* c_str, int c_str_buf_sz) {
     char mp_eq_str[15];
     sprintf_s(mp_eq_str, 15, "mpeq");
 
-    char* mul_str = dec_mul(&num_parm, mp_str, c, a, b, bit_count + 1, 0);
-    char* equals_str = equals(&num_parm, mp_eq_str, c, c_equals, true);
-    int mul_str_sz = (768 + 128) * a->sz * b->sz;
+    int mul_str_len = 0;
+
+    char* mul_str = dec_mul(&num_parm, mp_str, c, a, b, bit_count + 1, 0, & mul_str_len);
+
+    int equals_str_len = 0;
+
+    char* equals_str = equals(&num_parm, mp_eq_str, c, c_equals, true, & equals_str_len);
     
     int bd_sz = a->bd_sz < b->bd_sz ? a->bd_sz : b->bd_sz;
     int ad_sz = a->ad_sz > b->ad_sz ? a->ad_sz : b->bd_sz;
-    int equals_str_sz = (bd_sz + ad_sz) * (128 + 128) + 128;
 
-    int buf_3sat_sz = strnlen_s(mul_str, mul_str_sz) + strnlen_s(equals_str, equals_str_sz);
+    int buf_3sat_sz = mul_str_len + equals_str_len;
     char* buf_3sat = new char[buf_3sat_sz];
     strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
-    strcpy_s(&(buf_3sat[strnlen_s(mul_str, mul_str_sz)]), buf_3sat_sz - strnlen_s(mul_str, mul_str_sz), equals_str);
+    strcpy_s(&(buf_3sat[mul_str_len]), equals_str_len, equals_str);
 
     int k = 0;
     int** input = input_from_char_buf(&num_parm, buf_3sat, buf_3sat_sz, &k);
     bool* sln = new bool[num_parm-1];
 
+    SATSolverMaster* master = new SATSolverMaster();
+    SATSolverMaster_create(master, input, k, num_parm);
+
     SATSolver* s = new SATSolver();
-    SATSolver_create(s, input, k, num_parm, 0, 0);
+    SATSolver_create(s, master, input, k, num_parm, 0, 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
@@ -1385,9 +1391,14 @@ char* get_factors(char* c_str, int c_str_buf_sz) {
     
     char* b_str = dec_to_str(sln, b, &b_str_sz);
 
-    int ret_buf_sz = strnlen_s(a_str, a_str_sz) + strnlen_s("\n\n", 4) + strnlen_s(b_str, b_str_sz);
+    int ret_buf_sz = a_str_sz + strnlen_s("\n\n", 4) + b_str_sz;
     char* ret_buf = new char[ret_buf_sz];
     sprintf_s(ret_buf, ret_buf_sz, "%s\n\n%s", a_str, b_str);
+
+    delete mul_str;
+    delete equals_str;
+    delete a_str;
+    delete b_str;
 
     return ret_buf;
 }
