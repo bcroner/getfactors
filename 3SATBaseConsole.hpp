@@ -19,6 +19,8 @@ typedef struct {
 	int* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	int* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	int* powers;		// powers to jump forward by
+	int k;				// original number of clauses
+	int n;				// number of variables
 
 } SATSolverMaster;
 
@@ -29,8 +31,6 @@ typedef struct {
 	int* cls_tly;				// running tallies of the number of literals matched in clauses
 
 	bool* Z;					// current position in permutation space
-	int k;						// original number of clauses
-	int n;						// number of variables
 	int pow_jump;				// current value of jump, to be updated each cycle
 	bool* begin;				// first element begin of search space
 	bool* end;					// last element end of search space
@@ -48,6 +48,7 @@ int SATSolver_pow(int base, int chop);
 bool* SATSolver_int2bool(int n_parm, int position);
 void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int n_parm);
 void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos);
+void SATSolverMaster_destroy(SATSolverMaster* master);
 void SATSolver_destroy(SATSolver* me);
 
 #endif
