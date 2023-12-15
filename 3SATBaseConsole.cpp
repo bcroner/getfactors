@@ -278,7 +278,7 @@ bool* SATSolver_int2bool(int n_parm, int position) {
 * pos: position in chopping up search space
 * 
 * */
-void SATSolver_create(SATSolver * me , int** lst, int k_parm, int n_parm, int chop, int pos) {
+void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int k_parm, int n_parm, int chop, int pos) {
 
 	// valcheck
 
@@ -290,6 +290,8 @@ void SATSolver_create(SATSolver * me , int** lst, int k_parm, int n_parm, int ch
 		return;
 
 	// instantiate class member variables
+
+	me->master = master;
 
 	me->k = k_parm;
 	me->n = n_parm;
@@ -375,7 +377,7 @@ void SATSolver_create(SATSolver * me , int** lst, int k_parm, int n_parm, int ch
 	}
 }
 
-void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos) {
+void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int n_parm) {
 
 	// populate histogram of the variables
 
