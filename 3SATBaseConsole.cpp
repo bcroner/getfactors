@@ -74,10 +74,10 @@ void MyQSort(int arr [] , int low_parm, int high_parm)
 
 void SATSolver_updateTF(SATSolver* me, int lit, bool target) {
 
-	int** add_map = target ? me->pos_map : me->neg_map;
-	int* add_map_szs = target ? me->pos_map_szs : me->neg_map_szs;
-	int** sub_map = target ? me->neg_map : me->pos_map;
-	int* sub_map_szs = target ? me->neg_map_szs : me->pos_map_szs;
+	int** add_map = target ? me->master->pos_map : me->master->neg_map;
+	int* add_map_szs = target ? me->master->pos_map_szs : me->master->neg_map_szs;
+	int** sub_map = target ? me->master->neg_map : me->master->pos_map;
+	int* sub_map_szs = target ? me->master->neg_map_szs : me->master->pos_map_szs;
 
 	// first do the subtractions
 
@@ -140,7 +140,7 @@ int SATSolver_initializePowJump(SATSolver* me) {
 
 	for (int i = 0; i < me->k; i++) {
 		if (me->cls_tly[i] == 3) {
-			int tmp_jump = me->powers [i];
+			int tmp_jump = me->master->powers [i];
 			if (tmp_jump > max_jump)
 				max_jump = tmp_jump;
 		}
@@ -170,7 +170,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 		SATSolver_add(me, me->pow_jump);
 	else {
 		for (int i = 0; i < me->n; i++)
-			arr[me->decoding [i]] =  me->Z[i];
+			arr[me->master->decoding [i]] =  me->Z[i];
 
 		return true;
 	}
@@ -196,12 +196,12 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 			// point_map points to neg_map if 0 and pos_map if 1
 
 			if (!me->Z[me->n - i]) {
-				point_map = me->neg_map;
-				point_map_szs = me->neg_map_szs;
+				point_map = me->master->neg_map;
+				point_map_szs = me->master->neg_map_szs;
 			}
 			else {
-				point_map = me->pos_map;
-				point_map_szs = me->pos_map_szs;
+				point_map = me->master->pos_map;
+				point_map_szs = me->master->pos_map_szs;
 			}
 
 			for (int j = 0; j < point_map_szs [me->n - i]; j++) {
@@ -229,7 +229,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 		return false ;
 	
 	for (int i = 0; i < me->n; i++)
-		arr[me->decoding [ i ]] = me->Z[i];
+		arr[me->master->decoding [ i ]] = me->Z[i];
 
 	return true;
 }
@@ -338,160 +338,10 @@ void SATSolver_create(SATSolver * me , int** lst, int k_parm, int n_parm, int ch
 			lst_t[i]++;
 	}
 
-	// populate histogram of the variables
-
-	int* histogram = new int [n_parm];
-
-	for (int i = 0; i < n_parm; i++)
-		histogram [ i ] = 0 ;
-
-	for (int i = 0; i < k_parm; i++)
-		for (int j = 0; j < 3; j++) {
-			// check for existence of true TRUE_3SAT or false FALSE_3SAT
-			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
-				continue;
-			int tmp = ( lst[i][j] < 0 ? -lst[i][j] : lst[i][j] ) - 2 ;
-			int cur = histogram [tmp];
-			histogram [tmp] = cur + 1 ;
-		}
-
-	// create a sorted copy of the histogram
-
-	int* histogram_srt = new int[n_parm];
-
-	for (int i = 0; i < n_parm; i++)
-		histogram_srt [i] = histogram [i] ;
-
-	MyQSort(histogram_srt, 0, me->n - 1);
-
-	// create a decoding based on the histogram
-
-	me->decoding = new int[n_parm];
-
-	for (int i = 0; i < me->n; i++) {
-		int count = histogram_srt [ i ];
-		int pos = 0;
-		while (histogram [pos] != count)
-			pos++;
-		me->decoding [ i ] = pos ;
-		histogram [ pos ] = -1 ;
-	}
-
-	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
-
-	int* powers = (int*)malloc(sizeof(int) * me->k);
-	for (int i = 0; i < me->k; i++) {
-		int lowest = me->n - 1;
-		for (int j = 0; j < 3; j++) {
-			// check for true TRUE_3SAT or false FALSE_3SAT
-			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
-				continue;
-			int lit_cur = ( lst[i][j] < 0 ? - lst[i][j] : lst[i][j]) - 2 ;
-			if (lit_cur < lowest)
-				lowest = lit_cur;
-		}
-		powers[i] = lowest;
-	}
-
-	// create the map looking into running tally based on literals pos_map
-
-	me->pos_map = new int* [n_parm];
-	me->neg_map = new int* [n_parm];
-	me->powers = new int[k_parm];
-
-	// instantiate pos_map_szs and neg_map_szs
-
-	me->pos_map_szs = new int[n_parm];
-	me->neg_map_szs = new int[n_parm];
-
-	// initialize pos_map_szs and neg_map_szs all to 0
-
-	for (int i = 0; i < n_parm; i++) {
-		me->pos_map_szs [i] = 0;
-		me->neg_map_szs [i] = 0;
-	}
-
-	// determine the pos_map_szs
-
-	for (int i = 0; i < me->n; i++) {
-		for (int j = 0; j < k_parm; j++) {
-			// skip if true TRUE_3SAT or false FALSE_3SAT
-			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == -(i + 2)))
-				me->pos_map_szs[i]++;
-			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == -(i + 2)))
-				me->pos_map_szs[i]++;
-			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == -(i + 2)))
-				me->pos_map_szs[i]++;
-		}
-	}
-
-	// determine the neg_map_szs
-
-	for (int i = 0; i < me->n; i++) {
-		for (int j = 0; j < k_parm; j++) {
-			// skip if true TRUE_3SAT or false FALSE_3SAT
-			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == (i + 2)))
-				me->neg_map_szs[i]++;
-			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == (i + 2)))
-				me->neg_map_szs[i]++;
-			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == (i + 2)))
-				me->neg_map_szs[i]++;
-		}
-	}
-
-	// instantiate pos_map and neg_map for each variable
-
-	for (int i = 0; i < me->n; i++) {
-		me->pos_map[i] = new int [me->pos_map_szs[i]];
-		me->neg_map[i] = new int [me->neg_map_szs[i]];
-	}
-
-	// initialize pos_map and neg_map all to 3 minus non-T/F literals
-
-	for (int i = 0; i < me->n; i++) {
-		for (int j = 0; j < me->pos_map_szs[i]; j++)
-			me->pos_map[i][j] = 0;
-		for (int j = 0; j < me->neg_map_szs[i]; j++)
-			me->neg_map[i][j] = 0;
-	}
-
-	// for each variable in power, create an entry in cls_szs and populate pos_map, neg_map
-
-	for (int i = me->n - 1; i >= 0; i--) {
-		int pos_pos = 0;
-		int pos_neg = 0;
-		for (int j = 0; j < me->k; j++) {
-			if (powers[j] == i) {
-				for (int k = 0; k < 3; k++) {
-
-					// check for t/f
-					if (lst[j][k] == FALSE_3SAT || lst[j][k] == TRUE_3SAT)
-						continue;
-
-					int pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
-					me->powers[j] = i;
-
-					// now we must invert literals within clauses
-
-					if (lst[j][k] < 0) {
-						int pos = -lst[j][k] - 2;
-						me->pos_map[pos][pos_pos]++;
-						pos_pos++;
-					}
-					else {
-						int pos = lst[j][k] - 2;
-						me->neg_map[pos][pos_neg]++;
-						pos_neg++;
-					}
-				}
-			}
-		}
-	}
-
 	// set value of Z to begin, decoded
 
 	for (int i = 0; i < me->n + 1; i++)
-		me->Z[i] = me->begin [ me->decoding [ i ] ];
+		me->Z[i] = me->begin [ me->master->decoding [ i ] ];
 
 	// create the running clause tally cls_tly
 
@@ -505,22 +355,175 @@ void SATSolver_create(SATSolver * me , int** lst, int k_parm, int n_parm, int ch
 	// populate clause tally with initial begin value
 
 	for (int i = 0; i < n_parm; i++) {
-		int decoded = me->decoding [ i ];
+		int decoded = me->master->decoding [ i ];
 		int * point_map;
 		int point_map_sz;
 		if (me->begin[decoded]) {
-			point_map = me->pos_map[decoded];
-			point_map_sz = me->pos_map_szs[i];
+			point_map = me->master->pos_map[decoded];
+			point_map_sz = me->master->pos_map_szs[i];
 		}
 		else {
-			point_map = me->neg_map[decoded];
-			point_map_sz = me->neg_map_szs[i];
+			point_map = me->master->neg_map[decoded];
+			point_map_sz = me->master->neg_map_szs[i];
 		}
 		int map_sz = point_map_sz;
 		for (int j = 0; j < map_sz; j++) {
 			int cls_ix = point_map[j];
 			int old_val = me->cls_tly [ j ];
 			me->cls_tly [ cls_ix ] = old_val + 1;
+		}
+	}
+}
+
+void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos) {
+
+	// populate histogram of the variables
+
+	int* histogram = new int[n_parm];
+
+	for (int i = 0; i < n_parm; i++)
+		histogram[i] = 0;
+
+	for (int i = 0; i < k_parm; i++)
+		for (int j = 0; j < 3; j++) {
+			// check for existence of true TRUE_3SAT or false FALSE_3SAT
+			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
+				continue;
+			int tmp = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
+			int cur = histogram[tmp];
+			histogram[tmp] = cur + 1;
+		}
+
+	// create a sorted copy of the histogram
+
+	int* histogram_srt = new int[n_parm];
+
+	for (int i = 0; i < n_parm; i++)
+		histogram_srt[i] = histogram[i];
+
+	MyQSort(histogram_srt, 0, n_parm - 1);
+
+	// create a decoding based on the histogram
+
+	master->decoding = new int[n_parm];
+
+	for (int i = 0; i < n_parm; i++) {
+		int count = histogram_srt[i];
+		int pos = 0;
+		while (histogram[pos] != count)
+			pos++;
+		master->decoding[i] = pos;
+		histogram[pos] = -1;
+	}
+
+	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
+
+	master->powers = (int*)malloc(sizeof(int) * k_parm);
+	for (int i = 0; i < k_parm; i++) {
+		int lowest = n_parm - 1;
+		for (int j = 0; j < 3; j++) {
+			// check for true TRUE_3SAT or false FALSE_3SAT
+			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
+				continue;
+			int lit_cur = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
+			if (lit_cur < lowest)
+				lowest = lit_cur;
+		}
+		master->powers[i] = lowest;
+	}
+
+	// create the map looking into running tally based on literals pos_map
+
+	master->pos_map = new int* [n_parm];
+	master->neg_map = new int* [n_parm];
+	master->powers = new int[k_parm];
+
+	// instantiate pos_map_szs and neg_map_szs
+
+	master->pos_map_szs = new int[n_parm];
+	master->neg_map_szs = new int[n_parm];
+
+	// initialize pos_map_szs and neg_map_szs all to 0
+
+	for (int i = 0; i < n_parm; i++) {
+		master->pos_map_szs[i] = 0;
+		master->neg_map_szs[i] = 0;
+	}
+
+	// determine the pos_map_szs
+
+	for (int i = 0; i < n_parm; i++) {
+		for (int j = 0; j < k_parm; j++) {
+			// skip if true TRUE_3SAT or false FALSE_3SAT
+			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == -(i + 2)))
+				master->pos_map_szs[i]++;
+			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == -(i + 2)))
+				master->pos_map_szs[i]++;
+			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == -(i + 2)))
+				master->pos_map_szs[i]++;
+		}
+	}
+
+	// determine the neg_map_szs
+
+	for (int i = 0; i < n_parm; i++) {
+		for (int j = 0; j < k_parm; j++) {
+			// skip if true TRUE_3SAT or false FALSE_3SAT
+			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == (i + 2)))
+				master->neg_map_szs[i]++;
+			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == (i + 2)))
+				master->neg_map_szs[i]++;
+			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == (i + 2)))
+				master->neg_map_szs[i]++;
+		}
+	}
+
+	// instantiate pos_map and neg_map for each variable
+
+	for (int i = 0; i < n_parm; i++) {
+		master->pos_map[i] = new int[me->master->pos_map_szs[i]];
+		master->neg_map[i] = new int[me->master->neg_map_szs[i]];
+	}
+
+	// initialize pos_map and neg_map all to 3 minus non-T/F literals
+
+	for (int i = 0; i < n_parm; i++) {
+		for (int j = 0; j < master->pos_map_szs[i]; j++)
+			master->pos_map[i][j] = 0;
+		for (int j = 0; j < master->neg_map_szs[i]; j++)
+			master->neg_map[i][j] = 0;
+	}
+
+	// for each variable in power, create an entry in cls_szs and populate pos_map, neg_map
+
+	for (int i = n - 1; i >= 0; i--) {
+		int pos_pos = 0;
+		int pos_neg = 0;
+		for (int j = 0; j < k_parm; j++) {
+			if (master->powers[j] == i) {
+				for (int k = 0; k < 3; k++) {
+
+					// check for t/f
+					if (lst[j][k] == FALSE_3SAT || lst[j][k] == TRUE_3SAT)
+						continue;
+
+					int pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
+					master->powers[j] = i;
+
+					// now we must invert literals within clauses
+
+					if (lst[j][k] < 0) {
+						int pos = -lst[j][k] - 2;
+						master->pos_map[pos][pos_pos]++;
+						pos_pos++;
+					}
+					else {
+						int pos = lst[j][k] - 2;
+						master->neg_map[pos][pos_neg]++;
+						pos_neg++;
+					}
+				}
+			}
 		}
 	}
 }
