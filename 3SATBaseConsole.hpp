@@ -14,12 +14,19 @@
 typedef struct {
 
 	int* decoding;		// decoding of variables
-	int* cls_tly;		// running tallies of the number of literals matched in clauses
 	int** pos_map;		// map of non-negated literals to clauses for tallying
 	int** neg_map;		// map of negated literals to clauses for tallying
 	int* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	int* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	int* powers;		// powers to jump forward by
+
+} SATSolverMaster;
+
+typedef struct {
+
+	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
+
+	int* cls_tly;				// running tallies of the number of literals matched in clauses
 
 	bool* Z;					// current position in permutation space
 	int k;						// original number of clauses
