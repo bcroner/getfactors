@@ -8,18 +8,39 @@
 #include <cmath>
 #include <stdio.h>
 
+#include "I:/My Drive/products/3SAT AI/3SATAI/3SATBaseConsole.hpp"
 #include "I:/My Drive/products/3SAT AI/3SAT_Framework/3SAT_Framework/3SAT_framework.hpp"
 
 int main()
 {
     int num_parm = 2;
     int len_para = 0;
-    bit* a = create_bit(&num_parm);
-    bit* b = create_bit(&num_parm);
-    bit* c = NULL;
-    char bitc_name[15];
-    strcpy_s(bitc_name, 15, "bitc");
-    printf("%s\n", and_3sat(&num_parm, bitc_name, c, a, b, &len_para));
+    //bit* a = create_bit(&num_parm);
+    //bit* b = create_bit(&num_parm);
+    //bit* c = NULL;
+    //char bitc_name[15];
+    //strcpy_s(bitc_name, 15, "bitc");
+    //printf("%s\n", and_3sat(&num_parm, bitc_name, c, a, b, &len_para));
+    //char c_str[5];
+    //strcpy_s(c_str, 5, "6");
+    //strcpy_s(c_str, 5, "F");
+    //strcpy_s(c_str, 5, "8F");
+    //char * factors = get_factors(c_str, 5, & len_para);
+    int str_sz = 0;
+    bool decodable_buf[] = {true, false, true, true, false, false, true, false , false};
+    dec* numa = new dec();
+    numa->ad_sz = 0;
+    numa->bd_sz = 5;
+    numa->sz = 5;
+    strcpy_s(numa->name, 17, "numa_test");
+    numa->bits = new bit * [5];
+    int tf = FALSE_3SAT;
+    numa->bits[0] = create_bit(&tf);
+    numa->bits[1] = create_bit(&num_parm);
+    numa->bits[2] = create_bit(&num_parm);
+    numa->bits[3] = create_bit(&num_parm);
+    numa->bits[4] = create_bit(&num_parm);
+    char* dec_str = dec_to_str(decodable_buf, numa, &str_sz);
     return 0;
 }
 
@@ -49,6 +70,18 @@ CA 90 A2 C1 78 87 23 C9 B2 26 D8 45 45 35 6A 2F
 
   Public Exponent (17 bits):
   01 00 01
+
+*/
+
+/*
+* 
+* mail.google.com
+
+04:89:81:02:f9:80:b7:d6:f2:a2:63:69:2d:1d:ad:
+73:55:c7:22:bd:52:bc:56:15:fa:cf:e9:b7:a5:b2:
+d6:15:b9:d2:da:02:1a:9b:3b:86:f6:59:90:9f:c1:
+6f:ff:f8:34:45:96:2c:80:9d:95:da:df:4d:aa:8a:
+83:04:d8:42:67
 
 */
 
