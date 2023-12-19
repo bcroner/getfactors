@@ -420,7 +420,7 @@ char* dec_add(int * num_parm, char* name, dec* c, dec* a, dec* b, bool discard_f
     // find the largest number of bits
 
     int bd_bits = a->bd_sz > b->bd_sz ? a->bd_sz : b->bd_sz ;
-    int ad_bits = a->ad_sz > b->ad_sz ? a->ad_sz : a->ad_sz ;
+    int ad_bits = a->ad_sz > b->ad_sz ? a->ad_sz : b->ad_sz ;
     int tt_bits = bd_bits + ad_bits;
 
     // create modified a and b
@@ -879,8 +879,8 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         itmd_a->sz = a->sz + i;
         sprintf_s(itmd_a->name, "%s_itmd_a_%x", name, i);
         for (int j = 0; j < i; j++) {
-            itmd_a->bits[a->sz - j - 1] = new bit();
-            itmd_a->bits[a->sz - j - 1]->id = FALSE_3SAT;
+            itmd_a->bits[itmd_a->sz - j - 1] = new bit();
+            itmd_a->bits[itmd_a->sz - j - 1]->id = FALSE_3SAT;
         }
         for (int j = i; j < a->sz + i; j++) {
             sprintf_s(bitname, "%s_itmd_%x_%x", name, i, j);
