@@ -838,7 +838,7 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
     int** and_str_itmd_ab = new int* [b->sz];
     for (int i = 0; i < b->sz; i++) {
         and_str_itmd_ab[i] = new int[a->sz];
-        for (int j = 0; j < a->sz; a++)
+        for (int j = 0; j < a->sz; j++)
             and_str_itmd_ab[i][j] = 0;
     }
 
@@ -859,7 +859,7 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
 
     for (int j = 0; j < a->sz; j++) {
         sprintf_s(bitname, "%s_itmd_c_%x_%x", name, 0, j);
-        char * and_str = and_3sat(num_parm, bitname, itmd_c->bits[itmd_c->sz - j - 1], a->bits[a->sz - j - 1], b->bits[0], &(and_str_itmd_ab[0][j]));
+        char * and_str = and_3sat(num_parm, bitname, itmd_c->bits[itmd_c->sz - j - 1], a->bits[a->sz - j - 1], b->bits[b->sz - 1], &(and_str_itmd_ab[0][j]));
         strcpy_s(and_strs[0][j], 128, and_str);
         delete[] and_str;
     }
@@ -893,6 +893,10 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         char* sum_str = dec_add(num_parm, decname, itmd_c, itmd_a, itmd_b, false, &(sum_str_len[i]));
         sum_strs[i] = new char[sum_str_len[i]];
         strcpy_s(sum_strs [i], sum_str_len[i], sum_str);
+        for (int i = 0; i < itmd_a->sz; i++)
+            delete itmd_a->bits[i];
+        delete itmd_a;
+        delete sum_str;
     }
 
     // copy itmd_c to c truncated according to bd_sz and ad_sz
@@ -1300,8 +1304,6 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
         ;
 
-    printf("c_str: %s c_str_buf_sz: %d strln: %d\n", c_str, c_str_buf_sz, strln);
-
     int c_bit_count = strln * 4;
 
     dec* c_equals = new dec();
@@ -1310,8 +1312,8 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     c_equals->bd_sz = c_bit_count + 1;
     c_equals->bits = new bit * [c_bit_count + 1];
 
-    int tf = FALSE_3SAT;
-    c_equals->bits[0] = create_bit(&tf);
+    c_equals->bits[0] = new bit();
+    c_equals->bits[0]->id = FALSE_3SAT;
 
     for (int i = 0; i < strln; i++) {
 
@@ -1337,8 +1339,9 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
         hexbits[0] = hexval;
 
         for (int j = 0; j < 4; j++) {
-            tf = hexbits[3 - j] == 1 ? TRUE_3SAT : FALSE_3SAT;
-            c_equals->bits[1 + i*4 + j] = create_bit(&tf);
+            int tf = hexbits[3 - j] == 1 ? TRUE_3SAT : FALSE_3SAT;
+            c_equals->bits[1 + i * 4 + j] = new bit();
+            c_equals->bits[1 + i * 4 + j]->id = tf;
         }
     }
 
@@ -1358,14 +1361,14 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     b->bd_sz = ab_bit_count + 1;
     b->bits = new bit * [ab_bit_count+1];
 
-    tf = FALSE_3SAT;
-    a->bits[0] = create_bit(&tf);
+    a->bits[0] = new bit();
+    a->bits[0]->id = FALSE_3SAT;
 
     for (int i = 0; i < ab_bit_count; i++)
         a->bits[i+1] = create_bit(&num_parm);
 
-    tf = FALSE_3SAT;
-    b->bits[0] = create_bit(&tf);
+    b->bits[0] = new bit();
+    b->bits[0]->id = FALSE_3SAT;
 
     for (int i = 0; i < ab_bit_count; i++)
         b->bits[i+1] = create_bit(&num_parm);
