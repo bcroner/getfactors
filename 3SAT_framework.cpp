@@ -1345,33 +1345,31 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
         }
     }
 
-    int ab_bit_count = c_bit_count - 1;
-
     dec* c = NULL;
 
     dec* a = new dec();
-    a->sz = ab_bit_count;
+    a->sz = c_bit_count;
     a->ad_sz = 0;
-    a->bd_sz = ab_bit_count;
-    a->bits = new bit * [ab_bit_count];
+    a->bd_sz = c_bit_count;
+    a->bits = new bit * [c_bit_count];
 
     dec* b = new dec();
-    b->sz = ab_bit_count;
+    b->sz = c_bit_count;
     b->ad_sz = 0;
-    b->bd_sz = ab_bit_count;
-    b->bits = new bit * [ab_bit_count];
+    b->bd_sz = c_bit_count;
+    b->bits = new bit * [c_bit_count];
 
     a->bits[0] = new bit();
     a->bits[0]->id = FALSE_3SAT;
 
-    for (int i = 0; i < ab_bit_count; i++)
-        a->bits[i+1] = create_bit(&num_parm);
+    for (int i = 1; i < c_bit_count; i++)
+        a->bits[i] = create_bit(&num_parm);
 
     b->bits[0] = new bit();
     b->bits[0]->id = FALSE_3SAT;
 
-    for (int i = 0; i < ab_bit_count; i++)
-        b->bits[i+1] = create_bit(&num_parm);
+    for (int i = 1; i < c_bit_count; i++)
+        b->bits[i] = create_bit(&num_parm);
 
     char mp_str[15];
     sprintf_s(mp_str, 15, "mp");
