@@ -8,8 +8,8 @@
 #include <cmath>
 #include <stdio.h>
 
-#include "I:/My Drive/products/3SAT AI/3SATAI/3SATBaseConsole.hpp"
-#include "I:/My Drive/products/3SAT AI/3SAT_Framework/3SAT_Framework/3SAT_framework.hpp"
+#include "3SATBaseConsole.hpp"
+#include "3SAT_framework.hpp"
 
 int main()
 {
@@ -21,11 +21,13 @@ int main()
     //char bitc_name[15];
     //strcpy_s(bitc_name, 15, "bitc");
     //printf("%s\n", and_3sat(&num_parm, bitc_name, c, a, b, &len_para));
-    //char c_str[5];
-    //strcpy_s(c_str, 5, "6");
+    char c_str[5];
+    strcpy_s(c_str, 5, "6");
     //strcpy_s(c_str, 5, "F");
     //strcpy_s(c_str, 5, "8F");
-    //char * factors = get_factors(c_str, 5, & len_para);
+    char * factors = get_factors(c_str, 5, & len_para);
+    printf_s("%s\n", factors);
+    /*
     int str_sz = 0;
     bool decodable_buf[] = {true, false, true, true, false, false, true, false , false};
     dec* numa = new dec();
@@ -41,6 +43,7 @@ int main()
     numa->bits[3] = create_bit(&num_parm);
     numa->bits[4] = create_bit(&num_parm);
     char* dec_str = dec_to_str(decodable_buf, numa, &str_sz);
+    */
     return 0;
 }
 
