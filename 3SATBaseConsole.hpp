@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <cmath>
-#include<stdio.h>
+#include <stdio.h>
 
 #define FALSE_3SAT -1
 #define TRUE_3SAT 1

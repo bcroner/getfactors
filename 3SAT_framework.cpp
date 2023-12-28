@@ -5,7 +5,7 @@
 #define __3SATFRAMEWORK_C__
 
 #include "3SAT_framework.hpp"
-#include "../../3SATAI/3SATBaseConsole.hpp"
+#include "3SATBaseConsole.hpp"
 
 #include <iostream>
 #include <stdio.h>
@@ -864,6 +864,10 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         delete[] and_str;
     }
 
+    itmd_c->sz = a->sz;
+    itmd_c->ad_sz = a->ad_sz + b->ad_sz;
+    itmd_c->bd_sz = itmd_c->sz - itmd_c->ad_sz;
+
     // create the sum strings and their lengths
 
     char** sum_strs = new char* [b->sz];
@@ -877,6 +881,8 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         dec* itmd_a = new dec();
         itmd_a->bits = new bit * [a->sz + i];
         itmd_a->sz = a->sz + i;
+        itmd_a->ad_sz = a->ad_sz + b->ad_sz;
+        itmd_a->bd_sz = itmd_a->sz - itmd_a->ad_sz;
         sprintf_s(itmd_a->name, "%s_itmd_a_%x", name, i);
         for (int j = 0; j < i; j++) {
             itmd_a->bits[itmd_a->sz - j - 1] = new bit();
