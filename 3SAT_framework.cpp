@@ -900,7 +900,7 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         }
         char decname[15];
         sprintf_s(decname, "%s_itmd_s_%x", name, i);
-        char* sum_str = dec_add(num_parm, decname, &itmd_c, itmd_a, itmd_b, i + 1 == b->sz ? false : true, &(sum_str_len[i]));
+        char* sum_str = dec_add(num_parm, decname, &itmd_c, itmd_a, itmd_b, true, &(sum_str_len[i]));
         sum_strs[i] = new char[sum_str_len[i] + 1];
         strcpy_s(sum_strs [i], sum_str_len[i] + 1, sum_str);
         for (int i = 0; i < itmd_a->sz; i++)
