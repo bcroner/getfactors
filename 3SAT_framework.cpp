@@ -733,6 +733,7 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
     a_mod->ad_sz = ad_sz;
     a_mod->bd_sz = bd_sz;
     a_mod->sz = ad_sz + bd_sz;
+    a_mod->bits = new bit * [ad_sz + bd_sz];
     strcpy_s(a_mod->name, 17, a_mod_name);
 
     char b_mod_name[17];
@@ -741,30 +742,43 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
     b_mod->ad_sz = ad_sz;
     b_mod->bd_sz = bd_sz;
     b_mod->sz = ad_sz + bd_sz;
+    b_mod->bits = new bit * [ad_sz + bd_sz];
     strcpy_s(b_mod->name, 17, a_mod_name);
 
-    // copy over data for a
-    for (int i = 0; i < bd_sz + a->ad_sz; i++) {
-        a_mod->bits[i] = new bit();
-        a_mod->bits[i]->id = a->bits[a_start + i]->id;
-    }
-
     // sign-extend a
-    for (int i = 0; i < a_sign_ext; i++) {
-        a_mod->bits[bd_sz + a->ad_sz + i] = new bit();
-        a_mod->bits[bd_sz + a->ad_sz + i]->id = a->bits[a->sz - 1]->id;
-    }
-
-    // copy over data for b
-    for (int i = 0; i < bd_sz + b->ad_sz; i++) {
-        b_mod->bits[i] = new bit();
-        b_mod->bits[i]->id = b->bits[b_start + i]->id;
+    for (int i = 0; i < a_start; i++) {
+        a_mod->bits[i] = new bit();
+        a_mod->bits[i]->id = a->bits[0]->id;
     }
 
     // sign-extend b
-    for (int i = 0; i < b_sign_ext; i++) {
-        b_mod->bits[bd_sz + b->ad_sz + i] = new bit();
-        b_mod->bits[bd_sz + b->ad_sz + i]->id, b->bits[b->sz - 1]->id;
+    for (int i = 0; i < b_start; i++) {
+        b_mod->bits[i] = new bit();
+        b_mod->bits[i]->id = b->bits[0]->id;
+    }
+
+    // copy over data for a
+    for (int i = a_start; i < a->sz - a_sign_ext; i++) {
+        a_mod->bits[i] = new bit();
+        a_mod->bits[i]->id = a->bits[i]->id;
+    }
+
+    // copy over data for b
+    for (int i = b_start; i < b->sz - b_sign_ext; i++) {
+        b_mod->bits[i] = new bit();
+        b_mod->bits[i]->id = b->bits[i]->id;
+    }
+
+    // rpad a with 0s out to length
+    for (int i = a->sz - a_sign_ext; i < bd_sz + ad_sz; i++) {
+        a_mod->bits[i] = new bit();
+        a_mod->bits[i]->id = FALSE_3SAT;
+    }
+
+    // rpad b with 0s out to length
+    for (int i = b->sz - b_sign_ext; i < bd_sz + ad_sz; i++) {
+        b_mod->bits[i] = new bit();
+        b_mod->bits[i]->id = FALSE_3SAT;
     }
 
     // create return buffer
@@ -823,6 +837,7 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
 
     *len_para = pos;
 
+    delete final_xnor_str;
     delete [] xnor_str_len;
     delete [] and_str_len;
 
@@ -1416,10 +1431,10 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     int bd_sz = a->bd_sz < b->bd_sz ? a->bd_sz : b->bd_sz;
     int ad_sz = a->ad_sz > b->ad_sz ? a->ad_sz : b->bd_sz;
 
-    int buf_3sat_sz = mul_str_len + equals_str_len;
+    int buf_3sat_sz = mul_str_len + equals_str_len + 1;
     char* buf_3sat = new char[buf_3sat_sz];
     strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
-    strcpy_s(&(buf_3sat[mul_str_len]), equals_str_len, equals_str);
+    strcpy_s(&(buf_3sat[mul_str_len]), buf_3sat_sz - mul_str_len, equals_str);
 
     int k = 0;
     int** input = input_from_char_buf(&num_parm, buf_3sat, buf_3sat_sz, &k);
