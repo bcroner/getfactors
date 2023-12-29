@@ -813,10 +813,8 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
 
     int final_xnor_str_len = 0;
 
-    int eq_bit_id = eq ? TRUE_3SAT : FALSE_3SAT;
-
     bit* eq_bit = new bit();
-    eq_bit->id = eq_bit_id;
+    eq_bit->id = eq ? TRUE_3SAT : FALSE_3SAT;
 
     bit* f = NULL;
     char* final_xnor_str = xnor_3sat(num_parm, name, &f, d, eq_bit, &final_xnor_str_len);
