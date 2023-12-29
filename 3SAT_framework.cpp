@@ -55,9 +55,9 @@ char* and_3sat(int * num_parm, char* name, bit** c, bit* a, bit* b, int *len_par
     sprintf_s(lst[2], "%d -%d", b->id, c->id);
     */
 
-    sprintf_s(lst[0], 32, "-%d -%d %d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[1], 32, "%d -%d %d", a->id, (*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 32, "%d -%d %d", b->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[0], 32, "%d %d %d", -a->id, -b->id, (*c)->id);
+    sprintf_s(lst[1], 32, "%d %d %d", a->id, -(*c)->id, FALSE_3SAT);
+    sprintf_s(lst[2], 32, "%d %d %d", b->id, -(*c)->id, FALSE_3SAT);
 
     int len = 0;
     for (int i = 0; i < 3; i++) {
@@ -90,7 +90,7 @@ char* nand_3sat(int * num_parm, char* name, bit** c, bit* a, bit* b, int *len_pa
     sprintf_s(lst[2], "%d %d", b->id, c->id);
     */
 
-    sprintf_s(lst[0], 32, "-%d -%d -%d", a->id, b->id, (*c)->id);
+    sprintf_s(lst[0], 32, "%d %d %d", -a->id, -b->id, -(*c)->id);
     sprintf_s(lst[1], 32, "%d %d %d", a->id, (*c)->id, FALSE_3SAT);
     sprintf_s(lst[2], 32, "%d %d %d", b->id, (*c)->id, FALSE_3SAT);
 
@@ -125,9 +125,9 @@ char* or_3sat(int * num_parm , char* name, bit** c, bit *a, bit* b, int *len_par
     sprintf_s(lst[2], "-%d %d", b->id, c->id);
     */
 
-    sprintf_s(lst[0], 32, "%d %d -%d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[1], 32, "-%d %d %d", a->id, (*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 32, "-%d %d %d", b->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[0], 32, "%d %d -%d", a->id, b->id, -(*c)->id);
+    sprintf_s(lst[1], 32, "-%d %d %d", -a->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[2], 32, "-%d %d %d", -b->id, (*c)->id, FALSE_3SAT);
 
     int len = 0;
     for (int i = 0; i < 3; i++) {
@@ -161,8 +161,8 @@ char* nor_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int* len_para
     */
 
     sprintf_s(lst[0], 32, "%d %d %d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[1], 32, "-%d -%d -%d", a->id, (*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 32, "-%d -%d -%d", b->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[1], 32, "%d %d %d", -a->id, -(*c)->id, FALSE_3SAT);
+    sprintf_s(lst[2], 32, "%d %d %d", -b->id, -(*c)->id, FALSE_3SAT);
 
     int len = 0;
     for (int i = 0; i < 3; i++) {
@@ -194,7 +194,7 @@ char* not_3sat(int * num_parm, char* name, bit** c, bit* a, int *len_para) {
     sprintf_s(lst[1], "%d %d", a->id, c->id);
     */
 
-    sprintf_s(lst[0], 32, "-%d -%d -%d", a->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[0], 32, "%d %d %d", -a->id, -(*c)->id, FALSE_3SAT);
     sprintf_s(lst[1], 32, "%d %d %d", a->id, (*c)->id, FALSE_3SAT);
 
     int len = 0;
@@ -222,10 +222,10 @@ char* xor_3sat(int * num_parm, char* name, bit** c, bit* a, bit* b, int *len_par
     for (int i = 0; i < 4; i++)
         lst[i] = new char[32];
 
-    sprintf_s(lst[0], 32, "-%d -%d -%d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[1], 32, "%d %d -%d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[2], 32, "%d -%d %d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[3], 32, "-%d %d %d", a->id, b->id, (*c)->id);
+    sprintf_s(lst[0], 32, "%d %d %d", -a->id, -b->id, -(*c)->id);
+    sprintf_s(lst[1], 32, "%d %d %d", a->id, b->id, -(*c)->id);
+    sprintf_s(lst[2], 32, "%d %d %d", a->id, -b->id, (*c)->id);
+    sprintf_s(lst[3], 32, "%d %d %d", -a->id, b->id, (*c)->id);
 
     int len = 0;
     for (int i = 0; i < 4; i++) {
@@ -252,10 +252,10 @@ char* xnor_3sat(int * num_parm, char* name, bit** c, bit* a, bit* b, int *len_pa
     for (int i = 0; i < 4; i++)
         lst[i] = new char[32];
 
-    sprintf_s(lst[0], 32, "-%d -%d %d", a->id, b->id, (*c)->id);
+    sprintf_s(lst[0], 32, "%d %d %d", -a->id, -b->id, (*c)->id);
     sprintf_s(lst[1], 32, "%d %d %d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[2], 32, "%d -%d -%d", a->id, b->id, (*c)->id);
-    sprintf_s(lst[3], 32, "-%d %d -%d", a->id, b->id, (*c)->id);
+    sprintf_s(lst[2], 32, "%d %d %d", a->id, -b->id, -(*c)->id);
+    sprintf_s(lst[3], 32, "%d %d %d", -a->id, b->id, -(*c)->id);
 
     int len = 0;
     for (int i = 0; i < 4; i++) {
@@ -285,14 +285,14 @@ char* bitaddsum_3sat(int * num_parm, char* name, bit** sum, bit* c_in, bit* a, b
     for (int i = 0; i < 8; i++)
         lst[i] = new char[32];
 
-    sprintf_s(lst[0], 32, "-%d -%d -%d", a->id, b->id, c->id);
-    sprintf_s(lst[1], 32, "%d %d -%d", a->id, b->id, c->id);
-    sprintf_s(lst[2], 32, "%d -%d %d", a->id, b->id, c->id);
-    sprintf_s(lst[3], 32, "-%d %d %d", a->id, b->id, c->id);
-    sprintf_s(lst[4], 32, "-%d -%d -%d", c_in->id, c->id, d->id);
-    sprintf_s(lst[5], 32, "%d %d -%d", c_in->id, c->id, d->id);
-    sprintf_s(lst[6], 32, "%d -%d %d", c_in->id, c->id, d->id);
-    sprintf_s(lst[7], 32, "-%d %d %d", c_in->id, c->id, d->id);
+    sprintf_s(lst[0], 32, "%d %d %d", -a->id, -b->id, -c->id);
+    sprintf_s(lst[1], 32, "%d %d %d", a->id, b->id, -c->id);
+    sprintf_s(lst[2], 32, "%d %d %d", a->id, -b->id, c->id);
+    sprintf_s(lst[3], 32, "%d %d %d", -a->id, b->id, c->id);
+    sprintf_s(lst[4], 32, "%d %d %d", -c_in->id, -c->id, -d->id);
+    sprintf_s(lst[5], 32, "%d %d %d", c_in->id, c->id, -d->id);
+    sprintf_s(lst[6], 32, "%d %d %d", c_in->id, -c->id, d->id);
+    sprintf_s(lst[7], 32, "%d %d %d", -c_in->id, c->id, d->id);
 
     int len = 0;
     for (int i = 0; i < 8; i++) {
@@ -348,21 +348,21 @@ char* bitaddcout_3sat(int * num_parm, char* name, bit** c_out, bit* c_in, bit* a
     sprintf_s(lst[14], "-%d %d", e->id, g->id);
     */
 
-    sprintf_s(lst[0], 32, "-%d -%d %d", a->id, b->id, c->id);
-    sprintf_s(lst[1], 32, "%d -%d -%d", a->id, c->id, FALSE_3SAT);
-    sprintf_s(lst[2], 32, "%d -%d -%d", b->id, c->id, FALSE_3SAT);
-    sprintf_s(lst[3], 32, "-%d -%d %d", b->id, c_in->id, d->id);
-    sprintf_s(lst[4], 32, "%d -%d -%d", b->id, d->id, FALSE_3SAT);
-    sprintf_s(lst[5], 32, "%d -%d -%d", c_in->id, c->id, FALSE_3SAT);
-    sprintf_s(lst[6], 32, "-%d -%d %d", a->id, c_in->id, e->id);
-    sprintf_s(lst[7], 32, "%d -%d -%d", a->id, e->id, FALSE_3SAT);
-    sprintf_s(lst[8], 32, "%d -%d -%d", c_in->id, e->id, FALSE_3SAT);
-    sprintf_s(lst[9], 32, "%d %d -%d", c->id, d->id, f->id);
-    sprintf_s(lst[10], 32, "-%d %d %d", c->id, f->id, FALSE_3SAT);
-    sprintf_s(lst[11], 32, "-%d %d %d", d->id, f->id, FALSE_3SAT);
-    sprintf_s(lst[12], 32, "%d %d -%d", f->id, e->id, g->id);
-    sprintf_s(lst[13], 32, "-%d %d %d", f->id, g->id, FALSE_3SAT);
-    sprintf_s(lst[14], 32, "-%d %d %d", e->id, g->id, FALSE_3SAT);
+    sprintf_s(lst[0], 32, "%d %d %d", -a->id, -b->id, c->id);
+    sprintf_s(lst[1], 32, "%d %d %d", a->id, -c->id, FALSE_3SAT);
+    sprintf_s(lst[2], 32, "%d %d %d", b->id, -c->id, FALSE_3SAT);
+    sprintf_s(lst[3], 32, "%d %d %d", -b->id, -c_in->id, d->id);
+    sprintf_s(lst[4], 32, "%d %d %d", b->id, -d->id, FALSE_3SAT);
+    sprintf_s(lst[5], 32, "%d %d %d", c_in->id, -c->id, FALSE_3SAT);
+    sprintf_s(lst[6], 32, "%d %d %d", -a->id, -c_in->id, e->id);
+    sprintf_s(lst[7], 32, "%d %d %d", a->id, -e->id, FALSE_3SAT);
+    sprintf_s(lst[8], 32, "%d %d %d", c_in->id, -e->id, FALSE_3SAT);
+    sprintf_s(lst[9], 32, "%d %d %d", c->id, d->id, -f->id);
+    sprintf_s(lst[10], 32, "%d %d %d", -c->id, f->id, FALSE_3SAT);
+    sprintf_s(lst[11], 32, "%d %d %d", -d->id, f->id, FALSE_3SAT);
+    sprintf_s(lst[12], 32, "%d %d %d", f->id, e->id, -g->id);
+    sprintf_s(lst[13], 32, "%d %d %d", -f->id, g->id, FALSE_3SAT);
+    sprintf_s(lst[14], 32, "%d %d %d", -e->id, g->id, FALSE_3SAT);
 
     int len = 0;
     for (int i = 0; i < 15; i++) {
@@ -515,11 +515,11 @@ char* dec_add(int * num_parm, char* name, dec** c, dec* a, dec* b, bool discard_
 
     // perform the first addition with a zero for carry_in
 
-    char* sum_str = bitaddsum_3sat(num_parm, name, &((*c)->bits [0]), c_in, a_mod->bits[0], b_mod->bits[0], &(sum_str_len[0]));
-    strcpy_s(sum_strs[0], sum_str_len[0], sum_str);
+    char* sum_str = bitaddsum_3sat(num_parm, name, &((*c)->bits [(*c)->sz - 1]), c_in, a_mod->bits[a_mod->sz - 1], b_mod->bits[b_mod->sz - 1], &(sum_str_len[tt_bits - 1]));
+    strcpy_s(sum_strs[tt_bits - 1], 256, sum_str);
 
-    char* c_out_str = bitaddcout_3sat(num_parm, name, &c_out, c_in, a_mod->bits[0], b_mod->bits[0], &(cout_str_len[0]));
-    strcpy_s(cout_strs[0], cout_str_len[0], c_out_str);
+    char* c_out_str = bitaddcout_3sat(num_parm, name, &c_out, c_in, a_mod->bits[a_mod->sz - 1], b_mod->bits[b_mod->sz - 1], &(cout_str_len[tt_bits - 1]));
+    strcpy_s(cout_strs[tt_bits - 1], 512, c_out_str);
     delete c_in;
     c_in = c_out;
 
@@ -530,11 +530,12 @@ char* dec_add(int * num_parm, char* name, dec** c, dec* a, dec* b, bool discard_
 
     for (int i = 1; i < tt_bits; i++) {
 
-        char* sum_str = bitaddsum_3sat(num_parm, name, &((*c)->bits[i]), c_in, a_mod->bits[i], b_mod->bits[i], &(sum_str_len[i]));
-        strcpy_s(sum_strs[i], sum_str_len[i], sum_str);
+        char* sum_str = bitaddsum_3sat(num_parm, name, &((*c)->bits[(*c)->sz - i - 1]), c_in, a_mod->bits[a_mod->sz - i - 1], b_mod->bits[b_mod->sz - i - 1],
+            &(sum_str_len[tt_bits - i - 1]));
+        strcpy_s(sum_strs[tt_bits - i - 1], 256, sum_str);
 
-        char* c_out_str = bitaddcout_3sat(num_parm, name, &c_out, c_in, a_mod->bits[i], b_mod->bits[i], &(cout_str_len[i]));
-        strcpy_s(cout_strs[i], cout_str_len[i], c_out_str);
+        char* c_out_str = bitaddcout_3sat(num_parm, name, &c_out, c_in, a_mod->bits[a_mod->sz - i - 1], b_mod->bits[b_mod->sz - i - 1], &(cout_str_len[tt_bits - i - 1]));
+        strcpy_s(cout_strs[tt_bits - i - 1], 512, c_out_str);
         delete c_in;
         c_in = c_out;
 
@@ -547,11 +548,11 @@ char* dec_add(int * num_parm, char* name, dec** c, dec* a, dec* b, bool discard_
     if (discard_final_c_out)
         delete c_in;
     else
-        (*c)->bits[(*c)->sz - 1] = c_in;
+        (*c)->bits[0] = c_in;
 
     // create ret string
 
-    int ret_sz = 0;
+    int ret_sz = 1;
     for (int i = 0; i < tt_bits; i++) {
         ret_sz += sum_str_len[i];
         ret_sz += cout_str_len[i];
@@ -564,13 +565,11 @@ char* dec_add(int * num_parm, char* name, dec** c, dec* a, dec* b, bool discard_
     int pos = 0;
 
     for (int i = 0; i < tt_bits; i++) {
-        strcpy_s(&(ret[pos]), sum_str_len[i], sum_strs[i]);
+        strcpy_s(&(ret[pos]), ret_sz - pos, sum_strs[i]);
         pos += sum_str_len[i];
-        strcpy_s(&(ret[pos]), cout_str_len[i], cout_strs[i]);
+        strcpy_s(&(ret[pos]), ret_sz - pos, cout_strs[i]);
         pos += cout_str_len[i];
     }
-
-    ret[pos] = '\0';
 
     *len_para = pos;
 
@@ -845,10 +844,10 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
     // create the first intermediate number
 
     dec* itmd_c = new dec();
-    itmd_c->bits = new bit * [a->sz + b->sz];
-    itmd_c->sz = a->sz + b->sz;
-    itmd_c->bd_sz = a->bd_sz + b->bd_sz;
-    itmd_c->ad_sz = a->ad_sz + b->ad_sz;
+    itmd_c->bits = new bit * [a->sz + b->sz + 1];
+    itmd_c->sz = a->sz + b->sz + 1;
+    itmd_c->bd_sz = a->bd_sz + b->bd_sz + 1;
+    itmd_c->ad_sz = itmd_c->sz - itmd_c->bd_sz;
     sprintf_s(itmd_c->name, "%s_itmd_c_%x", name, 0);
 
     int* and_str_itmd_c = new int[a->sz];
@@ -864,9 +863,10 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         delete[] and_str;
     }
 
-    itmd_c->sz = a->sz;
-    itmd_c->ad_sz = a->ad_sz + b->ad_sz;
-    itmd_c->bd_sz = itmd_c->sz - itmd_c->ad_sz;
+    for (int j = 0; j < itmd_c->sz - a->sz; j++) {
+        itmd_c->bits[j] = new bit();
+        itmd_c->bits[j]->id = FALSE_3SAT;
+    }
 
     // create the sum strings and their lengths
 
@@ -879,10 +879,10 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
     for (int i = 1; i < b->sz; i++) {
         dec* itmd_b = itmd_c;
         dec* itmd_a = new dec();
-        itmd_a->bits = new bit * [a->sz + i];
-        itmd_a->sz = a->sz + i;
-        itmd_a->ad_sz = a->ad_sz + b->ad_sz;
-        itmd_a->bd_sz = itmd_a->sz - itmd_a->ad_sz;
+        itmd_a->bits = new bit * [a->sz + b->sz + 1];
+        itmd_a->sz = a->sz + b->sz + 1;
+        itmd_a->bd_sz = a->bd_sz + b->bd_sz + 1;
+        itmd_a->ad_sz = itmd_a->sz - itmd_a->bd_sz;
         sprintf_s(itmd_a->name, "%s_itmd_a_%x", name, i);
         for (int j = 0; j < i; j++) {
             itmd_a->bits[itmd_a->sz - j - 1] = new bit();
@@ -894,11 +894,15 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
                 b->bits[b->sz - i - 1], &(and_str_itmd_ab[i][j-i]));
             strcpy_s(and_strs [i][j-i], 128, and_str);
         }
+        for (int j = 0; j < itmd_a->sz - (a->sz + i); j++) {
+            itmd_a->bits[j] = new bit();
+            itmd_a->bits[j]->id = FALSE_3SAT;
+        }
         char decname[15];
         sprintf_s(decname, "%s_itmd_s_%x", name, i);
-        char* sum_str = dec_add(num_parm, decname, &itmd_c, itmd_a, itmd_b, false, &(sum_str_len[i]));
-        sum_strs[i] = new char[sum_str_len[i]];
-        strcpy_s(sum_strs [i], sum_str_len[i], sum_str);
+        char* sum_str = dec_add(num_parm, decname, &itmd_c, itmd_a, itmd_b, i + 1 == b->sz ? false : true, &(sum_str_len[i]));
+        sum_strs[i] = new char[sum_str_len[i] + 1];
+        strcpy_s(sum_strs [i], sum_str_len[i] + 1, sum_str);
         for (int i = 0; i < itmd_a->sz; i++)
             delete itmd_a->bits[i];
         delete itmd_a;
@@ -951,7 +955,7 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
 
     // create the return buffer and populate with 3CNF
 
-    int buf_sz = 0;
+    int buf_sz = 1;
 
     for (int i = 0; i < b->sz; i++) {
         buf_sz += sum_str_len[i];
@@ -962,16 +966,14 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
     char* ret = new char[buf_sz];
     int pos = 0;
 
-    for (int i = 0; i < b->sz; i++) {
-        strcpy_s(&(ret[pos]), sum_str_len[i], sum_strs[i]);
+    for (int i = 1; i < b->sz; i++) {
+        strcpy_s(&(ret[pos]), buf_sz - pos, sum_strs[i]);
         pos += sum_str_len[i];
         for (int j = 0; j < a->sz; j++) {
-            strcpy_s(&(ret[pos]), and_str_itmd_ab[i][j], and_strs [i][j]);
+            strcpy_s(&(ret[pos]), buf_sz - pos, and_strs [i][j]);
             pos += and_str_itmd_ab[i][j];
         }
     }
-
-    ret[pos] = '\0';
 
 
     // delete all work buffers
