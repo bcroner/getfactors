@@ -727,29 +727,45 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
     int b_sign_ext = ad_sz - b->ad_sz;
 
     // instantiate a_mod and b_mod
-    char a_mod_name[15];
+    char a_mod_name[17];
     sprintf_s(a_mod_name, "%s_mod", a->name);
-    a_mod = create_dec(num_parm, a_mod_name, bd_sz, ad_sz);
+    a_mod = new dec();
+    a_mod->ad_sz = ad_sz;
+    a_mod->bd_sz = bd_sz;
+    a_mod->sz = ad_sz + bd_sz;
+    strcpy_s(a_mod->name, 17, a_mod_name);
 
-    char b_mod_name[15];
+    char b_mod_name[17];
     sprintf_s(b_mod_name, "%s_mod", b->name);
-    b_mod = create_dec(num_parm, b_mod_name, bd_sz, ad_sz);
+    b_mod = new dec();
+    b_mod->ad_sz = ad_sz;
+    b_mod->bd_sz = bd_sz;
+    b_mod->sz = ad_sz + bd_sz;
+    strcpy_s(b_mod->name, 17, a_mod_name);
 
     // copy over data for a
-    for (int i = 0; i < bd_sz + a->ad_sz; i++)
+    for (int i = 0; i < bd_sz + a->ad_sz; i++) {
+        a_mod->bits[i] = new bit();
         a_mod->bits[i]->id = a->bits[a_start + i]->id;
+    }
 
     // sign-extend a
-    for (int i = 0; i < a_sign_ext; i++)
+    for (int i = 0; i < a_sign_ext; i++) {
+        a_mod->bits[bd_sz + a->ad_sz + i] = new bit();
         a_mod->bits[bd_sz + a->ad_sz + i]->id = a->bits[a->sz - 1]->id;
+    }
 
     // copy over data for b
-    for (int i = 0; i < bd_sz + b->ad_sz; i++)
+    for (int i = 0; i < bd_sz + b->ad_sz; i++) {
+        b_mod->bits[i] = new bit();
         b_mod->bits[i]->id = b->bits[b_start + i]->id;
+    }
 
     // sign-extend b
-    for (int i = 0; i < b_sign_ext; i++)
+    for (int i = 0; i < b_sign_ext; i++) {
+        b_mod->bits[bd_sz + b->ad_sz + i] = new bit();
         b_mod->bits[bd_sz + b->ad_sz + i]->id, b->bits[b->sz - 1]->id;
+    }
 
     // create return buffer
 
