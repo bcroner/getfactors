@@ -905,6 +905,7 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         strcpy_s(sum_strs [i], sum_str_len[i] + 1, sum_str);
         for (int i = 0; i < itmd_a->sz; i++)
             delete itmd_a->bits[i];
+        delete itmd_a->name;
         delete itmd_a;
         delete sum_str;
     }
