@@ -65,7 +65,7 @@ char* equals(int* num_parm, char* name, dec* a, dec* b, bool eq, int* len_para);
 
 char* not_equals(int* num_parm, char* name, dec* a, dec* b, int* len_para);
 
-char* dec_mul(int * num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int ad_sz, int* len_para);
+char* dec_mul(int * num_parm, char* name, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int* len_para);
 
 char* dec_div(int* num_parm, char* name, dec * c, dec * a, dec * b, int* len_para);
 

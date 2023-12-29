@@ -729,11 +729,11 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
     // instantiate a_mod and b_mod
     char a_mod_name[15];
     sprintf_s(a_mod_name, "%s_mod", a->name);
-    a_mod = create_dec(NULL, a_mod_name, bd_sz, ad_sz);
+    a_mod = create_dec(num_parm, a_mod_name, bd_sz, ad_sz);
 
     char b_mod_name[15];
     sprintf_s(b_mod_name, "%s_mod", b->name);
-    b_mod = create_dec(NULL, b_mod_name, bd_sz, ad_sz);
+    b_mod = create_dec(num_parm, b_mod_name, bd_sz, ad_sz);
 
     // copy over data for a
     for (int i = 0; i < bd_sz + a->ad_sz; i++)
@@ -780,7 +780,9 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
 
     int id = c->bits[0]->id;
 
-    bit* d = create_bit(&id);
+    bit* d = new bit();
+    d->id = id;
+
     for (int i = 1; i < c->sz; i++) {
         bit* temp = NULL;
         char* and_str = and_3sat(num_parm, name, &temp, d, c->bits[i], &(and_str_len[i]));
@@ -797,7 +799,8 @@ char* equals(int * num_parm, char* name, dec* a, dec* b, bool eq, int * len_para
 
     int eq_bit_id = eq ? TRUE_3SAT : FALSE_3SAT;
 
-    bit* eq_bit = create_bit(&eq_bit_id);
+    bit* eq_bit = new bit();
+    eq_bit->id = eq_bit_id;
 
     bit* f = NULL;
     char* final_xnor_str = xnor_3sat(num_parm, name, &f, d, eq_bit, &final_xnor_str_len);
@@ -823,7 +826,7 @@ char* not_equals(int* num_parm, char* name, dec* a, dec* b, int *len_para) {
 
 // dec_mul c = a * b
 
-char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int ad_sz, int *len_para) {
+char* dec_mul(int* num_parm, char* name, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int *len_para) {
 
     // create the buffers to collect the initial 3CNF
 
@@ -905,7 +908,6 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
         strcpy_s(sum_strs [i], sum_str_len[i] + 1, sum_str);
         for (int i = 0; i < itmd_a->sz; i++)
             delete itmd_a->bits[i];
-        delete itmd_a->name;
         delete itmd_a;
         delete sum_str;
     }
@@ -914,43 +916,43 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
 
     char decname[15];
     sprintf_s(decname, 15, "%s_c", name);
-    c = create_dec(num_parm, decname, bd_sz, ad_sz);
+    *c = create_dec(num_parm, decname, bd_sz, ad_sz);
 
     // if c->bd_sz > itmd_c->bd_sz, sign-extend itmd_c to size of c before decimal
 
     int c_start = 0;
     int itmd_c_start = 0;
 
-    if (c->bd_sz > itmd_c->bd_sz) {
-        for (int i = 0; i < c->bd_sz - itmd_c->bd_sz; i++) {
-            c->bits[i] = new bit();
-            c->bits[i]->id = itmd_c->bits[0]->id;
+    if ((*c)->bd_sz > itmd_c->bd_sz) {
+        for (int i = 0; i < (*c)->bd_sz - itmd_c->bd_sz; i++) {
+            (*c)->bits[i] = new bit();
+            (*c)->bits[i]->id = itmd_c->bits[0]->id;
         }
-        c_start = c->bd_sz - itmd_c->bd_sz;
+        c_start = (*c)->bd_sz - itmd_c->bd_sz;
     }
     else
-        itmd_c_start = itmd_c->bd_sz - c->bd_sz;
+        itmd_c_start = itmd_c->bd_sz - (*c)->bd_sz;
 
     // calculate number of bits to copy over
 
-    int copy_over = c->sz > itmd_c->sz ? itmd_c->sz : c->sz;
+    int copy_over = (*c)->sz > itmd_c->sz ? itmd_c->sz : (*c)->sz;
 
     // copy over that many bits
 
     for (int i = 0; i < copy_over; i++) {
-        c->bits[c_start + i] = new bit();
-        c->bits[c_start + i]->id = itmd_c->bits[itmd_c_start + i]->id;
+        (*c)->bits[c_start + i] = new bit();
+        (*c)->bits[c_start + i]->id = itmd_c->bits[itmd_c_start + i]->id;
     }
 
     // calculate rpad
 
-    int c_rpad = c->ad_sz > itmd_c->ad_sz ? c->ad_sz - itmd_c->ad_sz : 0;
+    int c_rpad = (*c)->ad_sz > itmd_c->ad_sz ? (*c)->ad_sz - itmd_c->ad_sz : 0;
 
     // rpad with false
 
     for (int i = 0; i < c_rpad; i++) {
-        c->bits[c_start + copy_over + i] = new bit();
-        c->bits[c_start + copy_over + i]->id = FALSE_3SAT;
+        (*c)->bits[c_start + copy_over + i] = new bit();
+        (*c)->bits[c_start + copy_over + i]->id = FALSE_3SAT;
     }
     
 
@@ -984,6 +986,9 @@ char* dec_mul(int* num_parm, char* name, dec* c, dec* a, dec* b, int bd_sz, int 
             delete[] and_strs[i][j];
         delete[] and_strs[i];
     }
+    for (int i = 1; i < b->sz; i++)
+        delete[] sum_strs[i];
+    delete[] sum_strs;
     delete[] and_strs;
     delete [] and_str_itmd_c;
     for (int i = 0; i < b->sz; i++)
@@ -1018,7 +1023,7 @@ char* dec_div(int* num_parm, char* name, dec* c, dec* a, dec* b, int *len_para) 
     int dec_mul_str_len = 0;
 
     dec* itmd_c = create_dec(num_parm, calc_name, c->bd_sz, c->ad_sz);
-    char* dec_mul_str = dec_mul(num_parm, calc_name, itmd_c, a, b, bd_sz, ad_sz, & dec_mul_str_len);
+    char* dec_mul_str = dec_mul(num_parm, calc_name, &itmd_c, a, b, bd_sz, ad_sz, & dec_mul_str_len);
 
     char calc_eq_name[15];
     sprintf_s(calc_b_name, 15, "%s_div_eq", calc_eq_name);
@@ -1059,7 +1064,7 @@ char* dec_sqrt(int* num_parm, char* name, dec* c, dec* a, int *len_para) {
     int dec_mul_str_len = 0;
 
     dec* itmd_c = create_dec(num_parm, calc_a_name, c->bd_sz, c->ad_sz);
-    char* dec_mul_str = dec_mul(num_parm, calc_c_name, itmd_c, a, a, bd_sz, ad_sz, &dec_mul_str_len);
+    char* dec_mul_str = dec_mul(num_parm, calc_c_name, &itmd_c, a, a, bd_sz, ad_sz, &dec_mul_str_len);
 
     char calc_eq_name[15];
     sprintf_s(calc_eq_name, 15, "%s_sqrt_eq", calc_eq_name);
@@ -1388,7 +1393,7 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
 
     int mul_str_len = 0;
 
-    char* mul_str = dec_mul(&num_parm, mp_str, c, a, b, c_bit_count + 1, 0, & mul_str_len);
+    char* mul_str = dec_mul(&num_parm, mp_str, &c, a, b, c_bit_count + 1, 0, & mul_str_len);
 
     int equals_str_len = 0;
 
