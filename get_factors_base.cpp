@@ -40,9 +40,10 @@ int main()
         59D6AD59EC1AAF2A7EF65F40D8C282B3\
         CA90A2C1788723C9B226D84545356A2F\
         4DF3F73A85483E8C08D5855055E7BE4D");
-    //strcpy_s(c_str, 5, "6");
-    //strcpy_s(c_str, 5, "F");
-    //strcpy_s(c_str, 5, "8F");
+        
+    //strcpy_s(c_str, 2000, "6");
+    //strcpy_s(c_str, 2000, "F");
+    //strcpy_s(c_str, 2000, "8F");
     char * factors = get_factors(c_str, 2000, & len_para);
     printf_s("%s\n", factors);
     /*
