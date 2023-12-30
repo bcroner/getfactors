@@ -23,7 +23,6 @@ typedef struct {
 
 typedef struct {
 
-    char name[17]; // var name of integer
     bit** bits; // bit string
     int   sz; // size in bits of number
     int   bd_sz; // before decimal size
@@ -33,43 +32,43 @@ typedef struct {
 
 bit* create_bit(int* num_parm);
 
-dec* create_dec(int* num_parm, char* name_parm, int bd_sz_parm, int ad_sz_parm);
+dec* create_dec(int* num_parm, int bd_sz_parm, int ad_sz_parm);
 
-char* and_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int * len_para);
+char* and_3sat(int* num_parm, bit** c, bit* a, bit* b, int * len_para);
 
-char* nand_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int* len_para);
+char* nand_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para);
 
-char* or_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int* len_para);
+char* or_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para);
 
-char* nor_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int* len_para);
+char* nor_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para);
 
-char* not_3sat(int* num_parm, char* name, bit** c, bit* a, int* len_para);
+char* not_3sat(int* num_parm, bit** c, bit* a, int* len_para);
 
-char* xor_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int* len_para);
+char* xor_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para);
 
-char* xnor_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int* len_para);
+char* xnor_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para);
 
-char* bitaddsum_3sat(int* num_parm, char* name, bit** sum, bit* c_in, bit* a, bit* b, int* len_para);
+char* bitaddsum_3sat(int* num_parm, bit** sum, bit* c_in, bit* a, bit* b, int* len_para);
 
-char* bitaddcout_3sat(int* num_parm, char* name, bit** c_out, bit* c_in, bit* a, bit* b, int* len_para);
+char* bitaddcout_3sat(int* num_parm, bit** c_out, bit* c_in, bit* a, bit* b, int* len_para);
 
-char* implies_3sat(int* num_parm, char* name, bit** c, bit* a, bit* b, int* len_para);
+char* implies_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para);
 
-char* dec_add(int* num_parm, char* name, dec** c, dec* a, dec* b, bool discard_final_c_out, int* len_para);
+char* dec_add(int* num_parm, dec** c, dec* a, dec* b, bool discard_final_c_out, int* len_para);
 
-char* twos_comp_3sat(int* num_parm, char* name, dec** c, dec* a, int* len_para);
+char* twos_comp_3sat(int* num_parm, dec** c, dec* a, int* len_para);
 
-char* dec_sub(int* num_parm, char* name, dec** c, dec* a, dec* b, int* len_para);
+char* dec_sub(int* num_parm, dec** c, dec* a, dec* b, int* len_para);
 
-char* equals(int* num_parm, char* name, dec* a, dec* b, bool eq, int* len_para);
+char* equals(int* num_parm, dec* a, dec* b, bool eq, int* len_para);
 
-char* not_equals(int* num_parm, char* name, dec* a, dec* b, int* len_para);
+char* not_equals(int* num_parm, dec* a, dec* b, int* len_para);
 
-char* dec_mul(int * num_parm, char* name, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int* len_para);
+char* dec_mul(int * num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int* len_para);
 
-char* dec_div(int* num_parm, char* name, dec * c, dec * a, dec * b, int* len_para);
+char* dec_div(int* num_parm, dec * c, dec * a, dec * b, int* len_para);
 
-char* dec_sqrt(int* num_parm, char* name, dec* c, dec* a, int* len_para);
+char* dec_sqrt(int* num_parm, dec* c, dec* a, int* len_para);
 
 //void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
 
