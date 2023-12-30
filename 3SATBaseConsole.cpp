@@ -218,14 +218,14 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 				break;
 		}
 
-		if (!found_match)
+		if (found_match)
 			break;
 
 		SATSolver_add(me , me->pow_jump);
 
 	}
 
-	if ( me->Z [me->master->n] )
+	if (SATSolver_GreaterThan(me->Z, me->end, me->master->n))
 		return false ;
 	
 	for (int i = 0; i < me->master->n; i++)
@@ -309,8 +309,8 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	int* lst_f = new int[k_parm];
 
 	for (int i = 0; i < k_parm; i++) {
-		lst_t = 0;
-		lst_f = 0;
+		lst_t [i] = 0;
+		lst_f [i] = 0;
 	}
 
 	int count_clauses_true = 0;
@@ -338,8 +338,10 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// set value of Z to begin, decoded
 
-	for (int i = 0; i < n_parm + 1; i++)
-		me->Z[i] = me->begin [ me->master->decoding [ i ] ];
+	for (int i = 0; i < n_parm; i++)
+		me->Z[i] = me->begin [ i ];
+
+	me->Z[n_parm] = 0;
 
 	// create the running clause tally cls_tly
 
@@ -367,7 +369,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		int map_sz = point_map_sz;
 		for (int j = 0; j < map_sz; j++) {
 			int cls_ix = point_map[j];
-			int old_val = me->cls_tly [ j ];
+			int old_val = me->cls_tly [ cls_ix ];
 			me->cls_tly [ cls_ix ] = old_val + 1;
 		}
 	}
@@ -419,7 +421,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
-	master->powers = (int*)malloc(sizeof(int) * k_parm);
+	master->powers = new int[k_parm];
+
 	for (int i = 0; i < k_parm; i++) {
 		int lowest = n_parm - 1;
 		for (int j = 0; j < 3; j++) {
@@ -437,7 +440,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	master->pos_map = new int* [n_parm];
 	master->neg_map = new int* [n_parm];
-	master->powers = new int[k_parm];
 
 	// instantiate pos_map_szs and neg_map_szs
 
@@ -509,7 +511,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 						continue;
 
 					int pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
-					master->powers[j] = i;
 
 					// now we must invert literals within clauses
 
