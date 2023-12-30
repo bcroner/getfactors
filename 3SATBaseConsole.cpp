@@ -252,13 +252,13 @@ bool* SATSolver_int2bool(int n_parm, int position) {
 	for (int i = 0; i <= n_parm; i++)
 		ret[i] = false;
 
-	// for each bit position, determine true/false value
+	// for each bit position, determine true/false value, using a signed 64 bit integer
 
-	for (int i = n_parm; i >= 0; i--) {
+	for (int i = 0; i < 64 - 1; i++) {
 
-		int temp_size = SATSolver_pow(2, i);
+		int temp_size = SATSolver_pow(2, 64 - i - 2);
 		if (temp_size <= position) {
-			ret[i] = true;
+			ret[n_parm - i - 1] = true;
 			position = position - temp_size;
 		}
 
