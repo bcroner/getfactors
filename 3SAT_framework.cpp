@@ -1196,17 +1196,11 @@ inline int decimal_from_char(char c) {
 
 int** input_from_char_buf(int * num_parm, char * buf_3sat, int buf_3sat_sz, int * k) {
 
-    // count the newlines for k
-
-    for (int i = 0; i < strnlen_s(buf_3sat, buf_3sat_sz); i++)
-        if (buf_3sat[i] == '\n')
-            (*k)++;
-
-    int** ret = new int* [*k];
+    // count the newlines for k where no clause has a TRUE value in it
 
     int pos = 0;
 
-    for (int i = 0; i < *k; i++) {
+    while (buf_3sat[pos] != '\0') {
 
         char temp[128];
 
@@ -1217,12 +1211,56 @@ int** input_from_char_buf(int * num_parm, char * buf_3sat, int buf_3sat_sz, int 
             t_pos++;
             pos++;
         }
-        char nullchar = '\0';
-        temp[t_pos] = nullchar;
+        temp[t_pos] = '\0';
 
-        ret[i] = new int[3];
+        int a;
+        int b;
+        int c;
 
-        sscanf_s(temp, "%d %d %d", &(ret[i][0]), &(ret[i][1]), &(ret[i][2]));
+        sscanf_s(temp, "%d %d %d", &a, &b, &c);
+
+        if (a != TRUE_3SAT && b != TRUE_3SAT && c != TRUE_3SAT)
+            (*k)++;
+
+        pos++;
+    }
+
+    // copy over all the tuples
+
+    int** ret = new int* [*k];
+
+    pos = 0;
+
+    int iter = 0;
+
+    while (buf_3sat[pos] != '\0') {
+
+        char temp[128];
+
+        int t_pos = 0;
+
+        while (buf_3sat[pos] != '\n') {
+            temp[t_pos] = buf_3sat[pos];
+            t_pos++;
+            pos++;
+        }
+        temp[t_pos] = '\0';
+
+        ret[iter] = new int[3];
+
+        int a;
+        int b;
+        int c;
+
+        sscanf_s(temp, "%d %d %d", &a, &b, &c);
+
+        if (a != TRUE_3SAT && b != TRUE_3SAT && c != TRUE_3SAT) {
+            ret[iter][0] = a;
+            ret[iter][1] = b;
+            ret[iter][2] = c;
+            iter++;
+        }
+        pos++;
     }
 
     return ret;
@@ -1441,10 +1479,10 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     bool* sln = new bool[num_parm-1];
 
     SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, num_parm);
+    SATSolverMaster_create(master, input, k, num_parm-1);
 
     SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, num_parm, 0, 0);
+    SATSolver_create(s, master, input, k, num_parm-1, 0, 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
