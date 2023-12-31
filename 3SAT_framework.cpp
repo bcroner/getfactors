@@ -881,11 +881,8 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
     // create the buffers to collect the initial 3CNF
 
     char*** and_strs = new char** [b->sz];
-    for (int i = 0; i < b->sz; i++) {
+    for (int i = 0; i < b->sz; i++)
         and_strs[i] = new char* [a->sz];
-        for (int j = 0; j < a->sz; j++)
-            and_strs[i][j] = new char[128];
-    }
 
     int** and_str_itmd_ab = new int* [b->sz];
     for (int i = 0; i < b->sz; i++) {
@@ -902,13 +899,10 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
     itmd_c->bd_sz = a->bd_sz + b->bd_sz + 1;
     itmd_c->ad_sz = itmd_c->sz - itmd_c->bd_sz;
 
-    int* and_str_itmd_c = new int[a->sz];
-    for (int i = 0; i < a->sz; i++)
-        and_str_itmd_c[i] = 0;
-
     for (int j = 0; j < a->sz; j++) {
         char * and_str = and_3sat(num_parm, &itmd_c->bits[itmd_c->sz - j - 1], a->bits[a->sz - j - 1], b->bits[b->sz - 1], &(and_str_itmd_ab[0][j]));
-        strcpy_s(and_strs[0][j], 128, and_str);
+        and_strs[0][j] = new char[and_str_itmd_ab[0][j] + 1];
+        strcpy_s(and_strs[0][j], and_str_itmd_ab[0][j] + 1, and_str);
         delete[] and_str;
     }
 
@@ -925,6 +919,10 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
     for (int i = 0; i < b->sz; i++)
         sum_str_len[i] = 0;
 
+    sum_strs[0] = new char[2];
+    strcpy_s(sum_strs[0], 2, "");
+    sum_str_len[0] = strnlen_s(sum_strs[0], 2);
+
     for (int i = 1; i < b->sz; i++) {
         dec* itmd_b = itmd_c;
         dec* itmd_a = new dec();
@@ -939,7 +937,8 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
         for (int j = i; j < a->sz + i; j++) {
             char* and_str = and_3sat(num_parm, &itmd_a->bits[itmd_a->sz - j - 1], a->bits[a->sz - 1 - (j - i)],
                 b->bits[b->sz - i - 1], &(and_str_itmd_ab[i][j-i]));
-            strcpy_s(and_strs [i][j-i], 128, and_str);
+            and_strs[i][j - i] = new char[and_str_itmd_ab[i][j - i] + 1];
+            strcpy_s(and_strs [i][j-i], and_str_itmd_ab[i][j - i] + 1, and_str);
         }
         for (int j = 0; j < itmd_a->sz - (a->sz + i); j++) {
             itmd_a->bits[j] = new bit();
@@ -1002,14 +1001,28 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
 
     for (int i = 0; i < b->sz; i++) {
         buf_sz += sum_str_len[i];
-        for (int j = 0; j < a->sz; j++)
+        if (sum_str_len[i] < 0)
+            printf("sum_str_len[%d] is %d\n", i, sum_str_len[i]);
+        if (buf_sz < 0) {
+            printf("sum_str_len[%d] is %d\n", i, sum_str_len[i]);
+            break;
+        }
+        for (int j = 0; j < a->sz; j++) {
             buf_sz += and_str_itmd_ab[i][j];
+            if (and_str_itmd_ab[i][j] < 0)
+                printf("and_str_itmd_ab[%d][%d] is %d\n", i, j, and_str_itmd_ab[i][j]);
+            if (buf_sz < 0) {
+                printf("and_str_itmd_ab[%d][%d] is %d\n", i, j, and_str_itmd_ab[i][j]);
+                i = b->sz;
+                break;
+            }
+        }
     }
 
     char* ret = new char[buf_sz];
     int pos = 0;
 
-    for (int i = 1; i < b->sz; i++) {
+    for (int i = 0; i < b->sz; i++) {
         strcpy_s(&(ret[pos]), buf_sz - pos, sum_strs[i]);
         pos += sum_str_len[i];
         for (int j = 0; j < a->sz; j++) {
@@ -1030,7 +1043,6 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
         delete[] sum_strs[i];
     delete[] sum_strs;
     delete[] and_strs;
-    delete [] and_str_itmd_c;
     for (int i = 0; i < b->sz; i++)
         delete [] and_str_itmd_ab[i];
     delete [] and_str_itmd_ab;
