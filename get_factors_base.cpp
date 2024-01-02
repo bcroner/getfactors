@@ -23,7 +23,7 @@ int main()
     //printf("%s\n", and_3sat(&num_parm, bitc_name, c, a, b, &len_para));
     //char c_str[5];
     char c_str[2000];
-    ///*
+    /*
     strcpy_s(c_str, 2000,
         "BE88B9A8CA71030100C1798F81149B6F\
         5687B7EB3E218554D6608D4528914571\
@@ -41,7 +41,7 @@ int main()
         59D6AD59EC1AAF2A7EF65F40D8C282B3\
         CA90A2C1788723C9B226D84545356A2F\
         4DF3F73A85483E8C08D5855055E7BE4D");
-    //*/
+    */
     /*
     strcpy_s(c_str, 2000,
         "04898102f980b7d6f2a263692d1dad\
@@ -50,7 +50,7 @@ int main()
         6ffff83445962c809d95dadf4daa8a\
         8304d84267"); // https://gmail.com
     */
-    //strcpy_s(c_str, 2000, "6");
+    strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
     char * factors = get_factors(c_str, 2000, & len_para);

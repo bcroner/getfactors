@@ -67,7 +67,7 @@ char* and_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
         delete [] lst[i];
     }
 
-    *len_para = len;
+    *len_para = ret_len - 1;
 
     delete [] lst;
 
@@ -326,7 +326,7 @@ char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *
         delete [] lst[i];
     }
 
-    *len_para = len;
+    *len_para = ret_len - 1;
 
     delete [] lst;
 
@@ -401,7 +401,7 @@ char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, in
         delete [] lst[i];
     }
 
-    *len_para = len;
+    *len_para = ret_len - 1;
 
     delete [] lst;
 
@@ -734,7 +734,7 @@ char* dec_sub(int* num_parm, dec** c, dec* a, dec* b, int *len_para) {
 
 // force equals
 
-char* equals(int * num_parm, dec* a, dec* b, bool eq, int * len_para) {
+char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
 
     // c = a xnor b
     // d = and all c bits together
@@ -868,7 +868,7 @@ char* equals(int * num_parm, dec* a, dec* b, bool eq, int * len_para) {
 
 // force not equals
 
-char* not_equals(int* num_parm, dec* a, dec* b, int *len_para) {
+char* not_equals(int* num_parm, dec* a, dec* b, __int64 *len_para) {
 
     return equals(num_parm, a, b, false, len_para);
 
@@ -876,7 +876,7 @@ char* not_equals(int* num_parm, dec* a, dec* b, int *len_para) {
 
 // dec_mul c = a * b
 
-char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int *len_para) {
+char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __int64 *len_para) {
 
     // create the buffers to collect the initial 3CNF
 
@@ -997,30 +997,16 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
 
     // create the return buffer and populate with 3CNF
 
-    int buf_sz = 1;
+    __int64 buf_sz = 1;
 
     for (int i = 0; i < b->sz; i++) {
         buf_sz += sum_str_len[i];
-        if (sum_str_len[i] < 0)
-            printf("sum_str_len[%d] is %d\n", i, sum_str_len[i]);
-        if (buf_sz < 0) {
-            printf("sum_str_len[%d] is %d\n", i, sum_str_len[i]);
-            break;
-        }
-        for (int j = 0; j < a->sz; j++) {
+        for (int j = 0; j < a->sz; j++)
             buf_sz += and_str_itmd_ab[i][j];
-            if (and_str_itmd_ab[i][j] < 0)
-                printf("and_str_itmd_ab[%d][%d] is %d\n", i, j, and_str_itmd_ab[i][j]);
-            if (buf_sz < 0) {
-                printf("and_str_itmd_ab[%d][%d] is %d\n", i, j, and_str_itmd_ab[i][j]);
-                i = b->sz;
-                break;
-            }
-        }
     }
 
     char* ret = new char[buf_sz];
-    int pos = 0;
+    __int64 pos = 0;
 
     for (int i = 0; i < b->sz; i++) {
         strcpy_s(&(ret[pos]), buf_sz - pos, sum_strs[i]);
@@ -1056,7 +1042,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int 
 
 // dec_div: b = c/a; a*b = c
 
-char* dec_div(int* num_parm, char* name, dec* c, dec* a, dec* b, int *len_para) {
+char* dec_div(int* num_parm, dec* c, dec* a, dec** b, __int64* len_para) {
 
     // calculate sizes after decimal and before decimal
 
@@ -1064,14 +1050,14 @@ char* dec_div(int* num_parm, char* name, dec* c, dec* a, dec* b, int *len_para) 
     int bd_sz = c->bd_sz > a->bd_sz ? c->bd_sz - a->bd_sz : a->bd_sz - c->bd_sz;
     int sz = ad_sz + bd_sz;
 
-    b = create_dec(num_parm, bd_sz, ad_sz);
+    *b = create_dec(num_parm, bd_sz, ad_sz);
 
-    int dec_mul_str_len = 0;
+    __int64 dec_mul_str_len = 0;
 
     dec* itmd_c = create_dec(num_parm, c->bd_sz, c->ad_sz);
-    char* dec_mul_str = dec_mul(num_parm, &itmd_c, a, b, bd_sz, ad_sz, & dec_mul_str_len);
+    char* dec_mul_str = dec_mul(num_parm, &itmd_c, a, *b, bd_sz, ad_sz, & dec_mul_str_len);
 
-    int equals_str_len = 0;
+    __int64 equals_str_len = 0;
 
     char * equals_str = equals(num_parm, c, itmd_c, true, &equals_str_len);
 
@@ -1089,21 +1075,21 @@ char* dec_div(int* num_parm, char* name, dec* c, dec* a, dec* b, int *len_para) 
 
 // dec_sqrt: a = sqrt(c); a*a = c
 
-char* dec_sqrt(int* num_parm, dec* c, dec* a, int *len_para) {
+char* dec_sqrt(int* num_parm, dec* c, dec** a, __int64 *len_para) {
     // calculate sizes after decimal and before decimal
 
     int ad_sz = c->ad_sz + c->sz;
     int bd_sz = c->bd_sz / 2 + c->bd_sz % 2;
     int sz = ad_sz + bd_sz;
 
-    a = create_dec(num_parm, bd_sz, ad_sz);
+    *a = create_dec(num_parm, bd_sz, ad_sz);
 
-    int dec_mul_str_len = 0;
+    __int64 dec_mul_str_len = 0;
 
     dec* itmd_c = create_dec(num_parm, c->bd_sz, c->ad_sz);
-    char* dec_mul_str = dec_mul(num_parm, &itmd_c, a, a, bd_sz, ad_sz, &dec_mul_str_len);
+    char* dec_mul_str = dec_mul(num_parm, &itmd_c, *a, *a, bd_sz, ad_sz, &dec_mul_str_len);
 
-    int equals_str_len = 0;
+    __int64 equals_str_len = 0;
 
     char * equals_str = equals(num_parm, c, itmd_c, true, & equals_str_len);
 
@@ -1199,17 +1185,17 @@ inline int decimal_from_char(char c) {
     }
 }
 
-int** input_from_char_buf(int * num_parm, char * buf_3sat, int buf_3sat_sz, int * k) {
+int** input_from_char_buf(int * num_parm, char * buf_3sat, __int64 buf_3sat_sz, int * k) {
 
     // count the newlines for k where no clause has a TRUE value in it
 
-    int pos = 0;
+    __int64 pos = 0;
 
     while (buf_3sat[pos] != '\0') {
 
         char temp[128];
 
-        int t_pos = 0;
+        __int64 t_pos = 0;
 
         while (buf_3sat[pos] != '\n') {
             temp[t_pos] = buf_3sat[pos];
@@ -1236,13 +1222,13 @@ int** input_from_char_buf(int * num_parm, char * buf_3sat, int buf_3sat_sz, int 
 
     pos = 0;
 
-    int iter = 0;
+    __int64 iter = 0;
 
     while (buf_3sat[pos] != '\0') {
 
         char temp[128];
 
-        int t_pos = 0;
+        __int64 t_pos = 0;
 
         while (buf_3sat[pos] != '\n') {
             temp[t_pos] = buf_3sat[pos];
@@ -1375,7 +1361,7 @@ char* dec_to_str(bool * decodable_buf, dec * a, int * str_sz) {
     return ret_str;
 }
 
-char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
+char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
 
     if (c_str == NULL or c_str == "")
         return NULL;
@@ -1454,18 +1440,18 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     for (int i = 1; i < c_bit_count; i++)
         b->bits[i] = create_bit(&num_parm);
 
-    int mul_str_len = 0;
+    __int64 mul_str_len = 0;
 
     char* mul_str = dec_mul(&num_parm, &c, a, b, c_bit_count + 1, 0, & mul_str_len);
 
-    int equals_str_len = 0;
+    __int64 equals_str_len = 0;
 
     char* equals_str = equals(&num_parm, c, c_equals, true, & equals_str_len);
     
     int bd_sz = a->bd_sz < b->bd_sz ? a->bd_sz : b->bd_sz;
     int ad_sz = a->ad_sz > b->ad_sz ? a->ad_sz : b->bd_sz;
 
-    int buf_3sat_sz = mul_str_len + equals_str_len + 1;
+    __int64 buf_3sat_sz = mul_str_len + equals_str_len + 1;
     char* buf_3sat = new char[buf_3sat_sz];
     strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
     strcpy_s(&(buf_3sat[mul_str_len]), buf_3sat_sz - mul_str_len, equals_str);
@@ -1501,6 +1487,8 @@ char* get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     int ret_buf_sz = a_str_sz + (int) strnlen_s("\n\n", 4) + b_str_sz + 1;
     char* ret_buf = new char[ret_buf_sz];
     sprintf_s(ret_buf, ret_buf_sz, "%s\n\n%s", a_str, b_str);
+
+    *len_para = ret_buf_sz - 1;
 
     delete a_str;
     delete b_str;

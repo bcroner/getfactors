@@ -60,15 +60,15 @@ char* twos_comp_3sat(int* num_parm, dec** c, dec* a, int* len_para);
 
 char* dec_sub(int* num_parm, dec** c, dec* a, dec* b, int* len_para);
 
-char* equals(int* num_parm, dec* a, dec* b, bool eq, int* len_para);
+char* equals(int* num_parm, dec* a, dec* b, bool eq, __int64* len_para);
 
-char* not_equals(int* num_parm, dec* a, dec* b, int* len_para);
+char* not_equals(int* num_parm, dec* a, dec* b, __int64* len_para);
 
-char* dec_mul(int * num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, int* len_para);
+char* dec_mul(int * num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __int64* len_para);
 
-char* dec_div(int* num_parm, dec * c, dec * a, dec * b, int* len_para);
+char* dec_div(int * num_parm, dec * c, dec * a, dec ** b, __int64* len_para);
 
-char* dec_sqrt(int* num_parm, dec* c, dec* a, int* len_para);
+char* dec_sqrt(int* num_parm, dec* c, dec** a, __int64* len_para);
 
 //void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
 
@@ -84,10 +84,10 @@ inline char hex_char_from_int(int a);
 
 //void bignum_from_str_dec(bn* c_bn, char* c_str, int len);
 
-int** input_from_char_buf(int* num_parm, char* buf_3sat, int buf_3sat_sz, int* k);
+int** input_from_char_buf(int* num_parm, char* buf_3sat, __int64 buf_3sat_sz, int* k);
 
 char* dec_to_str(bool* decodable_buf, dec* a, int* str_sz);
 
-char* get_factors(char* c_str, int c_str_buf_sz, int* len_para);
+char* get_factors(char* c_str, int c_str_buf_sz, int * len_para);
 
 #endif // !__3SATFRAMEWORK_H__
