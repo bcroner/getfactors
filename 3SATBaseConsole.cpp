@@ -234,7 +234,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 	return true;
 }
 
-int SATSolver_pow(int base, int chop) {
+__int64 SATSolver_pow(__int64 base, __int64 chop) {
 
 	if (chop != 0)
 		return (base * SATSolver_pow(base, chop - 1));
@@ -243,7 +243,7 @@ int SATSolver_pow(int base, int chop) {
 
 }
 
-bool* SATSolver_int2bool(int n_parm, int position) {
+bool* SATSolver_int2bool(__int64 n_parm, __int64 position) {
 
 	// create the return boolean array and initialize
 
@@ -256,7 +256,7 @@ bool* SATSolver_int2bool(int n_parm, int position) {
 
 	for (int i = 0; i < 64 - 1; i++) {
 
-		int temp_size = SATSolver_pow(2, 64 - i - 2);
+		__int64 temp_size = SATSolver_pow(2, 64 - i - 2);
 		if (temp_size <= position) {
 			ret[n_parm - i - 1] = true;
 			position = position - temp_size;
@@ -296,9 +296,9 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// set up first and last element to check: me->begin, me->end
 
-	int unit = SATSolver_pow(2, chop);
-	int begin_pos = unit * pos;
-	int end_pos = begin_pos + unit;
+	__int64 unit = SATSolver_pow(2, chop);
+	__int64 begin_pos = unit * pos;
+	__int64 end_pos = begin_pos + unit;
 
 	me->begin = SATSolver_int2bool(n_parm, begin_pos);
 	me->end = SATSolver_int2bool(n_parm, end_pos);
@@ -356,22 +356,18 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	for (int i = 0; i < n_parm; i++) {
 		int decoded = me->master->decoding [ i ];
-		int * point_map;
-		int point_map_sz;
-		if (me->begin[decoded]) {
-			point_map = me->master->pos_map[decoded];
-			point_map_sz = me->master->pos_map_szs[i];
-		}
-		else {
-			point_map = me->master->neg_map[decoded];
-			point_map_sz = me->master->neg_map_szs[i];
-		}
-		int map_sz = point_map_sz;
-		for (int j = 0; j < map_sz; j++) {
-			int cls_ix = point_map[j];
-			int old_val = me->cls_tly [ cls_ix ];
-			me->cls_tly [ cls_ix ] = old_val + 1;
-		}
+		if (me->begin[decoded])
+			for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
+				int cls_ix = me->master->pos_map[decoded][j];
+				int old_val = me->cls_tly[cls_ix];
+				me->cls_tly[cls_ix] = old_val + 1;
+			}
+		else
+			for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
+				int cls_ix = me->master->neg_map[decoded][j];
+				int old_val = me->cls_tly[cls_ix];
+				me->cls_tly[cls_ix] = old_val + 1;
+			}
 	}
 }
 
@@ -430,8 +426,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
 				continue;
 			int lit_cur = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (lit_cur < lowest)
-				lowest = lit_cur;
+			if (master->decoding[lit_cur] < lowest)
+				lowest = master->decoding[lit_cur];
 		}
 		master->powers[i] = lowest;
 	}
@@ -497,35 +493,38 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			master->neg_map[i][j] = 0;
 	}
 
-	// for each variable in power, create an entry in cls_szs and populate pos_map, neg_map
+	// populate pos_map, neg_map
+	for (int i = 0; i < n_parm; i++) {
 
-	for (int i = n_parm - 1; i >= 0; i--) {
 		int pos_pos = 0;
 		int pos_neg = 0;
+
 		for (int j = 0; j < k_parm; j++) {
-			if (master->powers[j] == i) {
-				for (int k = 0; k < 3; k++) {
 
-					// check for t/f
-					if (lst[j][k] == FALSE_3SAT || lst[j][k] == TRUE_3SAT)
-						continue;
+			for (int k = 0; k < 3; k++) {
 
-					int pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
+				if (lst[j][k] == FALSE_3SAT || lst[j][k] == TRUE_3SAT)
+					continue;
 
-					// now we must invert literals within clauses
+				int pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
 
-					if (lst[j][k] < 0) {
-						int pos = -lst[j][k] - 2;
-						master->pos_map[pos][pos_pos]++;
-						pos_pos++;
-					}
-					else {
-						int pos = lst[j][k] - 2;
-						master->neg_map[pos][pos_neg]++;
-						pos_neg++;
-					}
+				if (pos != i)
+					continue;
+
+				if (lst[i][j] < 0) {
+					master->pos_map[pos][pos_pos] = j;
+					if (master->pos_map[pos][pos_pos] < 0)
+						printf_s("%d\n", master->pos_map[pos][pos_pos]);
+					pos_pos++;
+				}
+				else {
+					master->neg_map[pos][pos_neg] = j;
+					if (master->neg_map[pos][pos_neg] < 0)
+						printf_s("%d\n", master->neg_map[pos][pos_neg]);
+					pos_neg++;
 				}
 			}
+
 		}
 	}
 }
