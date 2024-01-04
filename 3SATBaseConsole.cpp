@@ -214,11 +214,11 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 					break;
 				}
 			}
-			if (found_match)
+			if (!found_match)
 				break;
 		}
 
-		if (found_match)
+		if (!found_match)
 			break;
 
 		SATSolver_add(me , me->pow_jump);
