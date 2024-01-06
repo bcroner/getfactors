@@ -350,7 +350,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	// initialize to all having 3 - non-t/f literals
 
 	for (int i = 0; i < k_parm; i++)
-		me->cls_tly[i] = lst_f[i] - lst_t[i];
+		me->cls_tly[i] = lst_f[i] + 3 * lst_t[i];
 
 	// populate clause tally with initial begin value
 
