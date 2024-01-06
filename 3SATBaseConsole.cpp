@@ -150,15 +150,15 @@ int SATSolver_initializePowJump(SATSolver* me) {
 
 }
 
-bool SATSolver_GreaterThan(bool* a, bool* b , int n) {
+bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
 	for (int i = n; i >= 0; i--)
 		if (a && !b)
 			return true;
 		else if (!a && b)
-			break;
+			return false;
 
-	return false;
+	return true;
 
 }
 
@@ -178,7 +178,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 	// main loop- until end condition
 
 	// change this to check for if me->Z greater than me->end
-	while (! SATSolver_GreaterThan (me->Z, me->end , me->master->n)) {
+	while (! SATSolver_GreaterThanOrEqual (me->Z, me->end , me->master->n)) {
 
 		found_match = false;
 		me->pow_jump = -1;
@@ -191,7 +191,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 		int** point_map = NULL;
 		int* point_map_szs = NULL;
 
-		for (int i = 0; i < me->master->n; i++) {
+		for (int i = 0; i <= me->master->n; i++) {
 
 			// point_map points to neg_map if 0 and pos_map if 1
 
@@ -208,7 +208,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 				int cls_tly_pos = point_map[me->master->n - i] [j];
 				int cur_tly_num = me->cls_tly [cls_tly_pos];
 				me->cls_tly [cls_tly_pos] = cur_tly_num + 1;
-				if (me->cls_tly [cls_tly_pos] == 3) {
+				if (me->cls_tly [cls_tly_pos] >= 3) {
 					found_match = true;
 					me->pow_jump = me->master->n - i;
 					break;
@@ -225,7 +225,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 
 	}
 
-	if (SATSolver_GreaterThan(me->Z, me->end, me->master->n))
+	if (SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n))
 		return false ;
 	
 	for (int i = 0; i < me->master->n; i++)
@@ -296,7 +296,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// set up first and last element to check: me->begin, me->end
 
-	__int64 unit = SATSolver_pow(2, chop);
+	__int64 unit = SATSolver_pow(2, n_parm - chop);
 	__int64 begin_pos = unit * pos;
 	__int64 end_pos = begin_pos + unit;
 
