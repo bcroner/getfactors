@@ -234,12 +234,25 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 	return true;
 }
 
-__int64 SATSolver_pow(__int64 base, __int64 chop) {
+bool * SATSolver_bool_pow(__int64 base, __int64 pow) {
 
-	if (chop != 0)
-		return (base * SATSolver_pow(base, chop - 1));
-	else
-		return 1;
+	__int64 ret_pow = 1;
+
+	for (int i = 0; i < pow; i++)
+		ret_pow = ret_pow * base;
+
+	return ret_pow;
+}
+
+bool* SATSolver_bool_mul(bool* a, __int64 b) {
+
+	return NULL;
+
+}
+
+bool* SATSolver_bool_add(bool* a, bool* b) {
+
+	return NULL;
 
 }
 
@@ -256,7 +269,7 @@ bool* SATSolver_int2bool(__int64 n_parm, __int64 position) {
 
 	for (int i = 0; i < 64 - 1; i++) {
 
-		__int64 temp_size = SATSolver_pow(2, 64 - i - 2);
+		bool * temp_size = SATSolver_bool_pow(2, 64 - i - 2);
 		if (temp_size <= position) {
 			ret[n_parm - i - 1] = true;
 			position = position - temp_size;
@@ -296,12 +309,13 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// set up first and last element to check: me->begin, me->end
 
-	__int64 unit = SATSolver_pow(2, n_parm - chop);
-	__int64 begin_pos = unit * pos;
-	__int64 end_pos = begin_pos + unit;
+	bool * unit = SATSolver_bool_pow(2, n_parm - chop);
+	bool * offs = SATSolver_int2bool(n_parm, pos);
+	me->begin = SATSolver_bool_mul ( unit, offs) ;
+	me->end = SATSolver_bool_add ( me->begin, unit);
 
-	me->begin = SATSolver_int2bool(n_parm, begin_pos);
-	me->end = SATSolver_int2bool(n_parm, end_pos);
+	delete[] unit;
+	delete[] offs;
 
 	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
 
