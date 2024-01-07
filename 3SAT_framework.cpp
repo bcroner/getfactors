@@ -293,7 +293,7 @@ char* xnor_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 }
 
 // bitadd = a + b + cin: cin xor (a xor b) = (~a or ~b or ~c) (a or b or ~c) (a or ~b or c) (~a or b or c)
-// d = cin xor c: (~cin or ~c or ~d) (cin or c or ~d) (cin or ~c or d) (~cin or c or d)
+// *sum = cin xor c: (~cin or ~c or ~d) (cin or c or ~d) (cin or ~c or d) (~cin or c or d)
 
 char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *len_para) {
 
@@ -334,11 +334,11 @@ char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *
 }
 
 // bitcout = a + b + cin: (a and b) or (b and cin) or (a and cin):
-// (a and b): (~a or ~b or c) (a or ~c) (b or ~c)
-// (b and cin): (~b or ~cin or d) (b or ~d) (cin or ~c)
-// (a and cin): (~a or ~cin or e) (a or ~e) (cin or ~e)
-// (a and b) or (b and cin) = c or d: (c or d or ~f) (~c or f) (~d or f)
-// ((a and b) or (b and cin)) or (a and cin) = f or e: (f or e or ~g) (~f or g) (~e or g)
+// c = (a and b): (~a or ~b or c) (a or ~c) (b or ~c)
+// d = (b and cin): (~b or ~cin or d) (b or ~d) (cin or ~c)
+// e = (a and cin): (~a or ~cin or e) (a or ~e) (cin or ~e)
+// f = (a and b) or (b and cin) = c or d: (c or d or ~f) (~c or f) (~d or f)
+// *cout = ((a and b) or (b and cin)) or (a and cin) = f or e: (f or e or ~g) (~f or g) (~e or g)
 
 char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, int *len_para) {
 
