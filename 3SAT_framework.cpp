@@ -299,7 +299,6 @@ char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *
 
     *sum = create_bit(num_parm);
     bit * c = create_bit(num_parm);
-    bit* d = create_bit(num_parm);;
     char** lst = new char* [8];
     for (int i = 0; i < 8; i++)
         lst[i] = new char[64];
@@ -308,10 +307,10 @@ char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *
     sprintf_s(lst[1], 64, "%d %d %d", a->id, b->id, -c->id);
     sprintf_s(lst[2], 64, "%d %d %d", a->id, -b->id, c->id);
     sprintf_s(lst[3], 64, "%d %d %d", -a->id, b->id, c->id);
-    sprintf_s(lst[4], 64, "%d %d %d", -c_in->id, -c->id, -d->id);
-    sprintf_s(lst[5], 64, "%d %d %d", c_in->id, c->id, -d->id);
-    sprintf_s(lst[6], 64, "%d %d %d", c_in->id, -c->id, d->id);
-    sprintf_s(lst[7], 64, "%d %d %d", -c_in->id, c->id, d->id);
+    sprintf_s(lst[4], 64, "%d %d %d", -c_in->id, -c->id, -(*sum)->id);
+    sprintf_s(lst[5], 64, "%d %d %d", c_in->id, c->id, -(*sum)->id);
+    sprintf_s(lst[6], 64, "%d %d %d", c_in->id, -c->id, (*sum)->id);
+    sprintf_s(lst[7], 64, "%d %d %d", -c_in->id, c->id, (*sum)->id);
 
     int ret_len = 1;
     for (int i = 0; i < 8; i++)
@@ -348,7 +347,6 @@ char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, in
     bit * d = create_bit(num_parm);
     bit * e = create_bit(num_parm);
     bit * f = create_bit(num_parm);
-    bit * g = create_bit(num_parm);
     
     char** lst = new char* [15];
     for (int i = 0; i < 15; i++)
@@ -384,9 +382,9 @@ char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, in
     sprintf_s(lst[9], 64, "%d %d %d", c->id, d->id, -f->id);
     sprintf_s(lst[10], 64, "%d %d %d", -c->id, f->id, FALSE_3SAT);
     sprintf_s(lst[11], 64, "%d %d %d", -d->id, f->id, FALSE_3SAT);
-    sprintf_s(lst[12], 64, "%d %d %d", f->id, e->id, -g->id);
-    sprintf_s(lst[13], 64, "%d %d %d", -f->id, g->id, FALSE_3SAT);
-    sprintf_s(lst[14], 64, "%d %d %d", -e->id, g->id, FALSE_3SAT);
+    sprintf_s(lst[12], 64, "%d %d %d", f->id, e->id, -(*c_out)->id);
+    sprintf_s(lst[13], 64, "%d %d %d", -f->id, (*c_out)->id, FALSE_3SAT);
+    sprintf_s(lst[14], 64, "%d %d %d", -e->id, (*c_out)->id, FALSE_3SAT);
 
     int ret_len = 1;
     for (int i = 0; i < 15; i++)
