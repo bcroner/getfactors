@@ -107,25 +107,25 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 
 	// add 2^pos_parm to Z
 
-	for (int i = pos_parm; i < me->master->n + 1; i++) {
+	for (int i = me->master->n; i >= pos_parm; i--) {
 
 		// if carry, continue loop, if no carry, break
 		if (me->Z[i]) {
 			me->Z[i] = false;
-			//SATSolver_updateTF(me , i, false);
+			SATSolver_updateTF(me , i, false);
 		}
 		else {
 			me->Z[i] = true;
-			//SATSolver_updateTF(me , i, true);
+			SATSolver_updateTF(me , i, true);
 			break;
 		}
 	}
 
 	// zero out all lower bits of Z
-	for (int j = 0; j < pos_parm; j++)
+	for (int j = pos_parm; j>=0 ; j--)
 		if (me->Z[j]) {
 			me->Z[j] = false;
-			//SATSolver_updateTF(me , j, false);
+			SATSolver_updateTF(me , j, false);
 		}
 
 }
@@ -139,7 +139,7 @@ int SATSolver_initializePowJump(SATSolver* me) {
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
 	for (int i = 0; i < me->master->k; i++) {
-		if (me->cls_tly[i] == 3) {
+		if (me->cls_tly[i] >= 3) {
 			int tmp_jump = me->master->powers [i];
 			if (tmp_jump > max_jump)
 				max_jump = tmp_jump;
@@ -152,7 +152,7 @@ int SATSolver_initializePowJump(SATSolver* me) {
 
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
-	for (int i = n; i >= 0; i--)
+	for (int i = 0; i <= n; i++)
 		if (a && !b)
 			return true;
 		else if (!a && b)
@@ -195,7 +195,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 
 			// point_map points to neg_map if 0 and pos_map if 1
 
-			if (!me->Z[me->master->n - i]) {
+			if (!me->Z[i]) {
 				point_map = me->master->neg_map;
 				point_map_szs = me->master->neg_map_szs;
 			}
@@ -204,13 +204,13 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 				point_map_szs = me->master->pos_map_szs;
 			}
 
-			for (int j = 0; j < point_map_szs [me->master->n - i]; j++) {
-				int cls_tly_pos = point_map[me->master->n - i] [j];
+			for (int j = 0; j < point_map_szs [i]; j++) {
+				int cls_tly_pos = point_map[i] [j];
 				int cur_tly_num = me->cls_tly [cls_tly_pos];
 				me->cls_tly [cls_tly_pos] = cur_tly_num + 1;
 				if (me->cls_tly [cls_tly_pos] >= 3) {
 					found_match = true;
-					me->pow_jump = me->master->n - i;
+					me->pow_jump = i;
 					break;
 				}
 			}
@@ -234,47 +234,87 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 	return true;
 }
 
-bool * SATSolver_bool_pow(__int64 base, __int64 pow) {
+bool * SATSolver_bool_pow(bool* base, __int64 pow, int n) {
 
-	__int64 ret_pow = 1;
+	bool* prod = new bool[n];
+	for (int i = 0; i < n - 1; i++)
+		prod[i] = false;
+	prod[n - 1] = true;
 
 	for (int i = 0; i < pow; i++)
-		ret_pow = ret_pow * base;
+		prod = SATSolver_bool_mul(prod, base, n);
 
-	return ret_pow;
-}
-
-bool* SATSolver_bool_mul(bool* a, __int64 b) {
-
-	return NULL;
+	return prod;
 
 }
 
-bool* SATSolver_bool_add(bool* a, bool* b) {
+bool* SATSolver_bool_mul(bool* a, bool* b, int n) {
 
-	return NULL;
+	bool* sum = new bool[n];
+
+	for (int i = 0; i < n; i++)
+		sum[i] = false;
+
+	for (int i = 0; i < n; i++) {
+		bool* temp = new bool[n];
+
+		for (int j = 0; j < i; j++)
+			temp[n - 1 - j] = false;
+
+		for (int j = i; j < n; j++)
+			temp[n - 1 - j] = b[n - 1 - i] && a[n - 1 - j];
+
+		bool* new_sum = SATSolver_bool_add(temp, sum, n);
+		bool* dump = sum;
+		sum = new_sum;
+	}
+
+	return sum;
 
 }
 
-bool* SATSolver_int2bool(__int64 n_parm, __int64 position) {
+bool* SATSolver_bool_add(bool* a, bool* b, int n) {
+
+	bool carry = false;
+
+	bool* ret = new bool[n];
+
+	for (int i = 0; i < n; i++) {
+
+		bool sum_temp = (!a[n - i] && b[n - i]) || (a[n - i] && !b[n - i]);
+		ret[n - i] = (!sum_temp && carry) || (sum_temp && !carry);
+		carry = (a[n - i] && b[n - i]) || (a[n - i] && carry) || (b[n-i] && carry);
+
+	}
+
+	return ret;
+
+}
+
+bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 
 	// create the return boolean array and initialize
 
-	bool* ret = new bool[n_parm + 1];
+	bool* ret = new bool[n_parm];
 
-	for (int i = 0; i <= n_parm; i++)
+	for (int i = 0; i < n_parm; i++)
 		ret[i] = false;
 
-	// for each bit position, determine true/false value, using a signed 64 bit integer
 
-	for (int i = 0; i < 64 - 1; i++) {
+	// for each bit position, determine true/false value, using a signed 64 bit signed integer
 
-		bool * temp_size = SATSolver_bool_pow(2, 64 - i - 2);
-		if (temp_size <= position) {
-			ret[n_parm - i - 1] = true;
-			position = position - temp_size;
+	for (int i = 0; i < 64 - 1 ; i++) {
+
+		// form simple power
+		__int64 simple_pow = 1;
+
+		for (int j = 0; j < i; j++)
+			simple_pow *= 2;
+
+		if (a >= simple_pow) {
+			ret[i] = true;
+			a = a - simple_pow;
 		}
-
 	}
 
 	return ret;
