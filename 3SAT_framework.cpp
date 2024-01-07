@@ -293,118 +293,81 @@ char* xnor_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 }
 
 // bitadd = a + b + cin: cin xor (a xor b) = (~a or ~b or ~c) (a or b or ~c) (a or ~b or c) (~a or b or c)
-// *sum = cin xor c: (~cin or ~c or ~d) (cin or c or ~d) (cin or ~c or d) (~cin or c or d)
 
 char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *len_para) {
 
-    *sum = create_bit(num_parm);
     bit * c = create_bit(num_parm);
-    char** lst = new char* [8];
-    for (int i = 0; i < 8; i++)
-        lst[i] = new char[64];
 
-    sprintf_s(lst[0], 64, "%d %d %d", -a->id, -b->id, -c->id);
-    sprintf_s(lst[1], 64, "%d %d %d", a->id, b->id, -c->id);
-    sprintf_s(lst[2], 64, "%d %d %d", a->id, -b->id, c->id);
-    sprintf_s(lst[3], 64, "%d %d %d", -a->id, b->id, c->id);
-    sprintf_s(lst[4], 64, "%d %d %d", -c_in->id, -c->id, -(*sum)->id);
-    sprintf_s(lst[5], 64, "%d %d %d", c_in->id, c->id, -(*sum)->id);
-    sprintf_s(lst[6], 64, "%d %d %d", c_in->id, -c->id, (*sum)->id);
-    sprintf_s(lst[7], 64, "%d %d %d", -c_in->id, c->id, (*sum)->id);
+    int x1_len = 0;
+    char* x1 = xor_3sat(num_parm, &c, a, b, &x1_len);
 
-    int ret_len = 1;
-    for (int i = 0; i < 8; i++)
-        ret_len += strnlen_s(lst[i], 64) + strnlen_s("\n", 2);
+    int x2_len = 0;
+    char* x2 = xor_3sat(num_parm, sum, c_in, c, &x2_len);
 
+    int ret_len = x1_len + x2_len + 1;
     char* ret = new char[ret_len];
 
-    int len = 0;
-    for (int i = 0; i < 8; i++) {
-        sprintf_s(&(ret[len]), ret_len-len, "%s\n", lst[i]);
-        len += (int) strnlen_s(lst[i], 64) + (int) strnlen_s("\n", 2);
-        delete [] lst[i];
-    }
+    int pos = 0;
 
-    *len_para = ret_len - 1;
+    strcpy_s(&(ret[pos]), ret_len, x1);
+    pos += x1_len;
+    strcpy_s(&(ret[pos]), ret_len, x2);
+    pos += x2_len;
+    
+    *len_para = pos;
 
-    delete [] lst;
+    delete[] x1;
+    delete[] x2;
 
     return ret;
 
 }
 
 // bitcout = a + b + cin: (a and b) or (b and cin) or (a and cin):
-// c = (a and b): (~a or ~b or c) (a or ~c) (b or ~c)
-// d = (b and cin): (~b or ~cin or d) (b or ~d) (cin or ~c)
-// e = (a and cin): (~a or ~cin or e) (a or ~e) (cin or ~e)
-// f = (a and b) or (b and cin) = c or d: (c or d or ~f) (~c or f) (~d or f)
-// *cout = ((a and b) or (b and cin)) or (a and cin) = f or e: (f or e or ~g) (~f or g) (~e or g)
 
 char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, int *len_para) {
 
-    *c_out = create_bit(num_parm);
-    bit * c = create_bit(num_parm);
-    bit * d = create_bit(num_parm);
-    bit * e = create_bit(num_parm);
-    bit * f = create_bit(num_parm);
-    
-    char** lst = new char* [15];
-    for (int i = 0; i < 15; i++)
-        lst[i] = new char[64];
+    bit * a1;
+    bit * a2;
+    bit * a3;
+    bit * o1;
 
-    /*
-    sprintf_s(lst[0], "-%d -%d %d", a->id, b->id, c.id);
-    sprintf_s(lst[1], "%d -%d", a->id, c->id);
-    sprintf_s(lst[2], "%d -%d", b->id, c->id);
-    sprintf_s(lst[3], "-%d -%d %d", b->id, c_in->id, d->id);
-    sprintf_s(lst[4], "%d -%d", b->id, d->id);
-    sprintf_s(lst[5], "%d -%d", c_in->id, c->id);
-    sprintf_s(lst[6], "-%d -%d %d", a->id, c_in->id, e->id);
-    sprintf_s(lst[7], "%d -%d", a->id, e->id);
-    sprintf_s(lst[8], "%d -%d", c_in->id, e->id);
-    sprintf_s(lst[9], "%d %d -%d", c->id, d->id, f->id);
-    sprintf_s(lst[10], "-%d %d", c->id, f->id);
-    sprintf_s(lst[11], "-%d %d", d->id, f->id);
-    sprintf_s(lst[12], "%d %d -%d", f->id, e->id, g->id);
-    sprintf_s(lst[13], "-%d %d", f->id, g->id);
-    sprintf_s(lst[14], "-%d %d", e->id, g->id);
-    */
+    int a1_len = 0;
+    char* a1_str = and_3sat(num_parm, &a1, a, b, &a1_len);
+    int a2_len = 0;
+    char* a2_str = and_3sat(num_parm, &a2, a, c_in, &a2_len);
+    int a3_len = 0;
+    char* a3_str = and_3sat(num_parm, &a3, b, c_in, &a3_len);
+    int o1_len = 0;
+    char* o1_str = or_3sat(num_parm, &o1, a1, a2, &o1_len);
+    int o2_len = 0;
+    char* o2_str = or_3sat(num_parm, c_out, a3, o1, &o2_len);
 
-    sprintf_s(lst[0], 64, "%d %d %d", -a->id, -b->id, c->id);
-    sprintf_s(lst[1], 64, "%d %d %d", a->id, -c->id, FALSE_3SAT);
-    sprintf_s(lst[2], 64, "%d %d %d", b->id, -c->id, FALSE_3SAT);
-    sprintf_s(lst[3], 64, "%d %d %d", -b->id, -c_in->id, d->id);
-    sprintf_s(lst[4], 64, "%d %d %d", b->id, -d->id, FALSE_3SAT);
-    sprintf_s(lst[5], 64, "%d %d %d", c_in->id, -c->id, FALSE_3SAT);
-    sprintf_s(lst[6], 64, "%d %d %d", -a->id, -c_in->id, e->id);
-    sprintf_s(lst[7], 64, "%d %d %d", a->id, -e->id, FALSE_3SAT);
-    sprintf_s(lst[8], 64, "%d %d %d", c_in->id, -e->id, FALSE_3SAT);
-    sprintf_s(lst[9], 64, "%d %d %d", c->id, d->id, -f->id);
-    sprintf_s(lst[10], 64, "%d %d %d", -c->id, f->id, FALSE_3SAT);
-    sprintf_s(lst[11], 64, "%d %d %d", -d->id, f->id, FALSE_3SAT);
-    sprintf_s(lst[12], 64, "%d %d %d", f->id, e->id, -(*c_out)->id);
-    sprintf_s(lst[13], 64, "%d %d %d", -f->id, (*c_out)->id, FALSE_3SAT);
-    sprintf_s(lst[14], 64, "%d %d %d", -e->id, (*c_out)->id, FALSE_3SAT);
-
-    int ret_len = 1;
-    for (int i = 0; i < 15; i++)
-        ret_len += strnlen_s(lst[i], 64) + strnlen_s("\n", 2);
-
+    int ret_len = a1_len + a2_len + a3_len + o1_len + o2_len + 1;
     char* ret = new char[ret_len];
 
-    int len = 0;
-    for (int i = 0; i < 15; i++) {
-        sprintf_s(&(ret[len]), ret_len-len, "%s\n", lst[i]);
-        len += (int) strnlen_s(lst[i], 64) + (int) strnlen_s("\n", 2);
-        delete [] lst[i];
-    }
+    int pos = 0;
 
-    *len_para = ret_len - 1;
+    strcpy_s(&(ret[pos]), ret_len, a1_str);
+    pos += a1_len;
+    strcpy_s(&(ret[pos]), ret_len, a2_str);
+    pos += a2_len;
+    strcpy_s(&(ret[pos]), ret_len, a3_str);
+    pos += a3_len;
+    strcpy_s(&(ret[pos]), ret_len, o1_str);
+    pos += o1_len;
+    strcpy_s(&(ret[pos]), ret_len, o2_str);
+    pos += o2_len;
 
-    delete [] lst;
+    *len_para = pos;
+
+    delete[] a1_str;
+    delete[] a2_str;
+    delete[] a3_str;
+    delete[] o1_str;
+    delete[] o2_str;
 
     return ret;
-
 }
 
 // implies = a->b: (~a or b)
