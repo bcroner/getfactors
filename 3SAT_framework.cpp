@@ -296,7 +296,7 @@ char* xnor_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 
 char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *len_para) {
 
-    bit * c = create_bit(num_parm);
+    bit * c;
 
     int x1_len = 0;
     char* x1 = xor_3sat(num_parm, &c, a, b, &x1_len);
@@ -315,6 +315,8 @@ char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *
     pos += x2_len;
     
     *len_para = pos;
+
+    delete c;
 
     delete[] x1;
     delete[] x2;
@@ -360,6 +362,11 @@ char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, in
     pos += o2_len;
 
     *len_para = pos;
+
+    delete a1;
+    delete a2;
+    delete a3;
+    delete o1;
 
     delete[] a1_str;
     delete[] a2_str;
