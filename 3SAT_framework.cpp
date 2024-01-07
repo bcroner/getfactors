@@ -397,10 +397,10 @@ char* implies_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
     strcpy_s(&(ret[pos]), ret_len - pos, or_str);
     pos += or_len;
 
+    *len_para = pos;
+
     delete[] not_a_str;
     delete[] or_str;
-
-    *len_para = not_len + or_len;
 
     return ret;
 
