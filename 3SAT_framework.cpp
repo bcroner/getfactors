@@ -127,9 +127,9 @@ char* or_3sat(int * num_parm, bit** c, bit *a, bit* b, int *len_para) {
     sprintf_s(lst[2], "-%d %d", b->id, c->id);
     */
 
-    sprintf_s(lst[0], 64, "%d %d -%d", a->id, b->id, -(*c)->id);
-    sprintf_s(lst[1], 64, "-%d %d %d", -a->id, (*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 64, "-%d %d %d", -b->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[0], 64, "%d %d %d", a->id, b->id, -(*c)->id);
+    sprintf_s(lst[1], 64, "%d %d %d", -a->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[2], 64, "%d %d %d", -b->id, (*c)->id, FALSE_3SAT);
 
     int ret_len = strnlen_s(lst[0], 64) + strnlen_s(lst[1], 64) + strnlen_s(lst[2], 64) + 3 * strnlen_s("\n", 2) + 1;
     char* ret = new char[ret_len];
@@ -309,9 +309,9 @@ char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *
 
     int pos = 0;
 
-    strcpy_s(&(ret[pos]), ret_len, x1);
+    strcpy_s(&(ret[pos]), ret_len-pos, x1);
     pos += x1_len;
-    strcpy_s(&(ret[pos]), ret_len, x2);
+    strcpy_s(&(ret[pos]), ret_len-pos, x2);
     pos += x2_len;
     
     *len_para = pos;
@@ -350,15 +350,15 @@ char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, in
 
     int pos = 0;
 
-    strcpy_s(&(ret[pos]), ret_len, a1_str);
+    strcpy_s(&(ret[pos]), ret_len-pos, a1_str);
     pos += a1_len;
-    strcpy_s(&(ret[pos]), ret_len, a2_str);
+    strcpy_s(&(ret[pos]), ret_len-pos, a2_str);
     pos += a2_len;
-    strcpy_s(&(ret[pos]), ret_len, a3_str);
+    strcpy_s(&(ret[pos]), ret_len-pos, a3_str);
     pos += a3_len;
-    strcpy_s(&(ret[pos]), ret_len, o1_str);
+    strcpy_s(&(ret[pos]), ret_len-pos, o1_str);
     pos += o1_len;
-    strcpy_s(&(ret[pos]), ret_len, o2_str);
+    strcpy_s(&(ret[pos]), ret_len-pos, o2_str);
     pos += o2_len;
 
     *len_para = pos;
@@ -862,10 +862,10 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
     // create the first intermediate number
 
     dec* itmd_c = new dec();
-    itmd_c->bits = new bit * [a->sz + b->sz + 1];
-    itmd_c->sz = a->sz + b->sz + 1;
-    itmd_c->bd_sz = a->bd_sz + b->bd_sz + 1;
-    itmd_c->ad_sz = itmd_c->sz - itmd_c->bd_sz;
+    itmd_c->bits = new bit * [bd_sz + ad_sz];
+    itmd_c->sz = bd_sz + ad_sz;
+    itmd_c->bd_sz = bd_sz;
+    itmd_c->ad_sz = ad_sz;
 
     for (int j = 0; j < a->sz; j++) {
         char * and_str = and_3sat(num_parm, &itmd_c->bits[itmd_c->sz - j - 1], a->bits[a->sz - j - 1], b->bits[b->sz - 1], &(and_str_itmd_ab[0][j]));
@@ -894,21 +894,22 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
     for (int i = 1; i < b->sz; i++) {
         dec* itmd_b = itmd_c;
         dec* itmd_a = new dec();
-        itmd_a->bits = new bit * [a->sz + b->sz + 1];
-        itmd_a->sz = a->sz + b->sz + 1;
-        itmd_a->bd_sz = a->bd_sz + b->bd_sz + 1;
-        itmd_a->ad_sz = itmd_a->sz - itmd_a->bd_sz;
+        itmd_a->bits = new bit * [ad_sz + bd_sz];
+        itmd_a->sz = ad_sz + bd_sz;
+        itmd_a->bd_sz = bd_sz;
+        itmd_a->ad_sz = ad_sz;
         for (int j = 0; j < i; j++) {
             itmd_a->bits[itmd_a->sz - j - 1] = new bit();
             itmd_a->bits[itmd_a->sz - j - 1]->id = FALSE_3SAT;
         }
-        for (int j = i; j < a->sz + i; j++) {
+        int limit = a->sz + i < bd_sz + ad_sz ? a->sz + i : bd_sz + ad_sz;
+        for (int j = i; j < limit; j++) {
             char* and_str = and_3sat(num_parm, &itmd_a->bits[itmd_a->sz - j - 1], a->bits[a->sz - 1 - (j - i)],
                 b->bits[b->sz - i - 1], &(and_str_itmd_ab[i][j-i]));
             and_strs[i][j - i] = new char[and_str_itmd_ab[i][j - i] + 1];
             strcpy_s(and_strs [i][j-i], and_str_itmd_ab[i][j - i] + 1, and_str);
         }
-        for (int j = 0; j < itmd_a->sz - (a->sz + i); j++) {
+        for (int j = 0; j < itmd_a->sz - limit; j++) {
             itmd_a->bits[j] = new bit();
             itmd_a->bits[j]->id = FALSE_3SAT;
         }
@@ -918,7 +919,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
         for (int i = 0; i < itmd_a->sz; i++)
             delete itmd_a->bits[i];
         delete itmd_a;
-        delete sum_str;
+        delete[] sum_str;
     }
 
     // copy itmd_c to c truncated according to bd_sz and ad_sz

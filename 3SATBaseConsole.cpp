@@ -8,7 +8,8 @@
 
 #include <iostream>
 #include <cmath>
-#include<stdio.h>
+#include <stdio.h>
+#include <thread>
 
 ///* This function takes last element as pivot, places
 //   the pivot element at its correct position in sorted
@@ -349,11 +350,13 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// set up first and last element to check: me->begin, me->end
 
-	bool * unit = SATSolver_bool_pow(2, n_parm - chop);
-	bool * offs = SATSolver_int2bool(n_parm, pos);
-	me->begin = SATSolver_bool_mul ( unit, offs) ;
-	me->end = SATSolver_bool_add ( me->begin, unit);
+	bool * two = SATSolver_int2bool(2, n_parm);
+	bool * unit = SATSolver_bool_pow(two, n_parm - chop, n_parm);
+	bool * offs = SATSolver_int2bool(pos, n_parm);
+	me->begin = SATSolver_bool_mul ( unit, offs, n_parm) ;
+	me->end = SATSolver_bool_add ( me->begin, unit, n_parm);
 
+	delete[] two;
 	delete[] unit;
 	delete[] offs;
 

@@ -11,6 +11,8 @@
 #include "3SATBaseConsole.hpp"
 #include "3SAT_framework.hpp"
 
+using namespace std;
+
 int main()
 {
     int num_parm = 2;
