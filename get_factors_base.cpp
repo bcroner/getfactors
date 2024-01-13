@@ -75,22 +75,27 @@ int main()
     */
     dec_3sat* c;
     dec_3sat* a = new dec_3sat();
-    a->bd_sz = 2;
+    a->bd_sz = 4;
     a->ad_sz = 0;
     a->sz = 2;
-    a->bits = new bit_3sat*[2];
+    a->bits = new bit_3sat*[4];
     a->bits[0] = new bit_3sat();
     a->bits[0]->id = FALSE_3SAT;
     a->bits[1] = create_bit(&num_parm);
+    a->bits[2] = create_bit(&num_parm);
+    a->bits[3] = create_bit(&num_parm);
+
 
     dec_3sat* b = new dec_3sat();
-    b->bd_sz = 2;
+    b->bd_sz = 4;
     b->ad_sz = 0;
     b->sz = 2;
-    b->bits = new bit_3sat * [2];
+    b->bits = new bit_3sat * [4];
     b->bits[0] = new bit_3sat();
     b->bits[0]->id = FALSE_3SAT;
     b->bits[1] = create_bit(&num_parm);
+    b->bits[2] = create_bit(&num_parm);
+    b->bits[3] = create_bit(&num_parm);
 
     char* sum_str = dec_add(&num_parm, &c, a, b, false, &len_para);
 
