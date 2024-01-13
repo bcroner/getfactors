@@ -908,6 +908,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
                 b->bits[b->sz - i - 1], &(and_str_itmd_ab[i][j-i]));
             and_strs[i][j - i] = new char[and_str_itmd_ab[i][j - i] + 1];
             strcpy_s(and_strs [i][j-i], and_str_itmd_ab[i][j - i] + 1, and_str);
+            delete[] and_str;
         }
         for (int j = 0; j < itmd_a->sz - limit; j++) {
             itmd_a->bits[j] = new bit();
