@@ -5,7 +5,6 @@
 #define __GET_FACTORS_BASE_CPP__
 
 #include <iostream>
-#include <cmath>
 #include <stdio.h>
 
 #include "3SATBaseConsole.hpp"
@@ -55,12 +54,12 @@ int main()
     strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
-    char * factors = get_factors(c_str, 2000, & len_para);
-    printf_s("%s\n", factors);
+    //char * factors = get_factors(c_str, 2000, & len_para);
+    //printf_s("%s\n", factors);
     /*
     int str_sz = 0;
     bool decodable_buf[] = {true, false, true, true, false, false, true, false , false};
-    dec* numa = new dec();
+    dec_3sat * numa = new dec_3sat();
     numa->ad_sz = 0;
     numa->bd_sz = 5;
     numa->sz = 5;
@@ -74,6 +73,29 @@ int main()
     numa->bits[4] = create_bit(&num_parm);
     char* dec_str = dec_to_str(decodable_buf, numa, &str_sz);
     */
+    dec_3sat* c;
+    dec_3sat* a = new dec_3sat();
+    a->bd_sz = 2;
+    a->ad_sz = 0;
+    a->sz = 2;
+    a->bits = new bit_3sat*[2];
+    a->bits[0] = new bit_3sat();
+    a->bits[0]->id = FALSE_3SAT;
+    a->bits[1] = create_bit(&num_parm);
+
+    dec_3sat* b = new dec_3sat();
+    b->bd_sz = 2;
+    b->ad_sz = 0;
+    b->sz = 2;
+    b->bits = new bit_3sat * [2];
+    b->bits[0] = new bit_3sat();
+    b->bits[0]->id = FALSE_3SAT;
+    b->bits[1] = create_bit(&num_parm);
+
+    char* sum_str = dec_add(&num_parm, &c, a, b, false, &len_para);
+
+    printf_s("%s", sum_str);
+
     return 0;
 }
 

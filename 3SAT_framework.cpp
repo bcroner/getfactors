@@ -12,9 +12,9 @@
 
 // Tseytin transformations being employed here to convert operations to 3-CNF
 
-bit* create_bit(int* num_parm) {
+bit_3sat* create_bit(int* num_parm) {
 
-    bit* ret = new bit();
+    bit_3sat* ret = new bit_3sat();
     
     ret->id = *num_parm;
 
@@ -25,13 +25,13 @@ bit* create_bit(int* num_parm) {
 
 }
 
-dec* create_dec(int * num_parm, int bd_sz_parm, int ad_sz_parm) {
+dec_3sat* create_dec(int * num_parm, int bd_sz_parm, int ad_sz_parm) {
 
-    dec* ret = new dec();
+    dec_3sat* ret = new dec_3sat();
     ret->bd_sz = bd_sz_parm;
     ret->ad_sz = ad_sz_parm;
     ret->sz = bd_sz_parm + ad_sz_parm;
-    ret->bits = new bit * [ret->sz];
+    ret->bits = new bit_3sat * [ret->sz];
     for (int i = 0; i < ret->sz; i++)
         ret->bits[i] = create_bit(num_parm);
     return ret;
@@ -40,7 +40,7 @@ dec* create_dec(int * num_parm, int bd_sz_parm, int ad_sz_parm) {
 
 // c = a and b: (~a or ~b or c) (a or ~c) (b or ~c)
 
-char* and_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
+char* and_3sat(int * num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int *len_para) {
 
     *c = create_bit(num_parm);
     char** lst = new char* [3];
@@ -77,7 +77,7 @@ char* and_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 
 // c = a nand b: (~a or ~b or ~c) (a or c) (b or c)
 
-char* nand_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
+char* nand_3sat(int * num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int *len_para) {
 
     *c = create_bit(num_parm);
     char** lst = new char* [3];
@@ -114,7 +114,7 @@ char* nand_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 
 // c = a or b: (a or b or ~c) (~a or c) (~b or c)
 
-char* or_3sat(int * num_parm, bit** c, bit *a, bit* b, int *len_para) {
+char* or_3sat(int * num_parm, bit_3sat** c, bit_3sat *a, bit_3sat* b, int *len_para) {
 
     *c = create_bit(num_parm);
     char** lst = new char* [3];
@@ -151,7 +151,7 @@ char* or_3sat(int * num_parm, bit** c, bit *a, bit* b, int *len_para) {
 
 // c = a nor b: (a or b or c) (~a or ~c) (~b or ~c)
 
-char* nor_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para) {
+char* nor_3sat(int* num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int* len_para) {
 
     *c = create_bit(num_parm);
     char** lst = new char* [3];
@@ -188,7 +188,7 @@ char* nor_3sat(int* num_parm, bit** c, bit* a, bit* b, int* len_para) {
 
 // c = not a: (~a or ~c) (a or c)
 
-char* not_3sat(int * num_parm, bit** c, bit* a, int *len_para) {
+char* not_3sat(int * num_parm, bit_3sat** c, bit_3sat* a, int *len_para) {
 
     *c = create_bit(num_parm);
     char** lst = new char* [4];
@@ -224,7 +224,7 @@ char* not_3sat(int * num_parm, bit** c, bit* a, int *len_para) {
 
 // c = a xor b: (~a or ~b or ~c) (a or b or ~c) (a or ~b or c) (~a or b or c)
 
-char* xor_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
+char* xor_3sat(int * num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int *len_para) {
 
     *c = create_bit(num_parm);
     char** lst = new char* [4];
@@ -259,7 +259,7 @@ char* xor_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 
 // c = a xnor b: (~a or ~b or c) (a or b or c) (a or ~b or ~c) (~a or b or ~c)
 
-char* xnor_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
+char* xnor_3sat(int * num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int *len_para) {
 
     *c = create_bit(num_parm);
     char** lst = new char* [4];
@@ -294,9 +294,9 @@ char* xnor_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 
 // bitadd = a + b + cin: cin xor (a xor b) = (~a or ~b or ~c) (a or b or ~c) (a or ~b or c) (~a or b or c)
 
-char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *len_para) {
+char* bitaddsum_3sat(int * num_parm, bit_3sat** sum, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, int *len_para) {
 
-    bit * c;
+    bit_3sat * c;
 
     int x1_len = 0;
     char* x1 = xor_3sat(num_parm, &c, a, b, &x1_len);
@@ -327,12 +327,12 @@ char* bitaddsum_3sat(int * num_parm, bit** sum, bit* c_in, bit* a, bit* b, int *
 
 // bitcout = a + b + cin: (a and b) or (b and cin) or (a and cin):
 
-char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, int *len_para) {
+char* bitaddcout_3sat(int * num_parm, bit_3sat** c_out, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, int *len_para) {
 
-    bit * a1;
-    bit * a2;
-    bit * a3;
-    bit * o1;
+    bit_3sat * a1;
+    bit_3sat * a2;
+    bit_3sat * a3;
+    bit_3sat * o1;
 
     int a1_len = 0;
     char* a1_str = and_3sat(num_parm, &a1, a, b, &a1_len);
@@ -379,7 +379,7 @@ char* bitaddcout_3sat(int * num_parm, bit** c_out, bit* c_in, bit* a, bit* b, in
 
 // implies = a->b: (~a or b)
 
-char* implies_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
+char* implies_3sat(int * num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int *len_para) {
 
     int pos = 0;
 
@@ -387,7 +387,7 @@ char* implies_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 
     int not_len = 0;
 
-    bit* a_inv = NULL;
+    bit_3sat* a_inv = NULL;
     char* not_a_str = not_3sat(num_parm, &a_inv , a , &not_len);
 
     // or with b
@@ -415,7 +415,7 @@ char* implies_3sat(int * num_parm, bit** c, bit* a, bit* b, int *len_para) {
 
 // dec_add c = a + b
 
-char* dec_add(int * num_parm, dec** c, dec* a, dec* b, bool discard_final_c_out, int *len_para) {
+char* dec_add(int * num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool discard_final_c_out, int *len_para) {
 
     // find the largest number of bits
 
@@ -425,8 +425,8 @@ char* dec_add(int * num_parm, dec** c, dec* a, dec* b, bool discard_final_c_out,
 
     // create modified a and b
 
-    dec* a_mod = new dec();
-    dec* b_mod = new dec();
+    dec_3sat* a_mod = new dec_3sat();
+    dec_3sat* b_mod = new dec_3sat();
 
     a_mod->ad_sz = ad_bits;
     a_mod->bd_sz = bd_bits;
@@ -436,8 +436,8 @@ char* dec_add(int * num_parm, dec** c, dec* a, dec* b, bool discard_final_c_out,
     b_mod->bd_sz = bd_bits;
     b_mod->sz = tt_bits;
 
-    a_mod->bits = new bit * [tt_bits];
-    b_mod->bits = new bit * [tt_bits];
+    a_mod->bits = new bit_3sat * [tt_bits];
+    b_mod->bits = new bit_3sat * [tt_bits];
 
     // populate a_mod and b_mod
 
@@ -453,24 +453,24 @@ char* dec_add(int * num_parm, dec** c, dec* a, dec* b, bool discard_final_c_out,
     int b_mod_start = 0;
 
     for (a_mod_start = 0; a_mod_start < a_bd_extra; a_mod_start++) {
-        a_mod->bits[a_mod_start] = new bit();
+        a_mod->bits[a_mod_start] = new bit_3sat();
         a_mod->bits[a_mod_start]->id = a->bits[0]->id;
     }
 
     for (b_mod_start = 0; b_mod_start < b_bd_extra; b_mod_start++) {
-        b_mod->bits[b_mod_start] = new bit();
+        b_mod->bits[b_mod_start] = new bit_3sat();
         b_mod->bits[b_mod_start]->id = b->bits[0]->id;
     }
 
     // copy over bits
 
     for (int i = 0; i < a->sz; i++) {
-        a_mod->bits[a_mod_start + i] = new bit();
+        a_mod->bits[a_mod_start + i] = new bit_3sat();
         a_mod->bits[a_mod_start + i]->id = a->bits[i]->id;
     }
 
     for (int i = 0; i < b->sz; i++) {
-        b_mod->bits[b_mod_start + i] = new bit();
+        b_mod->bits[b_mod_start + i] = new bit_3sat();
         b_mod->bits[b_mod_start + i]->id = b->bits[i]->id;
     }
 
@@ -480,26 +480,26 @@ char* dec_add(int * num_parm, dec** c, dec* a, dec* b, bool discard_final_c_out,
     int b_rpad = b_mod->ad_sz > b->ad_sz ? b_mod->ad_sz - b->ad_sz : 0;
 
     for (int i = 0; i < a_rpad; i++) {
-        a_mod->bits[a_mod_start + a->sz + i] = new bit();
+        a_mod->bits[a_mod_start + a->sz + i] = new bit_3sat();
         a_mod->bits[a_mod_start + a->sz + i]->id = FALSE_3SAT;
     }
 
     for (int i = 0; i < b_rpad; i++) {
-        b_mod->bits[b_mod_start + b->sz + i] = new bit();
+        b_mod->bits[b_mod_start + b->sz + i] = new bit_3sat();
         b_mod->bits[b_mod_start + b->sz + i]->id = FALSE_3SAT;
     }
 
     // instantiate c
 
-    *c = new dec();
+    *c = new dec_3sat();
     (*c)->bd_sz = bd_bits;
     (*c)->ad_sz = ad_bits;
     (*c)->sz = tt_bits + (discard_final_c_out ? 0 : 1);
-    (*c)->bits = new bit * [(*c)->sz];
+    (*c)->bits = new bit_3sat * [(*c)->sz];
 
-    bit* c_in = new bit();
+    bit_3sat* c_in = new bit_3sat();
     c_in->id = FALSE_3SAT;
-    bit* c_out = NULL;
+    bit_3sat* c_out = NULL;
 
     // create sum_str and c_out_str buffers
 
@@ -592,7 +592,7 @@ char* dec_add(int * num_parm, dec** c, dec* a, dec* b, bool discard_final_c_out,
 
 // twos_complement = -a
 
-char* twos_comp_3sat(int* num_parm, dec** c, dec* a, int *len_para) {
+char* twos_comp_3sat(int* num_parm, dec_3sat** c, dec_3sat* a, int *len_para) {
 
     // create not_3sat_strs and not_3sat_len
 
@@ -606,11 +606,11 @@ char* twos_comp_3sat(int* num_parm, dec** c, dec* a, int *len_para) {
 
     // invert a
 
-    dec* a_inv = new dec();
+    dec_3sat* a_inv = new dec_3sat();
     a_inv->sz = a->sz;
     a_inv->ad_sz = a->ad_sz;
     a_inv->bd_sz = a->bd_sz;
-    a_inv->bits = new bit * [a_inv->sz]();
+    a_inv->bits = new bit_3sat * [a_inv->sz]();
     for (int i = 0; i < a_inv->sz; i++) {
         char * not_str = not_3sat(num_parm, &a_inv->bits[i], a->bits[i], &(not_3sat_len[i]));
         strcpy_s(not_3sat_strs[i], 64, not_str);
@@ -618,14 +618,14 @@ char* twos_comp_3sat(int* num_parm, dec** c, dec* a, int *len_para) {
 
     // create one, adjusting for any fractions
 
-    dec* b = new dec();
+    dec_3sat* b = new dec_3sat();
     b->sz = 2;
     b->bd_sz = 2;
     b->ad_sz = 0;
-    b->bits = new bit * [2];
-    b->bits[0] = new bit();
+    b->bits = new bit_3sat * [2];
+    b->bits[0] = new bit_3sat();
     b->bits[0]->id = FALSE_3SAT;
-    b->bits[1] = new bit();
+    b->bits[1] = new bit_3sat();
     b->bits[1]->id = TRUE_3SAT;
 
     // perform the addition discarding the final carry
@@ -673,13 +673,13 @@ char* twos_comp_3sat(int* num_parm, dec** c, dec* a, int *len_para) {
 
 // dec_sub c = a + -b
 
-char* dec_sub(int* num_parm, dec** c, dec* a, dec* b, int *len_para) {
+char* dec_sub(int* num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, int *len_para) {
 
     int buf_sz = (64 + 768) * b->sz + 768 * (a->sz > b->sz ? a->sz : b->sz);
     char* ret = new char[buf_sz];
     int pos = 0;
 
-    dec* twos_b = NULL;
+    dec_3sat* twos_b = NULL;
 
     int twos_str_len = 0;
     char* twos_str = twos_comp_3sat(num_parm, &twos_b, b, &twos_str_len);
@@ -702,7 +702,7 @@ char* dec_sub(int* num_parm, dec** c, dec* a, dec* b, int *len_para) {
 
 // force equals
 
-char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
+char* equals(int * num_parm, dec_3sat* a, dec_3sat* b, bool eq, __int64* len_para) {
 
     // c = a xnor b
     // d = and all c bits together
@@ -710,8 +710,8 @@ char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
 
     // create modified a and b for comparison purposes
 
-    dec* a_mod;
-    dec* b_mod;
+    dec_3sat* a_mod;
+    dec_3sat* b_mod;
 
     int bd_sz = a->bd_sz < b->bd_sz ? a->bd_sz : b->bd_sz;
     int a_start = bd_sz < a->bd_sz ? a->bd_sz - bd_sz : a->bd_sz;
@@ -724,51 +724,51 @@ char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
     int b_sign_ext = ad_sz - b->ad_sz;
 
     // instantiate a_mod and b_mod
-    a_mod = new dec();
+    a_mod = new dec_3sat();
     a_mod->ad_sz = ad_sz;
     a_mod->bd_sz = bd_sz;
     a_mod->sz = ad_sz + bd_sz;
-    a_mod->bits = new bit * [ad_sz + bd_sz];
+    a_mod->bits = new bit_3sat * [ad_sz + bd_sz];
 
-    b_mod = new dec();
+    b_mod = new dec_3sat();
     b_mod->ad_sz = ad_sz;
     b_mod->bd_sz = bd_sz;
     b_mod->sz = ad_sz + bd_sz;
-    b_mod->bits = new bit * [ad_sz + bd_sz];
+    b_mod->bits = new bit_3sat * [ad_sz + bd_sz];
 
     // sign-extend a
     for (int i = 0; i < a_start; i++) {
-        a_mod->bits[i] = new bit();
+        a_mod->bits[i] = new bit_3sat();
         a_mod->bits[i]->id = a->bits[0]->id;
     }
 
     // sign-extend b
     for (int i = 0; i < b_start; i++) {
-        b_mod->bits[i] = new bit();
+        b_mod->bits[i] = new bit_3sat();
         b_mod->bits[i]->id = b->bits[0]->id;
     }
 
     // copy over data for a
     for (int i = a_start; i < a->sz - a_sign_ext; i++) {
-        a_mod->bits[i] = new bit();
+        a_mod->bits[i] = new bit_3sat();
         a_mod->bits[i]->id = a->bits[i]->id;
     }
 
     // copy over data for b
     for (int i = b_start; i < b->sz - b_sign_ext; i++) {
-        b_mod->bits[i] = new bit();
+        b_mod->bits[i] = new bit_3sat();
         b_mod->bits[i]->id = b->bits[i]->id;
     }
 
     // rpad a with 0s out to length
     for (int i = a->sz - a_sign_ext; i < bd_sz + ad_sz; i++) {
-        a_mod->bits[i] = new bit();
+        a_mod->bits[i] = new bit_3sat();
         a_mod->bits[i]->id = FALSE_3SAT;
     }
 
     // rpad b with 0s out to length
     for (int i = b->sz - b_sign_ext; i < bd_sz + ad_sz; i++) {
-        b_mod->bits[i] = new bit();
+        b_mod->bits[i] = new bit_3sat();
         b_mod->bits[i]->id = FALSE_3SAT;
     }
 
@@ -784,7 +784,7 @@ char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
     for (int i = 0; i < bd_sz + ad_sz; i++)
         xnor_str_len[i] = 0;
 
-    dec* c = create_dec(num_parm, bd_sz, ad_sz);
+    dec_3sat* c = create_dec(num_parm, bd_sz, ad_sz);
     for (int i = 0; i < bd_sz + ad_sz; i++) {
         char* xnor_str = xnor_3sat(num_parm, &c->bits[i], a_mod->bits[i], b_mod->bits[i], & (xnor_str_len[i]));
         strcpy_s(&(ret[pos]), buf_sz - pos, xnor_str);
@@ -799,15 +799,15 @@ char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
 
     int id = c->bits[0]->id;
 
-    bit* d = new bit();
+    bit_3sat* d = new bit_3sat();
     d->id = id;
 
     for (int i = 1; i < c->sz; i++) {
-        bit* temp = NULL;
+        bit_3sat* temp = NULL;
         char* and_str = and_3sat(num_parm, &temp, d, c->bits[i], &(and_str_len[i]));
         strcpy_s(&(ret[pos]), buf_sz - pos, and_str);
         pos += and_str_len[i];
-        bit* dump = d;
+        bit_3sat* dump = d;
         d = temp;
         delete dump;
     }
@@ -816,10 +816,10 @@ char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
 
     int final_xnor_str_len = 0;
 
-    bit* eq_bit = new bit();
+    bit_3sat* eq_bit = new bit_3sat();
     eq_bit->id = eq ? TRUE_3SAT : FALSE_3SAT;
 
-    bit* f = NULL;
+    bit_3sat* f = NULL;
     char* final_xnor_str = xnor_3sat(num_parm, &f, d, eq_bit, &final_xnor_str_len);
     strcpy_s(&(ret[pos]), buf_sz - pos, final_xnor_str);
     pos += final_xnor_str_len;
@@ -836,7 +836,7 @@ char* equals(int * num_parm, dec* a, dec* b, bool eq, __int64* len_para) {
 
 // force not equals
 
-char* not_equals(int* num_parm, dec* a, dec* b, __int64 *len_para) {
+char* not_equals(int* num_parm, dec_3sat* a, dec_3sat* b, __int64 *len_para) {
 
     return equals(num_parm, a, b, false, len_para);
 
@@ -844,7 +844,7 @@ char* not_equals(int* num_parm, dec* a, dec* b, __int64 *len_para) {
 
 // dec_mul c = a * b
 
-char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __int64 *len_para) {
+char* dec_mul(int* num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, int bd_sz, int ad_sz, __int64 *len_para) {
 
     // create the buffers to collect the initial 3CNF
 
@@ -861,8 +861,8 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
 
     // create the first intermediate number
 
-    dec* itmd_c = new dec();
-    itmd_c->bits = new bit * [bd_sz + ad_sz];
+    dec_3sat* itmd_c = new dec_3sat();
+    itmd_c->bits = new bit_3sat * [bd_sz + ad_sz];
     itmd_c->sz = bd_sz + ad_sz;
     itmd_c->bd_sz = bd_sz;
     itmd_c->ad_sz = ad_sz;
@@ -875,7 +875,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
     }
 
     for (int j = 0; j < itmd_c->sz - a->sz; j++) {
-        itmd_c->bits[j] = new bit();
+        itmd_c->bits[j] = new bit_3sat();
         itmd_c->bits[j]->id = FALSE_3SAT;
     }
 
@@ -892,14 +892,14 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
     sum_str_len[0] = strnlen_s(sum_strs[0], 2);
 
     for (int i = 1; i < b->sz; i++) {
-        dec* itmd_b = itmd_c;
-        dec* itmd_a = new dec();
-        itmd_a->bits = new bit * [ad_sz + bd_sz];
+        dec_3sat* itmd_b = itmd_c;
+        dec_3sat* itmd_a = new dec_3sat();
+        itmd_a->bits = new bit_3sat * [ad_sz + bd_sz];
         itmd_a->sz = ad_sz + bd_sz;
         itmd_a->bd_sz = bd_sz;
         itmd_a->ad_sz = ad_sz;
         for (int j = 0; j < i; j++) {
-            itmd_a->bits[itmd_a->sz - j - 1] = new bit();
+            itmd_a->bits[itmd_a->sz - j - 1] = new bit_3sat();
             itmd_a->bits[itmd_a->sz - j - 1]->id = FALSE_3SAT;
         }
         int limit = a->sz + i < bd_sz + ad_sz ? a->sz + i : bd_sz + ad_sz;
@@ -911,7 +911,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
             delete[] and_str;
         }
         for (int j = 0; j < itmd_a->sz - limit; j++) {
-            itmd_a->bits[j] = new bit();
+            itmd_a->bits[j] = new bit_3sat();
             itmd_a->bits[j]->id = FALSE_3SAT;
         }
         char* sum_str = dec_add(num_parm, &itmd_c, itmd_a, itmd_b, true, &(sum_str_len[i]));
@@ -934,7 +934,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
 
     if ((*c)->bd_sz > itmd_c->bd_sz) {
         for (int i = 0; i < (*c)->bd_sz - itmd_c->bd_sz; i++) {
-            (*c)->bits[i] = new bit();
+            (*c)->bits[i] = new bit_3sat();
             (*c)->bits[i]->id = itmd_c->bits[0]->id;
         }
         c_start = (*c)->bd_sz - itmd_c->bd_sz;
@@ -949,7 +949,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
     // copy over that many bits
 
     for (int i = 0; i < copy_over; i++) {
-        (*c)->bits[c_start + i] = new bit();
+        (*c)->bits[c_start + i] = new bit_3sat();
         (*c)->bits[c_start + i]->id = itmd_c->bits[itmd_c_start + i]->id;
     }
 
@@ -960,7 +960,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
     // rpad with false
 
     for (int i = 0; i < c_rpad; i++) {
-        (*c)->bits[c_start + copy_over + i] = new bit();
+        (*c)->bits[c_start + copy_over + i] = new bit_3sat();
         (*c)->bits[c_start + copy_over + i]->id = FALSE_3SAT;
     }
     
@@ -1012,7 +1012,7 @@ char* dec_mul(int* num_parm, dec** c, dec* a, dec* b, int bd_sz, int ad_sz, __in
 
 // dec_div: b = c/a; a*b = c
 
-char* dec_div(int* num_parm, dec* c, dec* a, dec** b, __int64* len_para) {
+char* dec_div(int* num_parm, dec_3sat* c, dec_3sat* a, dec_3sat** b, __int64* len_para) {
 
     // calculate sizes after decimal and before decimal
 
@@ -1024,7 +1024,7 @@ char* dec_div(int* num_parm, dec* c, dec* a, dec** b, __int64* len_para) {
 
     __int64 dec_mul_str_len = 0;
 
-    dec* itmd_c = create_dec(num_parm, c->bd_sz, c->ad_sz);
+    dec_3sat* itmd_c = create_dec(num_parm, c->bd_sz, c->ad_sz);
     char* dec_mul_str = dec_mul(num_parm, &itmd_c, a, *b, bd_sz, ad_sz, & dec_mul_str_len);
 
     __int64 equals_str_len = 0;
@@ -1045,7 +1045,7 @@ char* dec_div(int* num_parm, dec* c, dec* a, dec** b, __int64* len_para) {
 
 // dec_sqrt: a = sqrt(c); a*a = c
 
-char* dec_sqrt(int* num_parm, dec* c, dec** a, __int64 *len_para) {
+char* dec_sqrt(int* num_parm, dec_3sat* c, dec_3sat** a, __int64 *len_para) {
     // calculate sizes after decimal and before decimal
 
     int ad_sz = c->ad_sz + c->sz;
@@ -1056,7 +1056,7 @@ char* dec_sqrt(int* num_parm, dec* c, dec** a, __int64 *len_para) {
 
     __int64 dec_mul_str_len = 0;
 
-    dec* itmd_c = create_dec(num_parm, c->bd_sz, c->ad_sz);
+    dec_3sat* itmd_c = create_dec(num_parm, c->bd_sz, c->ad_sz);
     char* dec_mul_str = dec_mul(num_parm, &itmd_c, *a, *a, bd_sz, ad_sz, &dec_mul_str_len);
 
     __int64 equals_str_len = 0;
@@ -1228,7 +1228,7 @@ int** input_from_char_buf(int * num_parm, char * buf_3sat, __int64 buf_3sat_sz, 
 
 }
 
-char* dec_to_str(bool * decodable_buf, dec * a, int * str_sz) {
+char* dec_to_str(bool * decodable_buf, dec_3sat * a, int * str_sz) {
 
     // rtrim trailing zeros and calculate rpad out to a multiple of 4
     int last_nonzero_offs = 0;
@@ -1345,13 +1345,13 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
 
     int c_bit_count = strln * 4;
 
-    dec* c_equals = new dec();
+    dec_3sat* c_equals = new dec_3sat();
     c_equals->sz = c_bit_count + 1;
     c_equals->ad_sz = 0;
     c_equals->bd_sz = c_bit_count + 1;
-    c_equals->bits = new bit * [c_bit_count + 1];
+    c_equals->bits = new bit_3sat * [c_bit_count + 1];
 
-    c_equals->bits[0] = new bit();
+    c_equals->bits[0] = new bit_3sat();
     c_equals->bits[0]->id = FALSE_3SAT;
 
     for (int i = 0; i < strln; i++) {
@@ -1379,32 +1379,32 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
 
         for (int j = 0; j < 4; j++) {
             int tf = hexbits[3 - j] == 1 ? TRUE_3SAT : FALSE_3SAT;
-            c_equals->bits[1 + i * 4 + j] = new bit();
+            c_equals->bits[1 + i * 4 + j] = new bit_3sat();
             c_equals->bits[1 + i * 4 + j]->id = tf;
         }
     }
 
-    dec* c = NULL;
+    dec_3sat* c = NULL;
 
-    dec* a = new dec();
+    dec_3sat* a = new dec_3sat();
     a->sz = c_bit_count;
     a->ad_sz = 0;
     a->bd_sz = c_bit_count;
-    a->bits = new bit * [c_bit_count];
+    a->bits = new bit_3sat * [c_bit_count];
 
-    dec* b = new dec();
+    dec_3sat* b = new dec_3sat();
     b->sz = c_bit_count;
     b->ad_sz = 0;
     b->bd_sz = c_bit_count;
-    b->bits = new bit * [c_bit_count];
+    b->bits = new bit_3sat * [c_bit_count];
 
-    a->bits[0] = new bit();
+    a->bits[0] = new bit_3sat();
     a->bits[0]->id = FALSE_3SAT;
 
     for (int i = 1; i < c_bit_count; i++)
         a->bits[i] = create_bit(&num_parm);
 
-    b->bits[0] = new bit();
+    b->bits[0] = new bit_3sat();
     b->bits[0]->id = FALSE_3SAT;
 
     for (int i = 1; i < c_bit_count; i++)
