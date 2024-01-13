@@ -54,8 +54,8 @@ int main()
     strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
-    //char * factors = get_factors(c_str, 2000, & len_para);
-    //printf_s("%s\n", factors);
+    char * factors = get_factors(c_str, 2000, & len_para);
+    printf_s("%s\n", factors);
     /*
     int str_sz = 0;
     bool decodable_buf[] = {true, false, true, true, false, false, true, false , false};
@@ -73,11 +73,12 @@ int main()
     numa->bits[4] = create_bit(&num_parm);
     char* dec_str = dec_to_str(decodable_buf, numa, &str_sz);
     */
+    /*
     dec_3sat* c;
     dec_3sat* a = new dec_3sat();
     a->bd_sz = 4;
     a->ad_sz = 0;
-    a->sz = 2;
+    a->sz = 4;
     a->bits = new bit_3sat*[4];
     a->bits[0] = new bit_3sat();
     a->bits[0]->id = FALSE_3SAT;
@@ -89,7 +90,7 @@ int main()
     dec_3sat* b = new dec_3sat();
     b->bd_sz = 4;
     b->ad_sz = 0;
-    b->sz = 2;
+    b->sz = 4;
     b->bits = new bit_3sat * [4];
     b->bits[0] = new bit_3sat();
     b->bits[0]->id = FALSE_3SAT;
@@ -100,6 +101,8 @@ int main()
     char* sum_str = dec_add(&num_parm, &c, a, b, false, &len_para);
 
     printf_s("%s", sum_str);
+
+    */
 
     return 0;
 }
