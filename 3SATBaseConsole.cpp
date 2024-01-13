@@ -73,12 +73,14 @@ void MyQSort(int arr [] , int low_parm, int high_parm)
 * 
 */
 
-void SATSolver_updateTF(SATSolver* me, int lit, bool target) {
+int SATSolver_updateTF(SATSolver* me, int lit, bool target) {
 
 	int** add_map = target ? me->master->pos_map : me->master->neg_map;
 	int* add_map_szs = target ? me->master->pos_map_szs : me->master->neg_map_szs;
 	int** sub_map = target ? me->master->neg_map : me->master->pos_map;
 	int* sub_map_szs = target ? me->master->neg_map_szs : me->master->pos_map_szs;
+
+	int max_pow = -1;
 
 	// first do the subtractions
 
@@ -86,6 +88,8 @@ void SATSolver_updateTF(SATSolver* me, int lit, bool target) {
 		int clause = sub_map[lit][i];
 		int new_val = me->cls_tly [clause] - 1;
 		me->cls_tly [clause] = new_val;
+		if (me->cls_tly[clause] >= 3 && me->master->powers[clause] > max_pow)
+			max_pow = me->master->powers[clause];
 	}
 
 	// now do the additions
@@ -94,7 +98,10 @@ void SATSolver_updateTF(SATSolver* me, int lit, bool target) {
 		int clause = add_map[lit] [i];
 		int new_val = me->cls_tly [clause] + 1;
 		me->cls_tly [clause] = new_val;
+		if (me->cls_tly[clause] >= 3 && me->master->powers[clause] > max_pow)
+			max_pow = me->master->powers[clause];
 	}
+	return max_pow;
 
 }
 
@@ -104,30 +111,40 @@ void SATSolver_updateTF(SATSolver* me, int lit, bool target) {
 * 
 */
 
-void SATSolver_add(SATSolver * me , int pos_parm) {
+int SATSolver_add(SATSolver * me , int pos_parm) {
 
 	// add 2^pos_parm to Z
+
+	int max_pow = -1;
 
 	for (int i = me->master->n; i >= pos_parm; i--) {
 
 		// if carry, continue loop, if no carry, break
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me , i, false);
+		if (me->Z[me->master->n - i]) {
+			me->Z[me->master->n - i] = false;
+			int mypow = SATSolver_updateTF(me , i, false);
+			if (mypow > max_pow)
+				max_pow = mypow;
 		}
 		else {
-			me->Z[i] = true;
-			SATSolver_updateTF(me , i, true);
+			me->Z[me->master->n - i] = true;
+			int mypow = SATSolver_updateTF(me , i, true);
+			if (mypow > max_pow)
+				max_pow = mypow;
 			break;
 		}
 	}
 
 	// zero out all lower bits of Z
 	for (int j = pos_parm; j>=0 ; j--)
-		if (me->Z[j]) {
-			me->Z[j] = false;
-			SATSolver_updateTF(me , j, false);
+		if (me->Z[me->master->n - j]) {
+			me->Z[me->master->n - j] = false;
+			int mypow = SATSolver_updateTF(me , j, false);
+			if (mypow > max_pow)
+				max_pow = mypow;
 		}
+
+	return max_pow;
 
 }
 
@@ -168,7 +185,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 	me->pow_jump = SATSolver_initializePowJump ( me );
 	bool found_match = me->pow_jump >= 0;
 	if ( found_match )
-		SATSolver_add(me, me->pow_jump);
+		me->pow_jump = SATSolver_add(me, me->pow_jump);
 	else {
 		for (int i = 0; i < me->master->n; i++)
 			arr[me->master->decoding [i]] =  me->Z[i];
@@ -181,48 +198,10 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 	// change this to check for if me->Z greater than me->end
 	while (! SATSolver_GreaterThanOrEqual (me->Z, me->end , me->master->n)) {
 
-		found_match = false;
-		me->pow_jump = -1;
-		
-		for (int i = 0; i < me->master->k; i++)
-			me->cls_tly [i] = 0 ;
+		me->pow_jump = SATSolver_add(me, me->pow_jump);
 
-		// point_map points to either the neg_map or the pos_map of SATSolver * me
-
-		int** point_map = NULL;
-		int* point_map_szs = NULL;
-
-		for (int i = 0; i <= me->master->n; i++) {
-
-			// point_map points to neg_map if 0 and pos_map if 1
-
-			if (!me->Z[i]) {
-				point_map = me->master->neg_map;
-				point_map_szs = me->master->neg_map_szs;
-			}
-			else {
-				point_map = me->master->pos_map;
-				point_map_szs = me->master->pos_map_szs;
-			}
-
-			for (int j = 0; j < point_map_szs [i]; j++) {
-				int cls_tly_pos = point_map[i] [j];
-				int cur_tly_num = me->cls_tly [cls_tly_pos];
-				me->cls_tly [cls_tly_pos] = cur_tly_num + 1;
-				if (me->cls_tly [cls_tly_pos] >= 3) {
-					found_match = true;
-					me->pow_jump = i;
-					break;
-				}
-			}
-			if (found_match)
-				break;
-		}
-
-		if (!found_match)
+		if (me->pow_jump < 0)
 			break;
-
-		SATSolver_add(me , me->pow_jump);
 
 	}
 
