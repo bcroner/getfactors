@@ -242,8 +242,11 @@ bool * SATSolver_bool_pow(bool* base, __int64 pow, int n) {
 		prod[i] = false;
 	prod[n - 1] = true;
 
-	for (int i = 0; i < pow; i++)
+	for (int i = 0; i < pow; i++) {
+		bool* dump = prod;
 		prod = SATSolver_bool_mul(prod, base, n);
+		delete[] dump;
+	}
 
 	return prod;
 
@@ -305,7 +308,7 @@ bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 
 	// for each bit position, determine true/false value, using a signed 64 bit signed integer
 
-	for (int i = 0; i < 64 - 1 ; i++) {
+	for (int i = 64 - 2; i >= 0; i--) {
 
 		// form simple power
 		__int64 simple_pow = 1;
@@ -314,7 +317,7 @@ bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 			simple_pow *= 2;
 
 		if (a >= simple_pow) {
-			ret[i] = true;
+			ret[n_parm - 1 - i] = true;
 			a = a - simple_pow;
 		}
 	}
