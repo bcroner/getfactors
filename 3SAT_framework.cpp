@@ -979,11 +979,15 @@ char* dec_mul(int* num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, int bd_sz, 
     __int64 pos = 0;
 
     for (int i = 0; i < b->sz; i++) {
-        strcpy_s(&(ret[pos]), buf_sz - pos, sum_strs[i]);
-        pos += sum_str_len[i];
+        if (sum_str_len[i] > 0) {
+            strcpy_s(&(ret[pos]), buf_sz - pos, sum_strs[i]);
+            pos += sum_str_len[i];
+        }
         for (int j = 0; j < a->sz; j++) {
-            strcpy_s(&(ret[pos]), buf_sz - pos, and_strs [i][j]);
-            pos += and_str_itmd_ab[i][j];
+            if (and_str_itmd_ab[i][j] > 0) {
+                strcpy_s(&(ret[pos]), buf_sz - pos, and_strs[i][j]);
+                pos += and_str_itmd_ab[i][j];
+            }
         }
     }
 
@@ -992,11 +996,13 @@ char* dec_mul(int* num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, int bd_sz, 
 
     for (int i = 0; i < b->sz; i++) {
         for (int j = 0; j < a->sz; j++)
-            delete[] and_strs[i][j];
-        delete[] and_strs[i];
+            if (and_str_itmd_ab[i][j] > 0)
+                delete[] and_strs[i][j];
+            delete[] and_strs[i];
     }
     for (int i = 1; i < b->sz; i++)
-        delete[] sum_strs[i];
+        if ( sum_str_len[i] > 0)
+            delete[] sum_strs[i];
     delete[] sum_strs;
     delete[] and_strs;
     for (int i = 0; i < b->sz; i++)
