@@ -268,6 +268,7 @@ bool* SATSolver_bool_mul(bool* a, bool* b, int n) {
 		bool* new_sum = SATSolver_bool_add(temp, sum, n);
 		bool* dump = sum;
 		sum = new_sum;
+		delete[] dump;
 	}
 
 	return sum;
@@ -282,9 +283,9 @@ bool* SATSolver_bool_add(bool* a, bool* b, int n) {
 
 	for (int i = 0; i < n; i++) {
 
-		bool sum_temp = (!a[n - i] && b[n - i]) || (a[n - i] && !b[n - i]);
-		ret[n - i] = (!sum_temp && carry) || (sum_temp && !carry);
-		carry = (a[n - i] && b[n - i]) || (a[n - i] && carry) || (b[n-i] && carry);
+		bool sum_temp = (!a[n - 1 - i] && b[n - 1 - i]) || (a[n - 1 - i] && !b[n - 1 - i]);
+		ret[n - 1 - i] = (!sum_temp && carry) || (sum_temp && !carry);
+		carry = (a[n - 1 - i] && b[n - 1 - i]) || (a[n - 1 - i] && carry) || (b[n - 1 - i] && carry);
 
 	}
 
