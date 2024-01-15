@@ -1405,6 +1405,7 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
         c_equals->bits[1 + i - leading_zeros]->id = inbuffer[i] ? TRUE_3SAT : FALSE_3SAT;
     }
 
+    delete[] inbuffer;
 
     dec_3sat* c = NULL;
 
