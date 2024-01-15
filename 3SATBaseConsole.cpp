@@ -176,13 +176,13 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 		return true;
 	}
 
-	printf_s("%d\n", me->pow_jump);
+	//printf_s("%d\n", me->pow_jump);
 
-	///*
+	/*
 	for (int i = 0; i <= me->master->n; i++)
 		printf_s("%d", me->Z[i]);
 	printf_s("\n");
-	//*/
+	*/
 
 	// main loop- until end condition
 
@@ -193,15 +193,15 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 
 		me->pow_jump = SATSolver_initializePowJump(me);
 
-		printf_s("%d\n", me->pow_jump);
+		//printf_s("%d\n", me->pow_jump);
 
 		if (me->pow_jump < 0)
 			break;
-		///*
+		/*
 		for (int i = 0; i <= me->master->n; i++)
 			printf_s("%d", me->Z[i]);
 		printf_s("\n");
-		//*/
+		*/
 
 	}
 
@@ -472,7 +472,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
 				continue;
 			int lit_cur = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->decoding[lit_cur] < lowest)
+			if (master->decoding[lit_cur] > lowest)
 				lowest = master->decoding[lit_cur];
 		}
 		master->powers[i] = n_parm - 1 - lowest;
