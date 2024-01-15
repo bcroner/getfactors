@@ -137,13 +137,9 @@ int SATSolver_initializePowJump(SATSolver* me) {
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
-	for (int i = 0; i < me->master->k; i++) {
-		if (me->cls_tly[i] >= 3) {
-			int tmp_jump = me->master->powers [i];
-			if (tmp_jump > max_jump)
-				max_jump = tmp_jump;
-		}
-	}
+	for (int i = 0; i < me->master->k; i++)
+		if (me->cls_tly[i] >= 3 && me->master->powers[i] > max_jump)
+			max_jump = me->master->powers[i];
 
 	return max_jump;
 
@@ -184,7 +180,9 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 	printf_s("\n");
 	*/
 
-	// main loop- until end condition
+	// main loop- until end condition]
+
+	int count = 0;
 
 	// change this to check for if me->Z greater than me->end
 	while (! SATSolver_GreaterThanOrEqual (me->Z, me->end , me->master->n)) {
@@ -193,15 +191,21 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 
 		me->pow_jump = SATSolver_initializePowJump(me);
 
+		//count++;
+
+		//if (count >= 1048576) {
+			//count = 0;
+			///*
+			for (int i = 0; i <= me->master->n; i++)
+				printf_s("%d", me->Z[i]);
+			printf_s("\n");
+			//*/
+		//}
+
 		//printf_s("%d\n", me->pow_jump);
 
 		if (me->pow_jump < 0)
 			break;
-		/*
-		for (int i = 0; i <= me->master->n; i++)
-			printf_s("%d", me->Z[i]);
-		printf_s("\n");
-		*/
 
 	}
 
@@ -209,7 +213,7 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 		return false ;
 	
 	for (int i = 0; i < me->master->n; i++)
-		arr[me->master->decoding [ i ]] = me->Z[i];
+		arr[i] = me->Z[me->master->decoding[i]];
 
 	return true;
 }
@@ -466,7 +470,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	master->powers = new int[k_parm];
 
 	for (int i = 0; i < k_parm; i++) {
-		int lowest = n_parm - 1;
+		int lowest = -1;
 		for (int j = 0; j < 3; j++) {
 			// check for true TRUE_3SAT or false FALSE_3SAT
 			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
