@@ -399,12 +399,16 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
 				int cls_ix = me->master->pos_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
+				if (old_val > 3)
+					old_val = old_val;
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 		else
 			for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
 				int cls_ix = me->master->neg_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
+				if (old_val > 3)
+					old_val = old_val;
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 	}
@@ -471,7 +475,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			if (master->decoding[lit_cur] < lowest)
 				lowest = master->decoding[lit_cur];
 		}
-		master->powers[i] = n_parm - lowest;
+		master->powers[i] = n_parm - 1 - lowest;
 	}
 
 	// create the map looking into running tally based on literals pos_map
@@ -487,8 +491,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	// initialize pos_map_szs and neg_map_szs all to 0
 
 	for (int i = 0; i < n_parm; i++) {
-		master->pos_map_szs[i] = 0;
-		master->neg_map_szs[i] = 0;
+		master->pos_map_szs[master->decoding[i]] = 0;
+		master->neg_map_szs[master->decoding[i]] = 0;
 	}
 
 	// determine the pos_map_szs
@@ -522,8 +526,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	// instantiate pos_map and neg_map for each variable
 
 	for (int i = 0; i < n_parm; i++) {
-		master->pos_map[i] = new int[master->pos_map_szs[master->decoding[i]]];
-		master->neg_map[i] = new int[master->neg_map_szs[master->decoding[i]]];
+		master->pos_map[master->decoding[i]] = new int[master->pos_map_szs[master->decoding[i]]];
+		master->neg_map[master->decoding[i]] = new int[master->neg_map_szs[master->decoding[i]]];
 	}
 
 	// initialize pos_map and neg_map all to 3 minus non-T/F literals
@@ -553,7 +557,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 				if (pos != i)
 					continue;
 
-				if (lst[i][j] < 0) {
+				if (lst[j][k] < 0) {
 					master->pos_map[master->decoding[pos]][pos_pos] = j;
 					pos_pos++;
 				}
