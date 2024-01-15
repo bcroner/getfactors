@@ -1349,16 +1349,10 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
         ;
 
-    int c_bit_count = strln * 4;
+    // transform hex input into bool buffer
 
-    dec_3sat* c_equals = new dec_3sat();
-    c_equals->sz = c_bit_count + 1;
-    c_equals->ad_sz = 0;
-    c_equals->bd_sz = c_bit_count + 1;
-    c_equals->bits = new bit_3sat * [c_bit_count + 1];
-
-    c_equals->bits[0] = new bit_3sat();
-    c_equals->bits[0]->id = FALSE_3SAT;
+    int inbuffer_sz = strln * 4;
+    bool* inbuffer = new bool[inbuffer_sz];
 
     for (int i = 0; i < strln; i++) {
 
@@ -1383,12 +1377,34 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
         }
         hexbits[0] = hexval;
 
-        for (int j = 0; j < 4; j++) {
-            int tf = hexbits[3 - j] == 1 ? TRUE_3SAT : FALSE_3SAT;
-            c_equals->bits[1 + i * 4 + j] = new bit_3sat();
-            c_equals->bits[1 + i * 4 + j]->id = tf;
-        }
+        for (int j = 0; j < 4; j++)
+            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
     }
+
+    // count leading zeros
+
+    int leading_zeros = 0;
+    for (leading_zeros = 0; !inbuffer[leading_zeros]; leading_zeros++)
+        ;
+
+    int c_bit_count = inbuffer_sz - leading_zeros;
+
+    dec_3sat* c_equals = new dec_3sat();
+    c_equals->sz = c_bit_count + 1;
+    c_equals->ad_sz = 0;
+    c_equals->bd_sz = c_bit_count + 1;
+    c_equals->bits = new bit_3sat * [c_bit_count + 1];
+
+    c_equals->bits[0] = new bit_3sat();
+    c_equals->bits[0]->id = FALSE_3SAT;
+
+    // transfer over inbuffer
+
+    for (int i = leading_zeros; i < inbuffer_sz; i++) {
+        c_equals->bits[1 + i - leading_zeros] = new bit_3sat();
+        c_equals->bits[1 + i - leading_zeros]->id = inbuffer[i] ? TRUE_3SAT : FALSE_3SAT;
+    }
+
 
     dec_3sat* c = NULL;
 
