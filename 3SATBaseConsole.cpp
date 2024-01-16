@@ -174,11 +174,11 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 
 	//printf_s("%d\n", me->pow_jump);
 
-	/*
+	///*
 	for (int i = 0; i <= me->master->n; i++)
 		printf_s("%d", me->Z[i]);
 	printf_s("\n");
-	*/
+	//*/
 
 	// main loop- until end condition]
 
@@ -191,16 +191,16 @@ bool SATSolver_isSat(SATSolver * me , bool arr []) {
 
 		me->pow_jump = SATSolver_initializePowJump(me);
 
-		//count++;
+		count++;
 
-		//if (count >= 1048576) {
-			//count = 0;
+		if (count >= 1048576) {
+			count = 0;
 			///*
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
 			printf_s("\n");
 			//*/
-		//}
+		}
 
 		//printf_s("%d\n", me->pow_jump);
 

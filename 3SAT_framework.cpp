@@ -1161,7 +1161,7 @@ inline int decimal_from_char(char c) {
     }
 }
 
-int** input_from_char_buf(int * num_parm, char * buf_3sat, __int64 buf_3sat_sz, int * k) {
+int** input_from_char_buf(char * buf_3sat, __int64 buf_3sat_sz, int * k, bool cnf) {
 
     // count the newlines for k where no clause has a TRUE value in it
 
@@ -1186,7 +1186,7 @@ int** input_from_char_buf(int * num_parm, char * buf_3sat, __int64 buf_3sat_sz, 
 
         sscanf_s(temp, "%d %d %d", &a, &b, &c);
 
-        if (a != TRUE_3SAT && b != TRUE_3SAT && c != TRUE_3SAT)
+        if (cnf || (!cnf && a != TRUE_3SAT && b != TRUE_3SAT && c != TRUE_3SAT))
             (*k)++;
 
         pos++;
@@ -1221,10 +1221,10 @@ int** input_from_char_buf(int * num_parm, char * buf_3sat, __int64 buf_3sat_sz, 
 
         sscanf_s(temp, "%d %d %d", &a, &b, &c);
 
-        if (a != TRUE_3SAT && b != TRUE_3SAT && c != TRUE_3SAT) {
-            ret[iter][0] = a;
-            ret[iter][1] = b;
-            ret[iter][2] = c;
+        if (cnf || (!cnf && a != TRUE_3SAT && b != TRUE_3SAT && c != TRUE_3SAT)) {
+            ret[iter][0] = !cnf ? a : a < 0 ? a - 1 : a + 1;
+            ret[iter][1] = !cnf ? b : b < 0 ? b - 1 : b + 1;
+            ret[iter][2] = !cnf ? c : c < 0 ? c - 1 : c + 1;
             iter++;
         }
         pos++;
@@ -1453,7 +1453,7 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     delete[] equals_str;
 
     int k = 0;
-    int** input = input_from_char_buf(&num_parm, buf_3sat, buf_3sat_sz, &k);
+    int** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
     bool* sln = new bool[num_parm-1];
 
     delete[] buf_3sat;
