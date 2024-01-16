@@ -157,7 +157,7 @@ bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
 }
 
-bool SATSolver_isSat(SATSolver * me , bool arr []) {
+bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	me->pow_jump = SATSolver_initializePowJump ( me );
 	bool found_match = me->pow_jump >= 0;
@@ -596,6 +596,28 @@ void SATSolver_destroy(SATSolver * me) {
 	delete me->Z;
 	delete me->begin;
 	delete me->end;
+
+}
+
+bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
+
+	int num_threads = std::thread::hardware_concurrency();
+
+	std::thread ** threadblock = new std::thread * [num_threads];
+
+	bool** arrs = new bool*[num_threads];
+
+	for (int i = 0; i < num_threads; i++)
+		arrs[i] = new bool[n_parm];
+
+	SATSolverMaster* master = new SATSolverMaster();
+	SATSolverMaster_create(master, lst, k_parm, n_parm);
+
+	for (int i = 0; i < num_threads; i++) {
+	}
+
+	SATSolver* s = new SATSolver();
+	SATSolver_create(s, master, lst, k_parm, n_parm, 0, 0);
 
 }
 

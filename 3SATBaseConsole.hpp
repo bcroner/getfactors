@@ -7,6 +7,9 @@
 #include <iostream>
 #include <cmath>
 #include <stdio.h>
+#include <thread>
+#include <condition_variable>
+#include <mutex>
 
 #define FALSE_3SAT -1
 #define TRUE_3SAT 1
@@ -43,7 +46,7 @@ void SATSolver_updateTF(SATSolver* me, int lit, bool target);
 void SATSolver_add(SATSolver* me, int pos_parm);
 int SATSolver_initializePowJump(SATSolver* me);
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b, int n);
-bool SATSolver_isSat(SATSolver* me, bool arr[]);
+bool SATSolver_isSat(SATSolver* me, bool *arr);
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n);
 bool * SATSolver_bool_add(bool *a, bool *b, int n);
 bool * SATSolver_bool_mul(bool *a, bool *b, int n);
@@ -52,6 +55,7 @@ void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int 
 void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos);
 void SATSolverMaster_destroy(SATSolverMaster* master);
 void SATSolver_destroy(SATSolver* me);
+bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool **arr);
 
 #endif
 

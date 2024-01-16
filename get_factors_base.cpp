@@ -245,20 +245,13 @@ const char * buf_3sat_src =
 
     int k = 0;
     int** input = input_from_char_buf (buf_3sat, buf_3sat_sz, &k, true);
-    bool* sln = new bool[100];
+    bool* sln = NULL;
 
-    //delete[] buf_3sat;
-
-    SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, 100);
-
-    SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, 100, 0, 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
 
-    if (!SATSolver_isSat(s, sln))
+    if ( ! SATSolver_threads(input, k, 100, &sln))
         printf_s("not satisfiable\n");
     else
         printf_s("satisfiable\n");
