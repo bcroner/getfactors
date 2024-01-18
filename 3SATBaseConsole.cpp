@@ -662,6 +662,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 			ready = true;
 			tid = -1;
 			std::unique_lock<std::mutex> unlock(m);
+			cv.notify_all();
 		}
 	}
 
