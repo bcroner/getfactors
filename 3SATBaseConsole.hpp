@@ -31,6 +31,8 @@ typedef struct {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
 
+	int tid;
+
 	int* cls_tly;				// running tallies of the number of literals matched in clauses
 
 	bool* Z;					// current position in permutation space
@@ -52,9 +54,10 @@ bool * SATSolver_bool_add(bool *a, bool *b, int n);
 bool * SATSolver_bool_mul(bool *a, bool *b, int n);
 bool* SATSolver_int2bool(__int64 a, __int64 n_parm);
 void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int n_parm);
-void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos);
+void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos, int tid);
 void SATSolverMaster_destroy(SATSolverMaster* master);
 void SATSolver_destroy(SATSolver* me);
+void thread_3SAT(int tid, SATSolverMaster* master, bool* arr, int** lst, int k_parm, int n_parm, __int64 chop, __int64 pos);
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool **arr);
 
 #endif

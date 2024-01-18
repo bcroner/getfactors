@@ -193,8 +193,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count >= 1048576) {
+		if (count >= 32000000) {
 			count = 0;
+			//printf_s("tid: %d\n", me->tid);
 			///*
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -320,7 +321,9 @@ bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 * pos: position in chopping up search space
 * 
 * */
-void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int k_parm, int n_parm, int chop, int pos) {
+void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int k_parm, int n_parm, int chop, int pos, int tid) {
+
+	me->tid = tid;
 
 	// valcheck
 
@@ -599,24 +602,38 @@ void SATSolver_destroy(SATSolver * me) {
 
 }
 
-void thread_3SAT(std::mutex * m, std::condition_variable * cv, int * ret_tid, bool * done, bool * ready, int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
+std::mutex m;
+std::condition_variable cv;
+bool done = false;
+bool ready = true;
+bool solved = false;
+int thread_id = -1;
+
+void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
 
 	SATSolver* s = new SATSolver();
-	SATSolver_create(s, master, lst, k_parm, n_parm, chop, pos);
+	SATSolver_create(s, master, lst, k_parm, n_parm, chop, pos, tid);
+
+	//printf_s("tid about to solve: %d\n", tid);
 
 	bool sat = SATSolver_isSat(s, arr);
 
-	std::unique_lock<std::mutex> lock(*m);
-	cv->wait(lock, [ready] {return *ready; });
-	*ready = false;
-	*done = sat;
-	*ret_tid = tid;
-	cv->notify_all();
+	//printf_s("tid solved: %d\n", tid);
+	{
+		std::unique_lock<std::mutex> lock(m);
+		//printf_s("tid mutex locked: %d\n", tid);
+		cv.wait(lock, [] {return ready; });
+		//printf_s("tid condition passed: %d\n", tid);
+		ready = false;
+		done = sat;
+		thread_id = tid;
+		cv.notify_all();
+	}
 }
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
-	int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency();
+	int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency() ;
 
 	std::thread ** threadblock = new std::thread * [num_threads];
 
@@ -631,37 +648,31 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	SATSolverMaster* master = new SATSolverMaster();
 	SATSolverMaster_create(master, lst, k_parm, n_parm);
 
-	std::mutex m;
-	std::condition_variable cv;
-	bool done = false;
-	bool ready = true;
-	bool solved = false;
-	int thread_id = -1;
-
 	__int64 top = 1;
 
-	int chop = n_parm < 50 ? 0 : 30;
+	int chop = n_parm < 50 ? 0 : 20;
 
 	for (int i = 0; i < chop; i++)
 		top *= 2;
 
 	for (int i = 0; i < num_threads; i++)
-		threadblock[i] = new std::thread(thread_3SAT, &m , &cv, &thread_id, &done, & ready, i , master, arrs[i], lst, k_parm, n_parm, chop, i);
+		threadblock[i] = new std::thread(thread_3SAT, i , master, arrs[i], lst, k_parm, n_parm, chop, i);
 
 	for (__int64 pos = num_threads; pos < top && !solved; pos++) {
-		std::unique_lock<std::mutex> lock(m);
-		cv.wait(lock, [ready] {return !ready; });
-		threadblock[thread_id]->join();
-		delete threadblock[thread_id];
-		solved = done;
-		if (solved)
-			break;
-		if (pos < top) {
-			threadblock[thread_id] = new std::thread(thread_3SAT, &m, &cv, &thread_id, &done, &ready, thread_id, master, arrs[thread_id], lst, k_parm, n_parm, chop, pos);
-			ready = true;
-			thread_id = -1;
-			std::unique_lock<std::mutex> unlock(m);
-			cv.notify_all();
+		{
+			std::unique_lock<std::mutex> lock(m);
+			cv.wait(lock, [] {return !ready; });
+			threadblock[thread_id]->join();
+			delete threadblock[thread_id];
+			solved = done;
+			if (solved)
+				break;
+			if (pos < top) {
+				threadblock[thread_id] = new std::thread(thread_3SAT, thread_id, master, arrs[thread_id], lst, k_parm, n_parm, chop, pos);
+				ready = true;
+				thread_id = -1;
+				cv.notify_all();
+			}
 		}
 	}
 
