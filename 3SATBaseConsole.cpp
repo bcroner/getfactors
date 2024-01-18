@@ -599,13 +599,18 @@ void SATSolver_destroy(SATSolver * me) {
 
 }
 
-void thread_3SAT(std::mutex * m, std::condition_variable * cv, int * ret_tid, bool * done, int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
+void thread_3SAT(std::mutex * m, std::condition_variable * cv, int * ret_tid, bool * done, bool * ready, int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
 
 	SATSolver* s = new SATSolver();
 	SATSolver_create(s, master, lst, k_parm, n_parm, chop, pos);
 
 	bool sat = SATSolver_isSat(s, arr);
 
+	std::unique_lock<std::mutex> lock(*m);
+	(*cv).wait(lock, [ready] {return *ready; });
+	*ready = false;
+	*done = sat;
+	*ret_tid = tid;
 }
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
@@ -628,6 +633,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	std::mutex m;
 	std::condition_variable cv;
 	bool done = false;
+	bool ready = true;
 	int tid = -1;
 	bool solved = false;
 	int thread_id = -1;
@@ -640,12 +646,35 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 		top *= 2;
 
 	for (int i = 0; i < num_threads; i++)
-		threadblock[i] = new std::thread(thread_3SAT, &m , &cv, &thread_id, &done, i , master, arrs[i], lst, k_parm, n_parm, chop, i);
+		threadblock[i] = new std::thread(thread_3SAT, &m , &cv, &thread_id, &done, & ready, i , master, arrs[i], lst, k_parm, n_parm, chop, i);
 
 	for (__int64 pos = num_threads; pos < top && !solved; pos++) {
-
+		std::unique_lock<std::mutex> lock(m);
+		cv.wait(lock, [ready] {return !ready; });
+		threadblock[tid]->join();
+		delete threadblock[tid];
+		solved = done;
+		if (solved)
+			break;
+		if (pos < top) {
+			threadblock[tid] = new std::thread(thread_3SAT, &m, &cv, &thread_id, &done, &ready, tid, master, arrs[tid], lst, k_parm, n_parm, chop, pos);
+			ready = true;
+			tid = -1;
+			std::unique_lock<std::mutex> unlock(m);
+		}
 	}
 
+	for (int i = 0; i < num_threads; i++)
+		if (solved && i != tid) {
+			threadblock[tid]->join();
+			delete threadblock[tid];
+		}
+
+	if (solved)
+		for (int i = 0; i < n_parm; i++)
+			(*arrs)[i] = arr[tid][i];
+
+	return solved;
 }
 
 #endif
