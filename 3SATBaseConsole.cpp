@@ -607,11 +607,11 @@ void thread_3SAT(std::mutex * m, std::condition_variable * cv, int * ret_tid, bo
 	bool sat = SATSolver_isSat(s, arr);
 
 	std::unique_lock<std::mutex> lock(*m);
-	(*cv).wait(lock, [ready] {return *ready; });
+	cv->wait(lock, [ready] {return *ready; });
 	*ready = false;
 	*done = sat;
 	*ret_tid = tid;
-	(*cv).notify_all();
+	cv->notify_all();
 }
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
