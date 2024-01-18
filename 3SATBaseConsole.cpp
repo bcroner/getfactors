@@ -635,7 +635,6 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	std::condition_variable cv;
 	bool done = false;
 	bool ready = true;
-	int tid = -1;
 	bool solved = false;
 	int thread_id = -1;
 
@@ -652,29 +651,29 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	for (__int64 pos = num_threads; pos < top && !solved; pos++) {
 		std::unique_lock<std::mutex> lock(m);
 		cv.wait(lock, [ready] {return !ready; });
-		threadblock[tid]->join();
-		delete threadblock[tid];
+		threadblock[thread_id]->join();
+		delete threadblock[thread_id];
 		solved = done;
 		if (solved)
 			break;
 		if (pos < top) {
-			threadblock[tid] = new std::thread(thread_3SAT, &m, &cv, &thread_id, &done, &ready, tid, master, arrs[tid], lst, k_parm, n_parm, chop, pos);
+			threadblock[thread_id] = new std::thread(thread_3SAT, &m, &cv, &thread_id, &done, &ready, thread_id, master, arrs[thread_id], lst, k_parm, n_parm, chop, pos);
 			ready = true;
-			tid = -1;
+			thread_id = -1;
 			std::unique_lock<std::mutex> unlock(m);
 			cv.notify_all();
 		}
 	}
 
 	for (int i = 0; i < num_threads; i++)
-		if (solved && i != tid) {
-			threadblock[tid]->join();
-			delete threadblock[tid];
+		if (solved && i != thread_id) {
+			threadblock[thread_id]->join();
+			delete threadblock[thread_id];
 		}
 
 	if (solved)
 		for (int i = 0; i < n_parm; i++)
-			(*arrs)[i] = arr[tid][i];
+			(*arrs)[i] = arr[thread_id][i];
 
 	return solved;
 }
