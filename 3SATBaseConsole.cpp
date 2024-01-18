@@ -599,11 +599,23 @@ void SATSolver_destroy(SATSolver * me) {
 
 }
 
+void thread_3SAT(std::mutex * m, std::condition_variable * cv, int * ret_tid, bool * done, int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
+
+	SATSolver* s = new SATSolver();
+	SATSolver_create(s, master, lst, k_parm, n_parm, chop, pos);
+
+	bool sat = SATSolver_isSat(s, arr);
+
+}
+
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
-	int num_threads = std::thread::hardware_concurrency();
+	int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency();
 
 	std::thread ** threadblock = new std::thread * [num_threads];
+
+	for (int i = 0; i < num_threads; i++)
+		threadblock[i] = NULL;
 
 	bool** arrs = new bool*[num_threads];
 
@@ -613,11 +625,26 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	SATSolverMaster* master = new SATSolverMaster();
 	SATSolverMaster_create(master, lst, k_parm, n_parm);
 
-	for (int i = 0; i < num_threads; i++) {
-	}
+	std::mutex m;
+	std::condition_variable cv;
+	bool done = false;
+	int tid = -1;
+	bool solved = false;
+	int thread_id = -1;
 
-	SATSolver* s = new SATSolver();
-	SATSolver_create(s, master, lst, k_parm, n_parm, 0, 0);
+	__int64 top = 1;
+
+	int chop = n_parm < 50 ? 0 : n_parm < 150 ? 30 : 40;
+
+	for (int i = 0; i < chop; i++)
+		top *= 2;
+
+	for (int i = 0; i < num_threads; i++)
+		threadblock[i] = new std::thread(thread_3SAT, &m , &cv, &thread_id, &done, i , master, arrs[i], lst, k_parm, n_parm, chop, i);
+
+	for (__int64 pos = num_threads; pos < top && !solved; pos++) {
+
+	}
 
 }
 
