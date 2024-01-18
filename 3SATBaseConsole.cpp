@@ -611,6 +611,7 @@ void thread_3SAT(std::mutex * m, std::condition_variable * cv, int * ret_tid, bo
 	*ready = false;
 	*done = sat;
 	*ret_tid = tid;
+	(*cv).notify_all();
 }
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
