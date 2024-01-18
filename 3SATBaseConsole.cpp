@@ -634,7 +634,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	__int64 top = 1;
 
-	int chop = n_parm < 50 ? 0 : n_parm < 150 ? 30 : 40;
+	int chop = n_parm < 50 ? 0 : 30;
 
 	for (int i = 0; i < chop; i++)
 		top *= 2;
