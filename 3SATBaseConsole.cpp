@@ -633,7 +633,8 @@ void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
-	int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency() ;
+	// int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency() ;
+	int num_threads = 1 ;
 
 	std::thread ** threadblock = new std::thread * [num_threads];
 
@@ -650,7 +651,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	__int64 top = 1;
 
-	int chop = n_parm < 50 ? 0 : 20;
+	int chop = n_parm < 50 ? 0 : 16;
 
 	for (int i = 0; i < chop; i++)
 		top *= 2;
