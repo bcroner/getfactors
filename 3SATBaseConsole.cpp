@@ -492,6 +492,16 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		histogram[pos] = -1;
 	}
 
+	// create the pow_cls list initialized with dummy heads
+
+	master->pow_cls = new cls_lst * [n_parm];
+
+	for (int i = 0; i < n_parm; i++) {
+		master->pow_cls[i] = new cls_lst();
+		master->pow_cls[i]->cls_id = -1;
+		master->pow_cls[i]->next = NULL;
+	}
+
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
 	master->powers = new int[k_parm];
@@ -506,7 +516,19 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			if (master->decoding[lit_cur] > lowest)
 				lowest = master->decoding[lit_cur];
 		}
+
+		// record the jump power of the clause at i
+
 		master->powers[i] = n_parm - 1 - lowest;
+
+		// record the reverse jump power lookup
+
+		cls_lst* ptr = master->pow_cls[n_parm - 1 - lowest]->next;
+		while (ptr->next != NULL)
+			ptr = ptr->next;
+		ptr->next = new cls_lst();
+		ptr->next->id = i;
+		ptr->next->next = NULL;
 	}
 
 	// create the map looking into running tally based on literals pos_map
@@ -610,6 +632,19 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 		delete master->pos_map[i];
 		delete master->neg_map[i];
 	}
+
+	for (int i = 0; i < master->n; i++) {
+		cls_lst* ptr = master->pow_cls[i]->next;
+		while (ptr != NULL) {
+			cls_lst* dump = ptr;
+			ptr = ptr->next;
+			delete dump;
+		}
+		delete master->pow_cls[i];
+	}
+
+	delete[] master->pow_cls;
+
 	delete master->pos_map;
 	delete master->neg_map;
 	delete master->pos_map_szs;
