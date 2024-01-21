@@ -160,6 +160,8 @@ bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	me->pow_jump = SATSolver_initializePowJump ( me );
+	printf_s("jump: %d", me->pow_jump);
+	printf_s("\n");
 	bool found_match = me->pow_jump >= 0;
 	if (found_match) {
 		SATSolver_add(me, me->pow_jump);
@@ -177,6 +179,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 	///*
 	for (int i = 0; i <= me->master->n; i++)
 		printf_s("%d", me->Z[i]);
+	printf_s(" jump: %d", me->pow_jump);
 	printf_s("\n");
 	//*/
 
@@ -193,12 +196,13 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count >= 32000000) {
+		if (count >= 1) {
 			count = 0;
 			//printf_s("tid: %d\n", me->tid);
 			///*
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
+			printf_s(" jump: %d", me->pow_jump);
 			printf_s("\n");
 			//*/
 		}
@@ -651,7 +655,8 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	__int64 top = 1;
 
-	int chop = n_parm < 50 ? 0 : 16;
+	// int chop = n_parm < 50 ? 0 : 16;
+	int chop = 0;
 
 	for (int i = 0; i < chop; i++)
 		top *= 2;
@@ -659,7 +664,9 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	for (int i = 0; i < num_threads; i++)
 		threadblock[i] = new std::thread(thread_3SAT, i , master, arrs[i], lst, k_parm, n_parm, chop, i);
 
-	for (__int64 pos = num_threads; pos < top && !solved; pos++) {
+	__int64 pos = num_threads;
+
+	do {
 		{
 			std::unique_lock<std::mutex> lock(m);
 			cv.wait(lock, [] {return !ready; });
@@ -675,13 +682,16 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 				cv.notify_all();
 			}
 		}
-	}
+		pos++;
+	} while (pos < top && !solved);
 
 	for (int i = 0; i < num_threads; i++)
 		if (solved && i != thread_id) {
 			threadblock[thread_id]->join();
 			delete threadblock[thread_id];
 		}
+
+	delete[] threadblock;
 
 	if (solved)
 		for (int i = 0; i < n_parm; i++)
