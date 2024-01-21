@@ -168,7 +168,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		SATSolver_add(me, me->pow_jump);
 		me->pow_jump = SATSolver_initializePowJump(me);
 
-		if (prev_pow_jump == me->pow_jump) {
+		if (prev_pow_jump >= me->pow_jump) {
 			// do something
 		}
 
