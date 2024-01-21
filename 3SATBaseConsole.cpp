@@ -631,6 +631,7 @@ void SATSolver_destroy(SATSolver * me) {
 			delete dump;
 
 		}
+		delete me->implies_ctx[i];
 	}
 
 	delete [] me->implies_ctx;
