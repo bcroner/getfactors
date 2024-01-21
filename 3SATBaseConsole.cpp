@@ -160,12 +160,19 @@ bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	me->pow_jump = SATSolver_initializePowJump ( me );
+	__int64 prev_pow_jump = me->pow_jump;
 	printf_s("jump: %d", me->pow_jump);
 	printf_s("\n");
 	bool found_match = me->pow_jump >= 0;
 	if (found_match) {
 		SATSolver_add(me, me->pow_jump);
 		me->pow_jump = SATSolver_initializePowJump(me);
+
+		if (prev_pow_jump == me->pow_jump) {
+			// do something
+		}
+
+		prev_pow_jump = me->pow_jump;
 	}
 	else {
 		for (int i = 0; i < me->master->n; i++)
@@ -325,9 +332,7 @@ bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 * pos: position in chopping up search space
 * 
 * */
-void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int k_parm, int n_parm, int chop, int pos, int tid) {
-
-	me->tid = tid;
+void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int k_parm, int n_parm, int chop, int pos) {
 
 	// valcheck
 
@@ -389,7 +394,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// create the running clause tally cls_tly
 
-	me->cls_tly = new int[k_parm];
+	me->cls_tly = new __int8[k_parm];
 
 	for (int i = 0; i < k_parm; i++)
 		me->cls_tly[i] = 0;
@@ -422,6 +427,21 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 					old_val = old_val;
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
+	}
+
+	// initialize implies array with self-referential jump power implications
+
+	me->implies_arr = new int[n_parm];
+	for (int i = 0; i < n_parm; i++)
+		me->implies_arr[i] = i;
+
+	// initialize context with dummy heads
+
+	me->implies_ctx = new cls_lst * [n_parm];
+	for (int i = 0; i < n_parm; i++) {
+		me->implies_ctx[i] = new cls_lst();
+		me->implies_ctx[i]->cls_id = -1;
+		me->implies_ctx[i]->next = NULL;
 	}
 
 	delete[] lst_t;
@@ -599,10 +619,26 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 
 void SATSolver_destroy(SATSolver * me) {
 
-	delete me->cls_tly;
-	delete me->Z;
-	delete me->begin;
-	delete me->end;
+	delete [] me->implies_arr;
+	
+	for (int i = 0; i < me->master->n; i++) {
+
+		cls_lst* ptr = me->implies_ctx[i]->next;
+		while (ptr != NULL) {
+
+			cls_lst* dump = ptr;
+			ptr = ptr->next;
+			delete dump;
+
+		}
+	}
+
+	delete [] me->implies_ctx;
+
+	delete [] me->cls_tly;
+	delete [] me->Z;
+	delete [] me->begin;
+	delete [] me->end;
 
 }
 
@@ -616,18 +652,13 @@ int thread_id = -1;
 void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
 
 	SATSolver* s = new SATSolver();
-	SATSolver_create(s, master, lst, k_parm, n_parm, chop, pos, tid);
-
-	//printf_s("tid about to solve: %d\n", tid);
+	SATSolver_create(s, master, lst, k_parm, n_parm, chop, pos);
 
 	bool sat = SATSolver_isSat(s, arr);
 
-	//printf_s("tid solved: %d\n", tid);
 	{
 		std::unique_lock<std::mutex> lock(m);
-		//printf_s("tid mutex locked: %d\n", tid);
 		cv.wait(lock, [] {return ready; });
-		//printf_s("tid condition passed: %d\n", tid);
 		ready = false;
 		done = sat;
 		thread_id = tid;
@@ -684,6 +715,11 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 		}
 		pos++;
 	} while (pos < top && !solved);
+
+	// free up master resources
+
+	SATSolverMaster_destroy(master);
+	delete master;
 
 	for (int i = 0; i < num_threads; i++)
 		if (solved && i != thread_id) {

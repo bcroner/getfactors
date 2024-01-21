@@ -16,6 +16,13 @@
 
 typedef struct {
 
+	int cls_id;		// clause id for implies context
+	cls_lst* next;	// linked list
+
+} cls_lst ;
+
+typedef struct {
+
 	int* decoding;		// decoding of variables
 	int** pos_map;		// map of non-negated literals to clauses for tallying
 	int** neg_map;		// map of negated literals to clauses for tallying
@@ -31,12 +38,13 @@ typedef struct {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
 
-	int tid;
+	int*	  implies_arr;		// efficiency: what a power jump implies about a higher power jump
+	cls_lst** implies_ctx;		// context of implies array for accounting of each higher jump implication
 
-	int* cls_tly;				// running tallies of the number of literals matched in clauses
+	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
 
 	bool* Z;					// current position in permutation space
-	int pow_jump;				// current value of jump, to be updated each cycle
+	__int64 pow_jump;			// current value of jump, to be updated each cycle
 	bool* begin;				// first element begin of search space
 	bool* end;					// last element end of search space
 } SATSolver;
