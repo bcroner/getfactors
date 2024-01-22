@@ -84,8 +84,27 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 	for (int i = 0; i < sub_map_szs [zpos]; i++) {
 		int clause = sub_map[zpos][i];
-		int new_val = me->cls_tly [clause] - 1;
-		me->cls_tly [clause] = new_val;
+		int old_val = me->cls_tly[clause];
+		me->cls_tly[clause] = old_val - 1;
+		if (old_val == 3) {
+			// break up implies_ctx
+			cls_lst* ptr = me->master->pow_cls[zpos];
+			while (ptr->next != NULL && ptr->next->cls_id != clause)
+				ptr = ptr->next;
+			if (ptr->next != NULL) {
+				cls_lst* dump = ptr->next;
+				ptr->next = ptr->next->next;
+				delete dump;
+			}
+			// break up implies_arr
+			if (me->master->pow_cls[zpos]->next != NULL) {
+				int pow = zpos - 1;
+				while (pow >= 0 && me->implies_arr[pow] == zpos) {
+					me->implies_arr[pow] = zpos - 1;
+					pow--;
+				}
+			}
+		}
 	}
 
 	// now do the additions
@@ -94,6 +113,15 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int clause = add_map[zpos] [i];
 		int new_val = me->cls_tly [clause] + 1;
 		me->cls_tly[clause] = new_val;
+		if (new_val == 3) {
+			// build up implies_ctx
+			cls_lst* ptr = me->master->pow_cls[zpos];
+			while (ptr->next != NULL)
+				ptr = ptr->next;
+			ptr->next = new cls_lst();
+			ptr->next->cls_id = clause;
+			ptr->next->next = NULL;
+		}
 	}
 }
 
@@ -157,49 +185,44 @@ bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
 }
 
+int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
+
+	// update implies_arr
+
+	int pos = repeat_jump ;
+	while (pos >= 0 && me->implies_arr[pos] == repeat_jump) {
+		me->implies_arr[pos] = me->implies_arr [ repeat_jump + 1 ];
+		pos--;
+	}
+
+	return me->implies_arr[repeat_jump + 1];
+
+}
+
 bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	me->pow_jump = SATSolver_initializePowJump ( me );
 	__int64 prev_pow_jump = me->pow_jump;
-	printf_s("jump: %d", me->pow_jump);
-	printf_s("\n");
-	bool found_match = me->pow_jump >= 0;
-	if (found_match) {
-		SATSolver_add(me, me->pow_jump);
-		me->pow_jump = SATSolver_initializePowJump(me);
 
-		if (prev_pow_jump >= me->pow_jump) {
-			// do something
-		}
-
-		prev_pow_jump = me->pow_jump;
-	}
-	else {
-		for (int i = 0; i < me->master->n; i++)
-			arr[me->master->decoding [i]] =  me->Z[i];
-
-		return true;
-	}
-
-	//printf_s("%d\n", me->pow_jump);
-
-	///*
-	for (int i = 0; i <= me->master->n; i++)
-		printf_s("%d", me->Z[i]);
-	printf_s(" jump: %d", me->pow_jump);
-	printf_s("\n");
-	//*/
-
-	// main loop- until end condition]
+	// main loop- until end condition
 
 	int count = 0;
 
 	// change this to check for if me->Z greater than me->end
-	while (! SATSolver_GreaterThanOrEqual (me->Z, me->end , me->master->n)) {
+	do {
+
+		if (me->pow_jump < 0)
+			break;
 
 		SATSolver_add(me, me->pow_jump);
 
-		me->pow_jump = SATSolver_initializePowJump(me);
+		int temp_jump = SATSolver_initializePowJump(me);
+		me->pow_jump = me->implies_arr[temp_jump];
+
+		if (prev_pow_jump == me->pow_jump)
+			me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
+
+		prev_pow_jump = me->pow_jump;
 
 		count++;
 
@@ -216,10 +239,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		//printf_s("%d\n", me->pow_jump);
 
-		if (me->pow_jump < 0)
-			break;
-
-	}
+	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
 
 	if (SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n))
 		return false ;
