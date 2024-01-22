@@ -191,11 +191,11 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 
 	int pos = repeat_jump ;
 	while (pos >= 0 && me->implies_arr[pos] >= repeat_jump) {
-		me->implies_arr[pos] = repeat_jump - 1 ;
+		me->implies_arr[pos] = repeat_jump + 1 ;
 		pos--;
 	}
 
-	return me->implies_arr[repeat_jump + 1];
+	return me->implies_arr[repeat_jump];
 
 }
 
@@ -225,7 +225,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count >= 100000000) {
+		if (count >= 1) {
 			count = 0;
 			///*
 			for (int i = 0; i <= me->master->n; i++)
@@ -722,8 +722,8 @@ void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
-	int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency() ;
-	//int num_threads = 1 ;
+	//int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency() ;
+	int num_threads = 1 ;
 
 	std::thread ** threadblock = new std::thread * [num_threads];
 
@@ -740,8 +740,8 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	__int64 top = 1;
 
-	int chop = n_parm < 50 ? 0 : 16;
-	//int chop = 0;
+	//int chop = n_parm < 50 ? 0 : 16;
+	int chop = 0;
 
 	for (int i = 0; i < chop; i++)
 		top *= 2;
