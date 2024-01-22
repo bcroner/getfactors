@@ -547,7 +547,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		while (ptr->next != NULL)
 			ptr = ptr->next;
 		ptr->next = new cls_lst();
-		ptr->next->id = i;
+		ptr->next->cls_id = i;
 		ptr->next->next = NULL;
 	}
 

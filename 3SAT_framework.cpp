@@ -1462,7 +1462,7 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     SATSolverMaster_create(master, input, k, num_parm-1);
 
     SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, num_parm-1, 0, 0, 0);
+    SATSolver_create(s, master, input, k, num_parm-1, 0, 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
