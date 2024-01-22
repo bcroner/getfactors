@@ -216,19 +216,17 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		SATSolver_add(me, me->pow_jump);
 
 		int temp_jump = SATSolver_initializePowJump(me);
-		if (temp_jump < me->master->n)
-			me->pow_jump = me->implies_arr[temp_jump];
+		me->pow_jump = me->implies_arr[temp_jump];
 
-		if (temp_jump < me->master->n && prev_pow_jump == me->pow_jump)
+		if (prev_pow_jump == me->pow_jump)
 			me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
 
 		prev_pow_jump = me->pow_jump;
 
 		count++;
 
-		if (count >= 1) {
+		if (count >= 100000000) {
 			count = 0;
-			//printf_s("tid: %d\n", me->tid);
 			///*
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -724,8 +722,8 @@ void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
-	// int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency() ;
-	int num_threads = 1 ;
+	int num_threads = n_parm < 50 ? 1 : std::thread::hardware_concurrency() ;
+	//int num_threads = 1 ;
 
 	std::thread ** threadblock = new std::thread * [num_threads];
 
@@ -742,8 +740,8 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	__int64 top = 1;
 
-	// int chop = n_parm < 50 ? 0 : 16;
-	int chop = 0;
+	int chop = n_parm < 50 ? 0 : 16;
+	//int chop = 0;
 
 	for (int i = 0; i < chop; i++)
 		top *= 2;
