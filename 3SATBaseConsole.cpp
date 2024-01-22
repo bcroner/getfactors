@@ -99,7 +99,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			// break up implies_arr
 			if (me->master->pow_cls[zpos]->next != NULL) {
 				int pow = zpos - 1;
-				while (pow >= 0 && me->implies_arr[pow] == zpos) {
+				while (pow >= 0 && me->implies_arr[pow] >= zpos) {
 					me->implies_arr[pow] = zpos - 1;
 					pow--;
 				}
@@ -190,8 +190,8 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 	// update implies_arr
 
 	int pos = repeat_jump ;
-	while (pos >= 0 && me->implies_arr[pos] == repeat_jump) {
-		me->implies_arr[pos] = me->implies_arr [ repeat_jump + 1 ];
+	while (pos >= 0 && me->implies_arr[pos] >= repeat_jump) {
+		me->implies_arr[pos] = repeat_jump - 1 ;
 		pos--;
 	}
 
@@ -208,7 +208,6 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	int count = 0;
 
-	// change this to check for if me->Z greater than me->end
 	do {
 
 		if (me->pow_jump < 0)
@@ -217,9 +216,10 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		SATSolver_add(me, me->pow_jump);
 
 		int temp_jump = SATSolver_initializePowJump(me);
-		me->pow_jump = me->implies_arr[temp_jump];
+		if (temp_jump < me->master->n)
+			me->pow_jump = me->implies_arr[temp_jump];
 
-		if (prev_pow_jump == me->pow_jump)
+		if (temp_jump < me->master->n && prev_pow_jump == me->pow_jump)
 			me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
 
 		prev_pow_jump = me->pow_jump;
@@ -543,7 +543,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 		// record the reverse jump power lookup
 
-		cls_lst* ptr = master->pow_cls[n_parm - 1 - lowest]->next;
+		cls_lst* ptr = master->pow_cls[n_parm - 1 - lowest];
 		while (ptr->next != NULL)
 			ptr = ptr->next;
 		ptr->next = new cls_lst();
