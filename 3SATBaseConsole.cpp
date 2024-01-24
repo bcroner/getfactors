@@ -193,7 +193,7 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 
 	// update implies_arr
 
-	int pos = me->master->n - 1;
+	int pos = repeat_jump;
 	int old_jump = me->implies_arr[repeat_jump];
 	while (pos >= 0 && me->implies_arr[pos] == old_jump) {
 		me->implies_arr[pos] = old_jump + 1 ;
