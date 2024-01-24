@@ -82,13 +82,15 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 	// first do the subtractions
 
+	int pow = me->master->n - 1 - zpos;
+
 	for (int i = 0; i < sub_map_szs [zpos]; i++) {
 		int clause = sub_map[zpos][i];
 		int old_val = me->cls_tly[clause];
 		me->cls_tly[clause] = old_val - 1;
 		if (old_val == 3) {
 			// break up implies_ctx
-			cls_lst* ptr = me->master->pow_cls[zpos];
+			cls_lst* ptr = me->implies_ctx[pow];
 			while (ptr->next != NULL && ptr->next->cls_id != clause)
 				ptr = ptr->next;
 			if (ptr->next != NULL) {
@@ -97,11 +99,11 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 				delete dump;
 			}
 			// break up implies_arr
-			if (me->master->pow_cls[zpos]->next != NULL) {
-				int pow = zpos - 1;
-				while (pow >= 0 && me->implies_arr[pow] >= zpos) {
-					me->implies_arr[pow] = zpos - 1;
-					pow--;
+			if (me->implies_ctx[pow]->next == NULL) {
+				int pos = pow;
+				while (pos >= 0 && me->implies_arr[pos] >= pow) {
+					me->implies_arr[pos] = pow - 1;
+					pos--;
 				}
 			}
 		}
@@ -115,7 +117,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		me->cls_tly[clause] = new_val;
 		if (new_val == 3) {
 			// build up implies_ctx
-			cls_lst* ptr = me->master->pow_cls[zpos];
+			cls_lst* ptr = me->implies_ctx[pow];
 			while (ptr->next != NULL)
 				ptr = ptr->next;
 			ptr->next = new cls_lst();
@@ -189,13 +191,14 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 
 	// update implies_arr
 
-	int pos = repeat_jump ;
-	while (pos >= 0 && me->implies_arr[pos] >= repeat_jump) {
-		me->implies_arr[pos] = repeat_jump + 1 ;
+	int pos = repeat_jump;
+	int old_jump = me->implies_arr[pos];
+	while (pos >= 0 && me->implies_arr[pos] == old_jump) {
+		me->implies_arr[pos] = old_jump + 1 ;
 		pos--;
 	}
 
-	return me->implies_arr[repeat_jump];
+	return old_jump + 1;
 
 }
 
@@ -223,17 +226,19 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		prev_pow_jump = me->pow_jump;
 
+		/*
 		count++;
 
-		if (count >= 1) {
+		if (count >= 1024) {
 			count = 0;
-			///*
+			//
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
 			printf_s(" jump: %d", me->pow_jump);
 			printf_s("\n");
-			//*/
+			//
 		}
+		*/
 
 		//printf_s("%d\n", me->pow_jump);
 
