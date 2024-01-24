@@ -89,6 +89,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		me->cls_tly[clause] = old_val - 1;
 		if (old_val == 3) {
+			bool deleted = false;
 			// break up implies_ctx
 			cls_lst* ptr = me->implies_ctx[pow];
 			while (ptr->next != NULL && ptr->next->cls_id != clause)
@@ -97,9 +98,10 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 				cls_lst* dump = ptr->next;
 				ptr->next = ptr->next->next;
 				delete dump;
+				deleted = true;
 			}
 			// break up implies_arr
-			if (me->implies_ctx[pow]->next == NULL) {
+			if (deleted && me->implies_ctx[pow]->next == NULL) {
 				int pos = pow;
 				while (pos >= 0 && me->implies_arr[pos] >= pow) {
 					me->implies_arr[pos] = pow - 1;
@@ -159,11 +161,11 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 		}
 }
 
-int SATSolver_initializePowJump(SATSolver* me) {
+__int64 SATSolver_initializePowJump(SATSolver* me) {
 
 	// initialize return value
 
-	int max_jump = -1;
+	__int64 max_jump = -1;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
@@ -191,8 +193,8 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 
 	// update implies_arr
 
-	int pos = repeat_jump;
-	int old_jump = me->implies_arr[pos];
+	int pos = me->master->n - 1;
+	int old_jump = me->implies_arr[repeat_jump];
 	while (pos >= 0 && me->implies_arr[pos] == old_jump) {
 		me->implies_arr[pos] = old_jump + 1 ;
 		pos--;
@@ -226,10 +228,10 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		prev_pow_jump = me->pow_jump;
 
-		/*
+		///*
 		count++;
 
-		if (count >= 1024) {
+		if (count >= 1) {
 			count = 0;
 			//
 			for (int i = 0; i <= me->master->n; i++)
@@ -238,7 +240,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 			printf_s("\n");
 			//
 		}
-		*/
+		//*/
 
 		//printf_s("%d\n", me->pow_jump);
 
