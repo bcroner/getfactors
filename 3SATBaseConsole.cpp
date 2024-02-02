@@ -557,7 +557,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		int sum = 6;
 		int missing = sum - loidx - hiidx - 1;
 		int lit_mid = (lst[i][missing] < 0 ? -lst[i][missing] - 2 : lst[i][missing]) - 2;
-		int tmp_idx = master->decoding[lit_mid] == lowest ? hiidx : loidx;
+		int tmp_idx = master->decoding[lit_mid] == lowest ? hiidx : missing;
 		int tmp_mid = lst[i][tmp_idx] < 0 ? -lst[i][tmp_idx] - 2: lst[i][tmp_idx] - 2;
 		int middle = lst[i][tmp_idx] < 0 ? -n_parm + 1 + master->decoding[tmp_mid] : n_parm - 1 - master->decoding[tmp_mid];
 
