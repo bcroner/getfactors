@@ -552,16 +552,17 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			}
 		}
 
-		// fetch middle number for clause
+		// fetch middle number for clause, make sure it's not the lowest repeated
 
 		int sum = 6;
 		int missing = sum - loidx - hiidx;
 		int lit_mid = (lst[i][missing-1] < 0 ? -lst[i][missing-1] : lst[i][missing-1]) - 2;
+		int middle = master->decoding[lit_mid] == lowest ? highest : master->decoding[lit_mid];
 
 		// record the jump power of the clause at i
 
 		master->powers[i] = n_parm - 1 - lowest;
-		master->middle[i] = n_parm - 1 - master->decoding[lit_mid];
+		master->middle[i] = n_parm - 1 - middle;
 
 		// record the reverse jump power lookup
 
