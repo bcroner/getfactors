@@ -556,9 +556,11 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 		int sum = 6;
 		int missing = sum - loidx - hiidx - 1;
-		int lit_mid = (lst[i][missing] < 0 ? -lst[i][missing] + 2 : lst[i][missing]) - 2;
-		int tmp_mid = master->decoding[lit_mid] == lowest ? highest : master->decoding[lit_mid];
-		int middle = lst[i][missing] < 0 ? -n_parm + 1 + tmp_mid : n_parm - 1 - tmp_mid;
+		int lit_mid = (lst[i][missing] < 0 ? -lst[i][missing] - 2 : lst[i][missing]) - 2;
+		int tmp_idx = master->decoding[lit_mid] == lowest ? hiidx : loidx;
+		int pre_tmp_mid = lst[i][tmp_idx] < 0 ? -lst[i][tmp_idx]: lst[i][tmp_idx];
+		int tmp_mid = pre_tmp_mid < 0 ? master->decoding[-tmp_idx - 2] : master->decoding[tmp_idx - 2];
+		int middle = lst[i][tmp_idx] < 0 ? -n_parm + 1 + tmp_mid : n_parm - 1 - tmp_mid;
 
 		// record the jump power of the clause at i
 
