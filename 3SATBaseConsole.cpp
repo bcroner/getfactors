@@ -102,7 +102,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			}
 			// update implies_arr
 			if (deleted && me->implies_ctx[pow]->next == NULL)
-				me->implies_arr[pow] = pow;
+				me->implies_arr[pow] = -pow;
 		}
 	}
 
@@ -188,13 +188,21 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 
 	// update implies_arr
 
+	int ret_jump = 0;
+
 	int pos = repeat_jump;
-	while (me->implies_arr[pos] != pos)
+	while (me->implies_arr[pos] != -pos && me->implies_arr[pos] != pos)
 		pos = me->implies_arr[pos];
-	me->implies_arr[pos] = pos + 1;
+	if (me->implies_arr[pos] == -pos) {
+		me->implies_arr[pos] = pos;
+		ret_jump = pos;
+	}
+	else if (me->implies_arr[pos] == pos) {
+		me->implies_arr[pos] = - (pos + 1);
+		ret_jump = pos;
+	}
 
-	return pos + 1;
-
+	return ret_jump;
 }
 
 bool SATSolver_isSat(SATSolver * me , bool *arr) {
@@ -451,7 +459,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	me->implies_arr = new int[n_parm];
 	for (int i = 0; i < n_parm; i++)
-		me->implies_arr[i] = i;
+		me->implies_arr[i] = -i;
 
 	// initialize context with dummy heads
 
