@@ -199,7 +199,7 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 	}
 	else if (me->implies_arr[pos] == pos + 1) {
 		me->implies_arr[pos] = -(pos+2);
-		ret_jump = pos + 1;
+		ret_jump = pos;
 	}
 
 	return ret_jump;
