@@ -100,14 +100,9 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 				delete dump;
 				deleted = true;
 			}
-			// break up implies_arr
-			if (deleted && me->implies_ctx[pow]->next == NULL) {
-				int pos = pow;
-				while (pos >= 0 && me->implies_arr[pos] >= pow) {
-					me->implies_arr[pos] = pow - 1;
-					pos--;
-				}
-			}
+			// update implies_arr
+			if (deleted && me->implies_ctx[pow]->next == NULL)
+				me->implies_arr[pow] = pow;
 		}
 	}
 
@@ -194,13 +189,11 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 	// update implies_arr
 
 	int pos = repeat_jump;
-	int old_jump = me->implies_arr[repeat_jump];
-	while (pos >= 0 && me->implies_arr[pos] == old_jump) {
-		me->implies_arr[pos] = old_jump + 1 ;
-		pos--;
-	}
+	while (me->implies_arr[pos] != pos)
+		pos = me->implies_arr[pos];
+	me->implies_arr[pos] = pos + 1;
 
-	return old_jump + 1;
+	return pos + 1;
 
 }
 
@@ -223,7 +216,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		int temp_jump = SATSolver_initializePowJump(me);
 		me->pow_jump = me->implies_arr[temp_jump];
 
-		if (prev_pow_jump == me->pow_jump)
+		if (prev_pow_jump == me->pow_jump && me->Z[prev_pow_jump])
 			me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
 
 		prev_pow_jump = me->pow_jump;
