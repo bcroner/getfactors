@@ -102,7 +102,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			}
 			// update implies_arr
 			if (deleted && me->implies_ctx[pow]->next == NULL)
-				me->implies_arr[pow] = -(pow+1);
+				me->implies_arr[pow] = target ? pow + 1 : - (pow + 1);
 		}
 	}
 
