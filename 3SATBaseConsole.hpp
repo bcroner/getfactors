@@ -43,9 +43,6 @@ typedef struct {
 	int*	  implies_arr;		// efficiency: what a power jump implies about a higher power jump
 	cls_lst** implies_ctx;		// context of implies array for accounting of each higher jump implication
 
-	//int*      implies_arr1;		// efficiency: what a power jump implies about a higher power jump; at val = 1
-	//cls_lst** implies_ctx1;		// context of implies array for accounting of each higher jump implication; at val = 1
-
 	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
 
 	bool* Z;					// current position in permutation space
