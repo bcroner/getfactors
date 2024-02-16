@@ -531,41 +531,21 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
 	master->powers = new int[k_parm];
-	master->middle = new int[k_parm];
 
 	for (int i = 0; i < k_parm; i++) {
 		int lowest = -1;
-		int loidx = -1;
-		int highest = n_parm + 1;
-		int hiidx = -1;
 		for (int j = 0; j < 3; j++) {
 			// check for true TRUE_3SAT or false FALSE_3SAT
 			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
 				continue;
 			int lit_cur = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->decoding[lit_cur] > lowest) {
+			if (master->decoding[lit_cur] > lowest)
 				lowest = master->decoding[lit_cur];
-				loidx = j + 1;
-			}
-			if (master->decoding[lit_cur] < highest) {
-				highest = master->decoding[lit_cur];
-				hiidx = j + 1;
-			}
 		}
-
-		// fetch middle number for clause, make sure it's not the lowest repeated
-
-		int sum = 6;
-		int missing = sum - loidx - hiidx - 1;
-		int lit_mid = (lst[i][missing] < 0 ? -lst[i][missing] - 2 : lst[i][missing]) - 2;
-		int tmp_idx = master->decoding[lit_mid] == lowest ? hiidx : missing;
-		int tmp_mid = lst[i][tmp_idx] < 0 ? -lst[i][tmp_idx] - 2: lst[i][tmp_idx] - 2;
-		int middle = lst[i][tmp_idx] < 0 ? -n_parm + 1 + master->decoding[tmp_mid] : n_parm - 1 - master->decoding[tmp_mid];
 
 		// record the jump power of the clause at i
 
 		master->powers[i] = n_parm - 1 - lowest;
-		master->middle[i] = middle;
 
 		// record the reverse jump power lookup
 
@@ -695,7 +675,6 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 	delete [] master->neg_map;
 	delete [] master->pos_map_szs;
 	delete [] master->neg_map_szs;
-	delete [] master->middle;
 	delete [] master->powers;
 }
 

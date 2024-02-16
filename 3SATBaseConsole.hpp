@@ -29,7 +29,6 @@ typedef struct {
 	int* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	int* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	int* powers;		// powers to jump forward by
-	int* middle;		// mid-range value of clauses
 	cls_lst** pow_cls;	// powers to matching clauses list
 	int k;				// original number of clauses
 	int n;				// number of variables
