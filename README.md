@@ -1,6 +1,6 @@
 # getfactors
 
-I worked for 21 years to find a constructive proof that P = NP. I achieved my goal.
+I worked since the fall of 2002 to find a constructive proof that P = NP. I achieved my goal.
 
 Included is the 3SAT solver and a framework that performs the factorization of arbitrary-size integers, among other math and logic operations.
 
