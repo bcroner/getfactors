@@ -102,7 +102,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			}
 			// update implies_arr
 			if (deleted && me->implies_ctx[pow]->next == NULL)
-				me->implies_arr[pow] = target ? pow + 1 : - (pow + 1);
+				me->implies_arr[pow] = me->master->powers[clause] > 0 ? pow : -pow;
 		}
 	}
 
@@ -166,7 +166,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 
 	for (int i = 0; i < me->master->k; i++)
 		if (me->cls_tly[i] >= 3 && me->master->powers[i] > max_jump)
-			max_jump = me->master->powers[i];
+			max_jump = me->master->powers[i] < 0 ? -me->master->powers[i] - 1 : me->master->powers[i] - 1;
 
 	return max_jump;
 
@@ -208,7 +208,7 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	me->pow_jump = SATSolver_initializePowJump ( me );
-	__int64 prev_pow_jump = me->pow_jump;
+	//__int64 prev_pow_jump = me->pow_jump;
 
 	// main loop- until end condition
 
@@ -224,10 +224,13 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		int temp_jump = SATSolver_initializePowJump(me);
 		me->pow_jump = me->implies_arr[temp_jump];
 
-		if (prev_pow_jump == me->pow_jump && me->Z[prev_pow_jump])
+		//if (prev_pow_jump == me->pow_jump && me->Z[prev_pow_jump])
+		//	me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
+
+		if (me->Z[me->pow_jump])
 			me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
 
-		prev_pow_jump = me->pow_jump;
+		//prev_pow_jump = me->pow_jump;
 
 		///*
 		count++;
@@ -534,18 +537,21 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	for (int i = 0; i < k_parm; i++) {
 		int lowest = -1;
+		int lit_cur = 0;
 		for (int j = 0; j < 3; j++) {
 			// check for true TRUE_3SAT or false FALSE_3SAT
 			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
 				continue;
-			int lit_cur = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->decoding[lit_cur] > lowest)
-				lowest = master->decoding[lit_cur];
+			int ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
+			if (master->decoding[ix] > lowest) {
+				lowest = master->decoding[ix];
+				lit_cur = lst[i][j] < 0 ? -lowest - 1 : lowest + 1;
+			}
 		}
 
 		// record the jump power of the clause at i
 
-		master->powers[i] = n_parm - 1 - lowest;
+		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - lowest) - 1 : (n_parm - 1 - lowest) + 1;
 
 		// record the reverse jump power lookup
 
