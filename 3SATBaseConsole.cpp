@@ -91,7 +91,8 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		if (old_val == 3) {
 			bool deleted = false;
 			// break up implies_ctx
-			cls_lst* ptr = me->implies_ctx[pow];
+			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
+			cls_lst* ptr = implies_ctx[pow];
 			while (ptr->next != NULL && ptr->next->cls_id != clause)
 				ptr = ptr->next;
 			if (ptr->next != NULL) {
@@ -101,7 +102,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 				deleted = true;
 			}
 			// update implies_arr
-			if (deleted && me->implies_ctx[pow]->next == NULL)
+			if (deleted && implies_ctx[pow]->next == NULL)
 				me->implies_arr[pow] = me->master->powers[clause] > 0 ? pow : -pow;
 		}
 	}
@@ -114,7 +115,8 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		me->cls_tly[clause] = new_val;
 		if (new_val == 3) {
 			// build up implies_ctx
-			cls_lst* ptr = me->implies_ctx[pow];
+			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
+			cls_lst* ptr = implies_ctx[pow];
 			while (ptr->next != NULL)
 				ptr = ptr->next;
 			ptr->next = new cls_lst();
@@ -466,11 +468,15 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// initialize context with dummy heads
 
-	me->implies_ctx = new cls_lst * [n_parm];
+	me->pos_imp_ctx = new cls_lst * [n_parm];
+	me->neg_imp_ctx = new cls_lst * [n_parm];
 	for (int i = 0; i < n_parm; i++) {
-		me->implies_ctx[i] = new cls_lst();
-		me->implies_ctx[i]->cls_id = -1;
-		me->implies_ctx[i]->next = NULL;
+		me->pos_imp_ctx[i] = new cls_lst();
+		me->pos_imp_ctx[i]->cls_id = -1;
+		me->pos_imp_ctx[i]->next = NULL;
+		me->neg_imp_ctx[i] = new cls_lst();
+		me->neg_imp_ctx[i]->cls_id = -1;
+		me->neg_imp_ctx[i]->next = NULL;
 	}
 
 	delete[] lst_t;
@@ -690,7 +696,7 @@ void SATSolver_destroy(SATSolver * me) {
 	
 	for (int i = 0; i < me->master->n; i++) {
 
-		cls_lst* ptr = me->implies_ctx[i]->next;
+		cls_lst* ptr = me->pos_imp_ctx[i]->next;
 		while (ptr != NULL) {
 
 			cls_lst* dump = ptr;
@@ -698,10 +704,21 @@ void SATSolver_destroy(SATSolver * me) {
 			delete dump;
 
 		}
-		delete me->implies_ctx[i];
+		delete me->pos_imp_ctx[i];
+
+		cls_lst* ptr = me->neg_imp_ctx[i]->next;
+		while (ptr != NULL) {
+
+			cls_lst* dump = ptr;
+			ptr = ptr->next;
+			delete dump;
+
+		}
+		delete me->neg_imp_ctx[i];
 	}
 
-	delete [] me->implies_ctx;
+	delete [] me->pos_imp_ctx;
+	delete[] me->neg_imp_ctx;
 
 	delete [] me->cls_tly;
 	delete [] me->Z;
