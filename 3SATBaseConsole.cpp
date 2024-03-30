@@ -162,7 +162,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 
 	// initialize return value
 
-	__int64 max_jump = -1;
+	__int64 max_jump = -me->master->n - 1;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
@@ -218,7 +218,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	do {
 
-		if (me->pow_jump < 0)
+		if (me->pow_jump < -me->master->n)
 			break;
 
 		SATSolver_add(me, me->pow_jump);
