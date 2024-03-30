@@ -706,7 +706,7 @@ void SATSolver_destroy(SATSolver * me) {
 		}
 		delete me->pos_imp_ctx[i];
 
-		cls_lst* ptr = me->neg_imp_ctx[i]->next;
+		ptr = me->neg_imp_ctx[i]->next;
 		while (ptr != NULL) {
 
 			cls_lst* dump = ptr;
@@ -816,7 +816,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	if (solved)
 		for (int i = 0; i < n_parm; i++)
-			(*arrs)[i] = arr[thread_id][i];
+			(*arr)[i] = arrs[thread_id][i];
 
 	return solved;
 }
