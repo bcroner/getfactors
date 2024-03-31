@@ -82,7 +82,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 	// first do the subtractions
 
-	int pow = me->master->n - 1 - zpos;
+	int pow = me->master->n - zpos;
 
 	for (int i = 0; i < sub_map_szs [zpos]; i++) {
 		int clause = sub_map[zpos][i];
@@ -136,7 +136,9 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 
 	// add 2^pos_parm to Z
 
-	for (int i = me->master->n - pos_parm; i >= 0; i--) {
+	int pos = pos_parm < 0 ? -pos_parm : pos_parm;
+
+	for (int i = me->master->n - pos; i >= 0; i--) {
 
 		// if carry, continue loop, if no carry, break
 		if (me->Z[i]) {
@@ -151,7 +153,7 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 	}
 
 	// zero out all lower bits of Z
-	for (int j = me->master->n - pos_parm + 1; j <= me->master->n ; j++)
+	for (int j = me->master->n - pos + 1; j <= me->master->n ; j++)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me , j, false);
@@ -192,15 +194,15 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 
 	int ret_jump = 0;
 
-	int pos = repeat_jump;
-	while (me->implies_arr[pos] != -(pos+1) && me->implies_arr[pos] != pos + 1)
-		pos = me->implies_arr[pos] < 0 ? -(me->implies_arr[pos]-1) : me->implies_arr[pos] - 1;
-	if (me->implies_arr[pos] == -(pos + 1)) {
-		me->implies_arr[pos] = pos + 1;
+	int pos = repeat_jump < 0 ? -repeat_jump : repeat_jump ;
+	while (pos < me->master->n && me->implies_arr[pos] != -pos && me->implies_arr[pos] != pos)
+		pos = me->implies_arr[pos] < 0 ? -(me->implies_arr[pos]) + 1 : me->implies_arr[pos] + 1;
+	if (me->implies_arr[pos] == -pos) {
+		me->implies_arr[pos] = pos;
 		ret_jump = pos;
 	}
-	else if (me->implies_arr[pos] == pos + 1) {
-		me->implies_arr[pos] = -(pos+2);
+	else if (me->implies_arr[pos] == pos) {
+		me->implies_arr[pos] = -(pos+1);
 		ret_jump = pos;
 	}
 
@@ -237,7 +239,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		///*
 		count++;
 
-		if (count >= 1) {
+		if (count >= 1048576*8) {
 			count = 0;
 			//
 			for (int i = 0; i <= me->master->n; i++)
