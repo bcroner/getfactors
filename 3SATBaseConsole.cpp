@@ -151,14 +151,14 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 			break;
 		}
 	}
-	///*
+	/*
 	// zero out all lower bits of Z
 	for (int j = me->master->n - pos + 1; j <= me->master->n ; j++)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me , j, false);
 		}
-	//*/
+	*/
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
@@ -196,13 +196,13 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 	int ret_jump = 0;
 
 	int pos = repeat_jump < 0 ? -repeat_jump : repeat_jump ;
-	while (pos < me->master->n && me->implies_arr[pos] != -pos && me->implies_arr[pos] != pos)
-		pos = me->implies_arr[pos] < 0 ? -(me->implies_arr[pos]) + 1 : me->implies_arr[pos] + 1;
-	if (me->implies_arr[pos] == -pos) {
+	while (pos < me->master->n && me->implies_arr[pos] != (-pos - 1) && me->implies_arr[pos] != (pos+1))
+		pos = me->implies_arr[pos] < 0 ? -(me->implies_arr[pos]) : me->implies_arr[pos];
+	if (me->implies_arr[pos] == -pos - 1) {
 		me->implies_arr[pos] = pos;
 		ret_jump = pos;
 	}
-	else if (me->implies_arr[pos] == pos) {
+	else if (me->implies_arr[pos] == pos + 1) {
 		me->implies_arr[pos] = -(pos+1);
 		ret_jump = pos;
 	}
@@ -240,7 +240,8 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		///*
 		count++;
 
-		if (count >= 1048576*8) {
+		//if (count >= 1048576*8) {
+		if ( count >= 1) {
 			count = 0;
 			//
 			for (int i = 0; i <= me->master->n; i++)
