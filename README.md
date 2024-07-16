@@ -9,3 +9,6 @@ It is buggy but it clearly and constructively shows, in source code form, that P
 I'm currently debugging this and setting up multithreading, as it is embarassingly parallelizable.
 
 I published some of the work at https://www.amazon.com/NP-3SAT-Coverage-False-Clauses-ebook/dp/B08P93KY4B?ref_=ast_author_mpb in November of 2020.
+
+This source code has some sort of a performance bug in it that hinders its ability to crack larger problems. I'm calling on
+all tech studs to take a fresh look at this, fork it, and fix what's wrong. I'm just so burned out and sick of working on it.
