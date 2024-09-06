@@ -212,47 +212,17 @@ int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
 
 bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
-	me->pow_jump = SATSolver_initializePowJump ( me );
+	
 	//__int64 prev_pow_jump = me->pow_jump;
 
 	// main loop- until end condition
 
-	int count = 0;
+	// int count = 0;
 
 	do {
 
-		if (me->pow_jump < -me->master->n)
-			break;
-
+		me->pow_jump = SATSolver_initializePowJump(me);
 		SATSolver_add(me, me->pow_jump);
-
-		int temp_jump = SATSolver_initializePowJump(me);
-		me->pow_jump = me->implies_arr[temp_jump];
-
-		//if (prev_pow_jump == me->pow_jump && me->Z[prev_pow_jump])
-		//	me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
-
-		if (me->Z[me->pow_jump])
-			me->pow_jump = SATSolver_manageIncrement(me, me->pow_jump);
-
-		//prev_pow_jump = me->pow_jump;
-
-		///*
-		count++;
-
-		//if (count >= 1048576*8) {
-		if ( count >= 1) {
-			count = 0;
-			//
-			for (int i = 0; i <= me->master->n; i++)
-				printf_s("%d", me->Z[i]);
-			printf_s(" jump: %d", me->pow_jump);
-			printf_s("\n");
-			//
-		}
-		//*/
-
-		//printf_s("%d\n", me->pow_jump);
 
 	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
 
