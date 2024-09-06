@@ -189,35 +189,9 @@ bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
 }
 
-int SATSolver_manageIncrement(SATSolver * me, int repeat_jump) {
-
-	// update implies_arr
-
-	int ret_jump = 0;
-
-	int pos = repeat_jump < 0 ? -repeat_jump : repeat_jump ;
-	while (pos < me->master->n && me->implies_arr[pos] != (-pos - 1) && me->implies_arr[pos] != (pos+1))
-		pos = me->implies_arr[pos] < 0 ? -(me->implies_arr[pos]) : me->implies_arr[pos];
-	if (me->implies_arr[pos] == -pos - 1) {
-		me->implies_arr[pos] = pos;
-		ret_jump = pos;
-	}
-	else if (me->implies_arr[pos] == pos + 1) {
-		me->implies_arr[pos] = -(pos+1);
-		ret_jump = pos;
-	}
-
-	return ret_jump;
-}
-
 bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
-	
-	//__int64 prev_pow_jump = me->pow_jump;
-
 	// main loop- until end condition
-
-	// int count = 0;
 
 	do {
 
@@ -436,9 +410,9 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// initialize implies array with self-referential jump power implications
 
-	me->implies_arr = new int[n_parm];
-	for (int i = 0; i < n_parm; i++)
-		me->implies_arr[i] = -(i+1);
+	//me->implies_arr = new int[n_parm];
+	//for (int i = 0; i < n_parm; i++)
+	//	me->implies_arr[i] = -(i+1);
 
 	// initialize context with dummy heads
 
@@ -666,7 +640,7 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 
 void SATSolver_destroy(SATSolver * me) {
 
-	delete [] me->implies_arr;
+	//delete [] me->implies_arr;
 	
 	for (int i = 0; i < me->master->n; i++) {
 
