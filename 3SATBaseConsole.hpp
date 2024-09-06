@@ -39,7 +39,7 @@ typedef struct {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
 
-	int*	  implies_arr;		// efficiency: what a power jump implies about a higher power jump
+	//int*	  implies_arr;		// efficiency: what a power jump implies about a higher power jump
 	cls_lst** pos_imp_ctx;		// context of implies array for accounting of each higher jump implication: positive
 	cls_lst** neg_imp_ctx;		// context of implies array for accounting of each higher jump implication: negative
 
