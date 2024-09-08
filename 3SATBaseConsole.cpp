@@ -167,7 +167,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
 	for (int i = 0; i < me->master->k; i++)
-		if (me->cls_tly[i] >= 3 && me->master->powers[i] > max_jump)
+		if (me->cls_tly[i] != 0 && me->master->powers[i] > max_jump)
 			max_jump = me->master->powers[i] < 0 ? -me->master->powers[i] - 1 : me->master->powers[i] - 1;
 
 	return max_jump;
