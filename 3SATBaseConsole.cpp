@@ -88,7 +88,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int clause = sub_map[zpos][i];
 		int old_val = me->cls_tly[clause];
 		me->cls_tly[clause] = old_val - 1;
-		if (old_val == 3) {
+		if (old_val != 0) {
 			bool deleted = false;
 			// break up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
@@ -101,9 +101,6 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 				delete dump;
 				deleted = true;
 			}
-			// update implies_arr
-			if (deleted && implies_ctx[pow]->next == NULL)
-				me->implies_arr[pow] = me->master->powers[clause] > 0 ? pow : -pow;
 		}
 	}
 
@@ -113,7 +110,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int clause = add_map[zpos] [i];
 		int new_val = me->cls_tly [clause] + 1;
 		me->cls_tly[clause] = new_val;
-		if (new_val == 3) {
+		if (new_val != 0) {
 			// build up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
