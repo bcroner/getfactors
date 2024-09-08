@@ -190,10 +190,25 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	// main loop- until end condition
 
+	int count = 0;
+
 	do {
 
 		me->pow_jump = SATSolver_initializePowJump(me);
 		SATSolver_add(me, me->pow_jump);
+
+		count++;
+
+		if (count == 1048576) {
+
+			count = 0;
+
+			for (int i = 0; i <= me->master->n; i++)
+				printf_s("%d", me->Z[i]);
+			printf_s(" jump: %d", me->pow_jump);
+			printf_s("\n");
+		}
+
 
 	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
 
@@ -391,16 +406,12 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
 				int cls_ix = me->master->pos_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
-				if (old_val > 3)
-					old_val = old_val;
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 		else
 			for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
 				int cls_ix = me->master->neg_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
-				if (old_val > 3)
-					old_val = old_val;
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 	}
@@ -637,8 +648,6 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 
 void SATSolver_destroy(SATSolver * me) {
 
-	//delete [] me->implies_arr;
-	
 	for (int i = 0; i < me->master->n; i++) {
 
 		cls_lst* ptr = me->pos_imp_ctx[i]->next;
