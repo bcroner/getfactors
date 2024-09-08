@@ -89,7 +89,6 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		me->cls_tly[clause] = old_val - 1;
 		if (old_val != 0) {
-			bool deleted = false;
 			// break up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
@@ -99,7 +98,6 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 				cls_lst* dump = ptr->next;
 				ptr->next = ptr->next->next;
 				delete dump;
-				deleted = true;
 			}
 		}
 	}
@@ -148,14 +146,6 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 			break;
 		}
 	}
-	/*
-	// zero out all lower bits of Z
-	for (int j = me->master->n - pos + 1; j <= me->master->n ; j++)
-		if (me->Z[j]) {
-			me->Z[j] = false;
-			SATSolver_updateTF(me , j, false);
-		}
-	*/
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
