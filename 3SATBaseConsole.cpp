@@ -406,16 +406,12 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
 				int cls_ix = me->master->pos_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
-				if (old_val > 3)
-					old_val = old_val;
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 		else
 			for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
 				int cls_ix = me->master->neg_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
-				if (old_val > 3)
-					old_val = old_val;
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 	}
