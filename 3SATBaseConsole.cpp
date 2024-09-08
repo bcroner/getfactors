@@ -92,9 +92,9 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			// break up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
-			while (ptr->next != NULL && ptr->next->cls_id != clause)
+			while (ptr != NULL && ptr->next != NULL && ptr->next->cls_id != clause)
 				ptr = ptr->next;
-			if (ptr->next != NULL) {
+			if (ptr != NULL && ptr->next != NULL) {
 				cls_lst* dump = ptr->next;
 				ptr->next = ptr->next->next;
 				delete dump;
@@ -112,8 +112,13 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			// build up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
-			while (ptr->next != NULL)
+			while (ptr != NULL && ptr->next != NULL)
 				ptr = ptr->next;
+			if (ptr == NULL) {
+				ptr = new cls_lst();
+				ptr->cls_id = clause;
+				ptr->next = NULL;
+			}
 			ptr->next = new cls_lst();
 			ptr->next->cls_id = clause;
 			ptr->next->next = NULL;
@@ -745,10 +750,6 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 		pos++;
 	} while (pos < top && !solved);
 
-	// free up master resources
-
-	SATSolverMaster_destroy(master);
-	delete master;
 
 	for (int i = 0; i < num_threads; i++)
 		if (solved && i != thread_id) {
@@ -761,6 +762,12 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	if (solved)
 		for (int i = 0; i < n_parm; i++)
 			(*arr)[i] = arrs[thread_id][i];
+
+	// free up master resources
+
+	SATSolverMaster_destroy(master);
+	delete master;
+
 
 	return solved;
 }
