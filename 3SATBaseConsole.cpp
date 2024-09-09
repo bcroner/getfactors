@@ -190,6 +190,11 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 	do {
 
 		me->pow_jump = SATSolver_initializePowJump(me);
+
+		if (me->pow_jump == -me->master->n - 1)
+			break;
+
+
 		SATSolver_add(me, me->pow_jump);
 
 		count++;
