@@ -87,12 +87,13 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 	for (int i = 0; i < sub_map_szs [zpos]; i++) {
 		int clause = sub_map[zpos][i];
 		int old_val = me->cls_tly[clause];
-		me->cls_tly[clause] = old_val - 1;
-		if (old_val != 0) {
+		int new_val = old_val - 1;
+		me->cls_tly[clause] = new_val;
+		if (old_val != 0 && new_val == 0) {
 			// break up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
-			while (ptr != NULL && ptr->next != NULL && ptr->next->cls_id != clause)
+			while (ptr->next != NULL && ptr->next->cls_id != clause)
 				ptr = ptr->next;
 			if (ptr != NULL && ptr->next != NULL) {
 				cls_lst* dump = ptr->next;
@@ -106,19 +107,15 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 	for (int i = 0; i < add_map_szs[zpos]; i++) {
 		int clause = add_map[zpos] [i];
-		int new_val = me->cls_tly [clause] + 1;
+		int old_val = me->cls_tly[clause];
+		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
-		if (new_val != 0) {
+		if (new_val != 0 && old_val == 0) {
 			// build up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
-			while (ptr != NULL && ptr->next != NULL)
+			while (ptr->next != NULL)
 				ptr = ptr->next;
-			if (ptr == NULL) {
-				ptr = new cls_lst();
-				ptr->cls_id = clause;
-				ptr->next = NULL;
-			}
 			ptr->next = new cls_lst();
 			ptr->next->cls_id = clause;
 			ptr->next->next = NULL;
