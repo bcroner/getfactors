@@ -157,13 +157,17 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 
 	// initialize return value
 
-	__int64 max_jump = -me->master->n - 1;
+	__int64 max_jump = 0;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
-	for (int i = 0; i < me->master->k; i++)
-		if (me->cls_tly[i] != 0 && me->master->powers[i] > max_jump)
-			max_jump = me->master->powers[i] < 0 ? -me->master->powers[i] - 1 : me->master->powers[i] - 1;
+	for (int i = 0; i < me->master->k; i++) {
+		__int64 temp_jump = me->master->powers[i];
+		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
+		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
+		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump)
+			max_jump = me->master->powers[i] ;
+	}
 
 	return max_jump;
 
@@ -191,15 +195,16 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		me->pow_jump = SATSolver_initializePowJump(me);
 
-		if (me->pow_jump == -me->master->n - 1)
+		if (me->pow_jump == 0)
 			break;
 
+		__int64 temp_pow_jump = me->pow_jump < 0 ? me->pow_jump + 1 : me->pow_jump - 1;
 
-		SATSolver_add(me, me->pow_jump);
+		SATSolver_add(me, temp_pow_jump);
 
 		count++;
 
-		if (count == 1048576) {
+		if (count == 1 /*1048576*/) {
 
 			count = 0;
 
