@@ -87,12 +87,13 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 	for (int i = 0; i < sub_map_szs [zpos]; i++) {
 		int clause = sub_map[zpos][i];
 		int old_val = me->cls_tly[clause];
-		me->cls_tly[clause] = old_val - 1;
-		if (old_val != 0) {
+		int new_val = old_val - 1;
+		me->cls_tly[clause] = new_val;
+		if (old_val != 0 && new_val == 0) {
 			// break up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
-			while (ptr != NULL && ptr->next != NULL && ptr->next->cls_id != clause)
+			while (ptr->next != NULL && ptr->next->cls_id != clause)
 				ptr = ptr->next;
 			if (ptr != NULL && ptr->next != NULL) {
 				cls_lst* dump = ptr->next;
@@ -106,19 +107,15 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 	for (int i = 0; i < add_map_szs[zpos]; i++) {
 		int clause = add_map[zpos] [i];
-		int new_val = me->cls_tly [clause] + 1;
+		int old_val = me->cls_tly[clause];
+		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
-		if (new_val != 0) {
+		if (new_val != 0 && old_val == 0) {
 			// build up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
 			cls_lst* ptr = implies_ctx[pow];
-			while (ptr != NULL && ptr->next != NULL)
+			while (ptr->next != NULL)
 				ptr = ptr->next;
-			if (ptr == NULL) {
-				ptr = new cls_lst();
-				ptr->cls_id = clause;
-				ptr->next = NULL;
-			}
 			ptr->next = new cls_lst();
 			ptr->next->cls_id = clause;
 			ptr->next->next = NULL;
@@ -157,13 +154,17 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 
 	// initialize return value
 
-	__int64 max_jump = -me->master->n - 1;
+	__int64 max_jump = 0;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
-	for (int i = 0; i < me->master->k; i++)
-		if (me->cls_tly[i] != 0 && me->master->powers[i] > max_jump)
-			max_jump = me->master->powers[i] < 0 ? -me->master->powers[i] - 1 : me->master->powers[i] - 1;
+	for (int i = 0; i < me->master->k; i++) {
+		__int64 temp_jump = me->master->powers[i];
+		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
+		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
+		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump)
+			max_jump = me->master->powers[i] ;
+	}
 
 	return max_jump;
 
@@ -191,15 +192,16 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		me->pow_jump = SATSolver_initializePowJump(me);
 
-		if (me->pow_jump == -me->master->n - 1)
+		if (me->pow_jump == 0)
 			break;
 
+		__int64 temp_pow_jump = me->pow_jump < 0 ? me->pow_jump + 1 : me->pow_jump - 1;
 
-		SATSolver_add(me, me->pow_jump);
+		SATSolver_add(me, temp_pow_jump);
 
 		count++;
 
-		if (count == 1048576) {
+		if (count == 1 /*1048576*/) {
 
 			count = 0;
 
