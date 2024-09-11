@@ -426,9 +426,9 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// initialize context with dummy heads
 
-	me->pos_imp_ctx = new cls_lst * [n_parm];
-	me->neg_imp_ctx = new cls_lst * [n_parm];
-	for (int i = 0; i < n_parm; i++) {
+	me->pos_imp_ctx = new cls_lst * [n_parm + 1];
+	me->neg_imp_ctx = new cls_lst * [n_parm + 1];
+	for (int i = 0; i < n_parm + 1; i++) {
 		me->pos_imp_ctx[i] = new cls_lst();
 		me->pos_imp_ctx[i]->cls_id = -1;
 		me->pos_imp_ctx[i]->next = NULL;
