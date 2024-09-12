@@ -89,20 +89,6 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val - 1;
 		me->cls_tly[clause] = new_val;
-		///*
-		if (old_val != 0 && new_val == 0) {
-			// break up implies_ctx
-			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
-			cls_lst* ptr = implies_ctx[pow];
-			while (ptr->next != NULL && ptr->next->cls_id != clause)
-				ptr = ptr->next;
-			if (ptr != NULL && ptr->next != NULL) {
-				cls_lst* dump = ptr->next;
-				ptr->next = ptr->next->next;
-				delete dump;
-			}
-		}
-		//*/
 	}
 
 	// now do the additions
@@ -112,18 +98,6 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
-		///*
-		if (new_val != 0 && old_val == 0) {
-			// build up implies_ctx
-			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
-			cls_lst* ptr = implies_ctx[pow];
-			while (ptr->next != NULL)
-				ptr = ptr->next;
-			ptr->next = new cls_lst();
-			ptr->next->cls_id = clause;
-			ptr->next->next = NULL;
-		}
-		//*/
 	}
 }
 
@@ -206,9 +180,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count == 1 /*1048576*/) {
+		if (count % 1 == 0/*1048576*/) {
 
-			count = 0;
+			//count = 0;
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -218,6 +192,8 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 
 	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
+
+	printf_s("count: %d\n", count);
 
 	if (SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n))
 		return false ;
@@ -423,24 +399,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			}
 	}
 
-	// initialize implies array with self-referential jump power implications
-
-	//me->implies_arr = new int[n_parm];
-	//for (int i = 0; i < n_parm; i++)
-	//	me->implies_arr[i] = -(i+1);
-
-	// initialize context with dummy heads
-
-	me->pos_imp_ctx = new cls_lst * [n_parm + 1];
-	me->neg_imp_ctx = new cls_lst * [n_parm + 1];
-	for (int i = 0; i < n_parm + 1; i++) {
-		me->pos_imp_ctx[i] = new cls_lst();
-		me->pos_imp_ctx[i]->cls_id = -1;
-		me->pos_imp_ctx[i]->next = NULL;
-		me->neg_imp_ctx[i] = new cls_lst();
-		me->neg_imp_ctx[i]->cls_id = -1;
-		me->neg_imp_ctx[i]->next = NULL;
-	}
+	// delete
 
 	delete[] lst_t;
 	delete[] lst_f;
