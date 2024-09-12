@@ -89,6 +89,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val - 1;
 		me->cls_tly[clause] = new_val;
+		///*
 		if (old_val != 0 && new_val == 0) {
 			// break up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
@@ -101,6 +102,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 				delete dump;
 			}
 		}
+		//*/
 	}
 
 	// now do the additions
@@ -110,6 +112,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
+		///*
 		if (new_val != 0 && old_val == 0) {
 			// build up implies_ctx
 			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
@@ -120,6 +123,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			ptr->next->cls_id = clause;
 			ptr->next->next = NULL;
 		}
+		//*/
 	}
 }
 
@@ -162,7 +166,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump)
+		bool same_sign = temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true;
+		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump && same_sign)
 			max_jump = me->master->powers[i] ;
 	}
 
