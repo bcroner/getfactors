@@ -616,30 +616,6 @@ void SATSolver_destroy(SATSolver * me) {
 
 	for (int i = 0; i < me->master->n; i++) {
 
-		cls_lst* ptr = me->pos_imp_ctx[i]->next;
-		while (ptr != NULL) {
-
-			cls_lst* dump = ptr;
-			ptr = ptr->next;
-			delete dump;
-
-		}
-		delete me->pos_imp_ctx[i];
-
-		ptr = me->neg_imp_ctx[i]->next;
-		while (ptr != NULL) {
-
-			cls_lst* dump = ptr;
-			ptr = ptr->next;
-			delete dump;
-
-		}
-		delete me->neg_imp_ctx[i];
-	}
-
-	delete [] me->pos_imp_ctx;
-	delete[] me->neg_imp_ctx;
-
 	delete [] me->cls_tly;
 	delete [] me->Z;
 	delete [] me->begin;
