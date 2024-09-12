@@ -14,13 +14,6 @@
 #define FALSE_3SAT -1
 #define TRUE_3SAT 1
 
-typedef struct cls_lst {
-
-	int cls_id;		// clause id for implies context
-	cls_lst* next;	// linked list
-
-} cls_lst ;
-
 typedef struct {
 
 	int* decoding;		// decoding of variables
