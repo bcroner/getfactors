@@ -14,10 +14,10 @@
 #define FALSE_3SAT -1
 #define TRUE_3SAT 1
 
-typedef struct {
+typedef struct CLS_CTX_struct {
 
 	int cls_id;
-	CLS_CTX* next;
+	CLS_CTX_struct * next;
 
 } CLS_CTX ;
 
