@@ -94,7 +94,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			while (temp->next != NULL && temp->next->cls_id != clause)
 				temp = temp->next;
 
-			if (temp->next->cls_id == clause) {
+			if (temp->next != NULL && temp->next->cls_id == clause) {
 				CLS_CTX* temp = me->cls_ctx[zpos]->next->next;
 				CLS_CTX* dump = me->cls_ctx[zpos]->next;
 				me->cls_ctx[zpos]->next = temp;
@@ -640,6 +640,20 @@ void SATSolver_destroy(SATSolver * me) {
 		delete[] me->end;
 
 	}
+
+	for (int i = 0; i < me->master->n; i++) {
+
+		CLS_CTX* dump = me->cls_ctx[i];
+		CLS_CTX* temp = dump->next;
+		do {
+			delete dump;
+			dump = temp;
+			temp = temp->next;
+		} while (temp != NULL);
+
+	}
+
+	delete me->cls_ctx;
 
 	delete me->implies_arr;
 
