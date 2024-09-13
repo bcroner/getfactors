@@ -94,7 +94,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			while (temp->next != NULL && temp->next->cls_id != clause)
 				temp = temp->next;
 
-			if (temp->next->cls_id == clause) {
+			if (temp->next != NULL && temp->next->cls_id == clause) {
 				CLS_CTX* temp = me->cls_ctx[zpos]->next->next;
 				CLS_CTX* dump = me->cls_ctx[zpos]->next;
 				me->cls_ctx[zpos]->next = temp;
