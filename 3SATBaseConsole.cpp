@@ -138,9 +138,9 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		bool same_sign = temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true;
+		bool same_sign = (temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true);
 		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump && same_sign)
-			max_jump = me->master->powers[i] ;
+			max_jump = temp_jump;
 	}
 
 	return max_jump;
