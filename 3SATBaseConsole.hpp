@@ -16,6 +16,13 @@
 
 typedef struct {
 
+	int cls_id;
+	CLS_CTX* next;
+
+} CLS_CTX ;
+
+typedef struct {
+
 	int* decoding;		// decoding of variables
 	int** pos_map;		// map of non-negated literals to clauses for tallying
 	int** neg_map;		// map of negated literals to clauses for tallying
@@ -32,6 +39,7 @@ typedef struct {
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
 
 	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
+	CLS_CTX** cls_ctx;			// clause context for calculating whether to modify implies_arr (a Z[i] could have multiple false clauses)
 
 	__int64* implies_arr;		// what is implied by the encounter of a jump
 

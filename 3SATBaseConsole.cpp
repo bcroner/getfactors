@@ -88,8 +88,21 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int new_val = old_val - 1;
 		me->cls_tly[clause] = new_val;
 
-		if (old_val > 0 && new_val == 0)
-			me->implies_arr[zpos] = -(zpos + 1);
+		if (old_val > 0 && new_val == 0) {
+
+			CLS_CTX* temp = me->cls_ctx[zpos];
+			while (temp->next != NULL && temp->next->cls_id != clause)
+				temp = temp->next;
+
+			if (temp->next->cls_id == clause) {
+				CLS_CTX* temp = me->cls_ctx[zpos]->next->next;
+				CLS_CTX* dump = me->cls_ctx[zpos]->next;
+				me->cls_ctx[zpos]->next = temp;
+				delete dump;
+			}
+			if (me->cls_ctx[zpos]->next == NULL)
+				me->implies_arr[zpos] = -(zpos + 1);
+		}
 	}
 
 	// now do the additions
@@ -99,6 +112,13 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
+
+		if (old_val == 0 && new_val > 0) {
+			CLS_CTX* temp = me->cls_ctx[zpos]->next;
+			me->cls_ctx[zpos]->next = new CLS_CTX();
+			me->cls_ctx[zpos]->next->cls_id = clause;
+			me->cls_ctx[zpos]->next->next = temp;
+		}
 	}
 }
 
@@ -416,6 +436,16 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	for (__int64 i = 0; i < n_parm; i++)
 		me->implies_arr[i] = -(i+1);
+
+	// create clause context list
+
+	me->cls_ctx = new CLS_CTX * [n_parm];
+	for (int i = 0; i < n_parm; i++) {
+		me->cls_ctx[i] = new CLS_CTX();
+		me->cls_ctx[i]->cls_id = -1;
+		me->cls_ctx[i]->next = NULL;
+	}
+
 
 	// delete
 
