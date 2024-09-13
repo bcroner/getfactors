@@ -33,6 +33,8 @@ typedef struct {
 
 	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
 
+	__int64* implies_arr;		// what is implied by the encounter of a jump
+
 	bool* Z;					// current position in permutation space
 	__int64 pow_jump;			// current value of jump, to be updated each cycle
 	bool* begin;				// first element begin of search space
@@ -45,6 +47,7 @@ void MyQSort(int arr[], int low_parm, int high_parm);
 void SATSolver_updateTF(SATSolver* me, int lit, bool target);
 void SATSolver_add(SATSolver* me, int pos_parm);
 __int64 SATSolver_initializePowJump(SATSolver* me);
+__int64 SATSolver_ManageIncrement(SATSolver* me);
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b, int n);
 bool SATSolver_isSat(SATSolver* me, bool *arr);
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n);

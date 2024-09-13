@@ -87,6 +87,9 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val - 1;
 		me->cls_tly[clause] = new_val;
+
+		if (old_val > 0 && new_val == 0)
+			me->implies_arr[zpos] = -(zpos + 1);
 	}
 
 	// now do the additions
@@ -147,6 +150,21 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 
 }
 
+__int64 SATSolver_ManageIncrement(SATSolver* me) {
+
+	int pos = me->pow_jump;
+
+	while (pos < me->master->n && (me->implies_arr[pos] == -(pos + 2) || me->implies_arr[pos] == (pos + 2)))
+		pos++;
+
+	if (me->implies_arr[pos] == -(pos + 1))
+		me->implies_arr[pos] = pos + 1;
+	else if (me->implies_arr[pos] == (pos + 1))
+		me->implies_arr[pos] = -(pos + 2);
+
+	return me->implies_arr[pos] < 0 ? -me->implies_arr[pos] - 1 : me->implies_arr[pos] - 1;
+}
+
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
 	for (int i = n; i >= 0; i--)
@@ -172,7 +190,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		if (temp_pow_jump == 0)
 			break;
 
-		 me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
+		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
+
+		me->pow_jump = SATSolver_ManageIncrement(me);
 
 		SATSolver_add(me, me->pow_jump);
 
@@ -389,6 +409,13 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			}
 	}
 
+	// initialize implies_arr
+
+	me->implies_arr = new __int64[n_parm];
+
+	for (__int64 i = 0; i < n_parm; i++)
+		me->implies_arr[i] = -(i+1);
+
 	// delete
 
 	delete[] lst_t;
@@ -582,6 +609,8 @@ void SATSolver_destroy(SATSolver * me) {
 		delete[] me->end;
 
 	}
+
+	delete me->implies_arr;
 
 }
 
