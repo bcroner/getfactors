@@ -192,7 +192,8 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
 
-		me->pow_jump = SATSolver_ManageIncrement(me);
+		if ( me->Z[me->pow_jump])
+			me->pow_jump = SATSolver_ManageIncrement(me);
 
 		SATSolver_add(me, me->pow_jump);
 
