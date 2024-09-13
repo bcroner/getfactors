@@ -178,7 +178,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count % 1048576 == 0) {
+		if (count % (16 * 1048576) == 0) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -367,7 +367,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	for (int i = 0; i < k_parm; i++)
 		if (lst_t[i] > 0)
-			me->cls_tly[i] = 0;
+			me->cls_tly[i] = -3;
 		else
 			me->cls_tly[i] = lst_f[i];
 
