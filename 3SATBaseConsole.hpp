@@ -14,13 +14,6 @@
 #define FALSE_3SAT -1
 #define TRUE_3SAT 1
 
-typedef struct cls_lst {
-
-	int cls_id;		// clause id for implies context
-	cls_lst* next;	// linked list
-
-} cls_lst ;
-
 typedef struct {
 
 	int* decoding;		// decoding of variables
@@ -29,7 +22,6 @@ typedef struct {
 	int* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	int* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	int* powers;		// powers to jump forward by
-	cls_lst** pow_cls;	// powers to matching clauses list
 	int k;				// original number of clauses
 	int n;				// number of variables
 
@@ -38,10 +30,6 @@ typedef struct {
 typedef struct {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
-
-	//int*	  implies_arr;		// efficiency: what a power jump implies about a higher power jump
-	cls_lst** pos_imp_ctx;		// context of implies array for accounting of each higher jump implication: positive
-	cls_lst** neg_imp_ctx;		// context of implies array for accounting of each higher jump implication: negative
 
 	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
 

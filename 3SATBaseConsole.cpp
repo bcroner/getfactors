@@ -82,25 +82,11 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 	// first do the subtractions
 
-	int pow = me->master->n - zpos;
-
 	for (int i = 0; i < sub_map_szs [zpos]; i++) {
 		int clause = sub_map[zpos][i];
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val - 1;
 		me->cls_tly[clause] = new_val;
-		if (old_val != 0 && new_val == 0) {
-			// break up implies_ctx
-			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
-			cls_lst* ptr = implies_ctx[pow];
-			while (ptr->next != NULL && ptr->next->cls_id != clause)
-				ptr = ptr->next;
-			if (ptr != NULL && ptr->next != NULL) {
-				cls_lst* dump = ptr->next;
-				ptr->next = ptr->next->next;
-				delete dump;
-			}
-		}
 	}
 
 	// now do the additions
@@ -110,22 +96,12 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int old_val = me->cls_tly[clause];
 		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
-		if (new_val != 0 && old_val == 0) {
-			// build up implies_ctx
-			cls_lst** implies_ctx = me->master->powers[clause] > 0 ? me->pos_imp_ctx : me->neg_imp_ctx;
-			cls_lst* ptr = implies_ctx[pow];
-			while (ptr->next != NULL)
-				ptr = ptr->next;
-			ptr->next = new cls_lst();
-			ptr->next->cls_id = clause;
-			ptr->next->next = NULL;
-		}
 	}
 }
 
 /*
 * 
-* add- add a number 2^pos_parm to Z, zeroing out all lower bits
+* add- add a number 2^pos_parm to Z
 * 
 */
 
@@ -135,16 +111,16 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 
 	int pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
-	for (int i = me->master->n - pos; i >= 0; i--) {
+	for (int i = 0; i < me->master->n - pos; i++) {
 
 		// if carry, continue loop, if no carry, break
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me , i, false);
+		if (me->Z[pos + i]) {
+			me->Z[pos + i] = false;
+			SATSolver_updateTF(me , pos + i, false);
 		}
 		else {
-			me->Z[i] = true;
-			SATSolver_updateTF(me , i, true);
+			me->Z[pos + i] = true;
+			SATSolver_updateTF(me , pos + i, true);
 			break;
 		}
 	}
@@ -162,7 +138,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump)
+		bool same_sign = temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true;
+		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump && same_sign)
 			max_jump = me->master->powers[i] ;
 	}
 
@@ -172,7 +149,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
-	for (int i = 0; i <= n; i++)
+	for (int i = n; i >= 0; i--)
 		if (a[i] && !b[i])
 			return true;
 		else if (!a[i] && b[i])
@@ -190,20 +167,18 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	do {
 
-		me->pow_jump = SATSolver_initializePowJump(me);
+		__int64 temp_pow_jump = SATSolver_initializePowJump(me);
 
-		if (me->pow_jump == 0)
+		if (temp_pow_jump == 0)
 			break;
 
-		__int64 temp_pow_jump = me->pow_jump < 0 ? me->pow_jump + 1 : me->pow_jump - 1;
+		 me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
 
-		SATSolver_add(me, temp_pow_jump);
+		SATSolver_add(me, me->pow_jump);
 
 		count++;
 
-		if (count == 1 /*1048576*/) {
-
-			count = 0;
+		if (count % 1048576 == 0) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -213,6 +188,8 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 
 	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
+
+	//printf_s("count: %d\n", count);
 
 	if (SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n))
 		return false ;
@@ -226,15 +203,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n) {
 
 	bool* prod = new bool[n];
-	for (int i = 0; i < n - 1; i++)
+	for (int i = 0; i < n ; i++)
 		prod[i] = false;
-	prod[n - 1] = true;
-
-	for (int i = 0; i < pow; i++) {
-		bool* dump = prod;
-		prod = SATSolver_bool_mul(prod, base, n);
-		delete[] dump;
-	}
+	prod[pow] = true;
 
 	return prod;
 
@@ -275,9 +246,9 @@ bool* SATSolver_bool_add(bool* a, bool* b, int n) {
 
 	for (int i = 0; i < n; i++) {
 
-		bool sum_temp = (!a[n - 1 - i] && b[n - 1 - i]) || (a[n - 1 - i] && !b[n - 1 - i]);
-		ret[n - 1 - i] = (!sum_temp && carry) || (sum_temp && !carry);
-		carry = (a[n - 1 - i] && b[n - 1 - i]) || (a[n - 1 - i] && carry) || (b[n - 1 - i] && carry);
+		bool sum_temp = (!a[i] && b[i]) || (a[i] && !b[i]);
+		ret[i] = (!sum_temp && carry) || (sum_temp && !carry);
+		carry = (a[i] && b[i]) || (a[i] && carry) || (b[i] && carry);
 
 	}
 
@@ -418,24 +389,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			}
 	}
 
-	// initialize implies array with self-referential jump power implications
-
-	//me->implies_arr = new int[n_parm];
-	//for (int i = 0; i < n_parm; i++)
-	//	me->implies_arr[i] = -(i+1);
-
-	// initialize context with dummy heads
-
-	me->pos_imp_ctx = new cls_lst * [n_parm + 1];
-	me->neg_imp_ctx = new cls_lst * [n_parm + 1];
-	for (int i = 0; i < n_parm + 1; i++) {
-		me->pos_imp_ctx[i] = new cls_lst();
-		me->pos_imp_ctx[i]->cls_id = -1;
-		me->pos_imp_ctx[i]->next = NULL;
-		me->neg_imp_ctx[i] = new cls_lst();
-		me->neg_imp_ctx[i]->cls_id = -1;
-		me->neg_imp_ctx[i]->next = NULL;
-	}
+	// delete
 
 	delete[] lst_t;
 	delete[] lst_f;
@@ -485,16 +439,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		histogram[pos] = -1;
 	}
 
-	// create the pow_cls list initialized with dummy heads
-
-	master->pow_cls = new cls_lst * [n_parm];
-
-	for (int i = 0; i < n_parm; i++) {
-		master->pow_cls[i] = new cls_lst();
-		master->pow_cls[i]->cls_id = -1;
-		master->pow_cls[i]->next = NULL;
-	}
-
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
 	master->powers = new int[k_parm];
@@ -517,14 +461,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - lowest) - 1 : (n_parm - 1 - lowest) + 1;
 
-		// record the reverse jump power lookup
-
-		cls_lst* ptr = master->pow_cls[n_parm - 1 - lowest];
-		while (ptr->next != NULL)
-			ptr = ptr->next;
-		ptr->next = new cls_lst();
-		ptr->next->cls_id = i;
-		ptr->next->next = NULL;
 	}
 
 	// create the map looking into running tally based on literals pos_map
@@ -549,11 +485,11 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
-			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == -(i + 2)))
+			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
-			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == -(i + 2)))
+			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
-			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == -(i + 2)))
+			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
 		}
 	}
@@ -563,11 +499,11 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
-			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == (i + 2)))
+			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
-			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == (i + 2)))
+			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
-			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == (i + 2)))
+			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
 		}
 	}
@@ -629,18 +565,6 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 		delete [] master->neg_map[i];
 	}
 
-	for (int i = 0; i < master->n; i++) {
-		cls_lst* ptr = master->pow_cls[i]->next;
-		while (ptr != NULL) {
-			cls_lst* dump = ptr;
-			ptr = ptr->next;
-			delete dump;
-		}
-		delete master->pow_cls[i];
-	}
-
-	delete [] master->pow_cls;
-
 	delete [] master->pos_map;
 	delete [] master->neg_map;
 	delete [] master->pos_map_szs;
@@ -652,34 +576,12 @@ void SATSolver_destroy(SATSolver * me) {
 
 	for (int i = 0; i < me->master->n; i++) {
 
-		cls_lst* ptr = me->pos_imp_ctx[i]->next;
-		while (ptr != NULL) {
+		delete[] me->cls_tly;
+		delete[] me->Z;
+		delete[] me->begin;
+		delete[] me->end;
 
-			cls_lst* dump = ptr;
-			ptr = ptr->next;
-			delete dump;
-
-		}
-		delete me->pos_imp_ctx[i];
-
-		ptr = me->neg_imp_ctx[i]->next;
-		while (ptr != NULL) {
-
-			cls_lst* dump = ptr;
-			ptr = ptr->next;
-			delete dump;
-
-		}
-		delete me->neg_imp_ctx[i];
 	}
-
-	delete [] me->pos_imp_ctx;
-	delete[] me->neg_imp_ctx;
-
-	delete [] me->cls_tly;
-	delete [] me->Z;
-	delete [] me->begin;
-	delete [] me->end;
 
 }
 
@@ -727,7 +629,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	__int64 top = 1;
 
-	//int chop = n_parm < 50 ? 0 : 16;
+	//int chop = 16;
 	int chop = 0;
 
 	for (int i = 0; i < chop; i++)
