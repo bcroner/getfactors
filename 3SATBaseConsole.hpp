@@ -33,6 +33,8 @@ typedef struct {
 
 	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
 
+	__int64* implies_arr;		// what is implied by the encounter of a jump
+
 	bool* Z;					// current position in permutation space
 	__int64 pow_jump;			// current value of jump, to be updated each cycle
 	bool* begin;				// first element begin of search space
