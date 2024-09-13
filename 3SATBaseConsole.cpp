@@ -82,8 +82,6 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 	// first do the subtractions
 
-	int pow = me->master->n - zpos;
-
 	for (int i = 0; i < sub_map_szs [zpos]; i++) {
 		int clause = sub_map[zpos][i];
 		int old_val = me->cls_tly[clause];
@@ -103,7 +101,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
 /*
 * 
-* add- add a number 2^pos_parm to Z, zeroing out all lower bits
+* add- add a number 2^pos_parm to Z
 * 
 */
 
@@ -113,16 +111,16 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 
 	int pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
-	for (int i = me->master->n - pos; i >= 0; i--) {
+	for (int i = 0; i < me->master->n - pos; i++) {
 
 		// if carry, continue loop, if no carry, break
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me , i, false);
+		if (me->Z[pos + i]) {
+			me->Z[pos + i] = false;
+			SATSolver_updateTF(me , pos + i, false);
 		}
 		else {
-			me->Z[i] = true;
-			SATSolver_updateTF(me , i, true);
+			me->Z[pos + i] = true;
+			SATSolver_updateTF(me , pos + i, true);
 			break;
 		}
 	}
@@ -143,8 +141,6 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		bool same_sign = temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true;
 		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump && same_sign)
 			max_jump = me->master->powers[i] ;
-		//if (max_jump == -93)
-		//	printf_s("i: %d\n", i);
 	}
 
 	return max_jump;
@@ -153,7 +149,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
-	for (int i = 0; i <= n; i++)
+	for (int i = n; i >= 0; i--)
 		if (a[i] && !b[i])
 			return true;
 		else if (!a[i] && b[i])
@@ -171,20 +167,18 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	do {
 
-		me->pow_jump = SATSolver_initializePowJump(me);
+		__int64 temp_pow_jump = SATSolver_initializePowJump(me);
 
-		if (me->pow_jump == 0)
+		if (temp_pow_jump == 0)
 			break;
 
-		__int64 temp_pow_jump = me->pow_jump < 0 ? - me->pow_jump - 1 : me->pow_jump - 1;
+		 me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
 
-		SATSolver_add(me, temp_pow_jump);
+		SATSolver_add(me, me->pow_jump);
 
 		count++;
 
-		if (count % 1 == 0/*1048576*/) {
-
-			//count = 0;
+		if (count % 1048576 == 0) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -195,7 +189,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
 
-	printf_s("count: %d\n", count);
+	//printf_s("count: %d\n", count);
 
 	if (SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n))
 		return false ;
@@ -209,15 +203,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n) {
 
 	bool* prod = new bool[n];
-	for (int i = 0; i < n - 1; i++)
+	for (int i = 0; i < n ; i++)
 		prod[i] = false;
-	prod[n - 1] = true;
-
-	for (int i = 0; i < pow; i++) {
-		bool* dump = prod;
-		prod = SATSolver_bool_mul(prod, base, n);
-		delete[] dump;
-	}
+	prod[pow] = true;
 
 	return prod;
 
@@ -258,9 +246,9 @@ bool* SATSolver_bool_add(bool* a, bool* b, int n) {
 
 	for (int i = 0; i < n; i++) {
 
-		bool sum_temp = (!a[n - 1 - i] && b[n - 1 - i]) || (a[n - 1 - i] && !b[n - 1 - i]);
-		ret[n - 1 - i] = (!sum_temp && carry) || (sum_temp && !carry);
-		carry = (a[n - 1 - i] && b[n - 1 - i]) || (a[n - 1 - i] && carry) || (b[n - 1 - i] && carry);
+		bool sum_temp = (!a[i] && b[i]) || (a[i] && !b[i]);
+		ret[i] = (!sum_temp && carry) || (sum_temp && !carry);
+		carry = (a[i] && b[i]) || (a[i] && carry) || (b[i] && carry);
 
 	}
 
@@ -472,6 +460,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		// record the jump power of the clause at i
 
 		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - lowest) - 1 : (n_parm - 1 - lowest) + 1;
+
 	}
 
 	// create the map looking into running tally based on literals pos_map
@@ -640,7 +629,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	__int64 top = 1;
 
-	//int chop = n_parm < 50 ? 0 : 16;
+	//int chop = 16;
 	int chop = 0;
 
 	for (int i = 0; i < chop; i++)
