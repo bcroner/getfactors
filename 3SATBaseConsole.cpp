@@ -277,7 +277,7 @@ bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 			simple_pow *= 2;
 
 		if (a >= simple_pow) {
-			ret[n_parm - 1 - i] = true;
+			ret[i] = true;
 			a = a - simple_pow;
 		}
 	}
