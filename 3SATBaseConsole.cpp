@@ -143,6 +143,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		bool same_sign = temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true;
 		if (me->cls_tly[i] != 0 && abs_temp_jump > abs_max_jump && same_sign)
 			max_jump = me->master->powers[i] ;
+		//if (max_jump == -93)
+		//	printf_s("i: %d\n", i);
 	}
 
 	return max_jump;
@@ -174,7 +176,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 		if (me->pow_jump == 0)
 			break;
 
-		__int64 temp_pow_jump = me->pow_jump < 0 ? me->pow_jump + 1 : me->pow_jump - 1;
+		__int64 temp_pow_jump = me->pow_jump < 0 ? - me->pow_jump - 1 : me->pow_jump - 1;
 
 		SATSolver_add(me, temp_pow_jump);
 
@@ -449,16 +451,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		histogram[pos] = -1;
 	}
 
-	// create the pow_cls list initialized with dummy heads
-
-	master->pow_cls = new cls_lst * [n_parm];
-
-	for (int i = 0; i < n_parm; i++) {
-		master->pow_cls[i] = new cls_lst();
-		master->pow_cls[i]->cls_id = -1;
-		master->pow_cls[i]->next = NULL;
-	}
-
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
 	master->powers = new int[k_parm];
@@ -480,15 +472,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		// record the jump power of the clause at i
 
 		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - lowest) - 1 : (n_parm - 1 - lowest) + 1;
-
-		// record the reverse jump power lookup
-
-		cls_lst* ptr = master->pow_cls[n_parm - 1 - lowest];
-		while (ptr->next != NULL)
-			ptr = ptr->next;
-		ptr->next = new cls_lst();
-		ptr->next->cls_id = i;
-		ptr->next->next = NULL;
 	}
 
 	// create the map looking into running tally based on literals pos_map
@@ -513,11 +496,11 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
-			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == -(i + 2)))
+			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
-			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == -(i + 2)))
+			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
-			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == -(i + 2)))
+			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
 		}
 	}
@@ -527,11 +510,11 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
-			if ((lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT) && (lst[j][0] == (i + 2)))
+			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
-			if ((lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT) && (lst[j][1] == (i + 2)))
+			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
-			if ((lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT) && (lst[j][2] == (i + 2)))
+			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
 		}
 	}
@@ -593,18 +576,6 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 		delete [] master->neg_map[i];
 	}
 
-	for (int i = 0; i < master->n; i++) {
-		cls_lst* ptr = master->pow_cls[i]->next;
-		while (ptr != NULL) {
-			cls_lst* dump = ptr;
-			ptr = ptr->next;
-			delete dump;
-		}
-		delete master->pow_cls[i];
-	}
-
-	delete [] master->pow_cls;
-
 	delete [] master->pos_map;
 	delete [] master->neg_map;
 	delete [] master->pos_map_szs;
@@ -616,10 +587,12 @@ void SATSolver_destroy(SATSolver * me) {
 
 	for (int i = 0; i < me->master->n; i++) {
 
-	delete [] me->cls_tly;
-	delete [] me->Z;
-	delete [] me->begin;
-	delete [] me->end;
+		delete[] me->cls_tly;
+		delete[] me->Z;
+		delete[] me->begin;
+		delete[] me->end;
+
+	}
 
 }
 
