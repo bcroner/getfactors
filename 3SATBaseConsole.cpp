@@ -408,7 +408,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	for (int i = 0; i < k_parm; i++)
 		if (lst_t[i] > 0)
-			me->cls_tly[i] = -3;
+			me->cls_tly[i] = 0;
 		else
 			me->cls_tly[i] = lst_f[i];
 
