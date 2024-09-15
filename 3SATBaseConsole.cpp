@@ -88,7 +88,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int new_val = old_val - 1;
 		me->cls_tly[clause] = new_val;
 
-		if (old_val > 0 && new_val == 0) {
+		if (old_val == 3 && new_val < 3) {
 
 			CLS_CTX* temp = me->cls_ctx[zpos];
 			while (temp->next != NULL && temp->next->cls_id != clause)
@@ -113,7 +113,7 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
 
-		if (old_val == 0 && new_val > 0) {
+		if (old_val < 3 && new_val == 3) {
 			CLS_CTX* temp = me->cls_ctx[zpos]->next;
 			me->cls_ctx[zpos]->next = new CLS_CTX();
 			me->cls_ctx[zpos]->next->cls_id = clause;
@@ -162,7 +162,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool same_sign = (temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true);
-		if (me->cls_tly[i] > 0 && abs_temp_jump > abs_max_jump && same_sign)
+		if (me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && same_sign)
 			max_jump = temp_jump;
 	}
 
