@@ -681,6 +681,8 @@ void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k
 		thread_id = tid;
 		cv.notify_all();
 	}
+
+	SATSolver_destroy(s);
 }
 
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
