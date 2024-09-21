@@ -134,7 +134,7 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 
 	int pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
-	for (int i = 0; i < me->master->n - pos; i++) {
+	for (int i = 0; i < me->master->n + 1 - pos; i++) {
 
 		// if carry, continue loop, if no carry, break
 		if (me->Z[pos + i]) {
@@ -161,8 +161,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		bool same_sign = (temp_jump < 0 && me->Z[abs_temp_jump - 1] == false || temp_jump > 0 && me->Z[abs_temp_jump - 1] == true);
-		if (me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && same_sign)
+		if (me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 			max_jump = temp_jump;
 	}
 
@@ -212,14 +211,21 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
 
-		if ( me->Z[me->pow_jump])
-			me->pow_jump = SATSolver_ManageIncrement(me);
+		//if ( me->Z[me->pow_jump])
+		//	me->pow_jump = SATSolver_ManageIncrement(me);
+
+		if (me->pow_jump >= me->master->n) {
+			me->Z[me->master->n] = true;
+			break;
+		}
 
 		SATSolver_add(me, me->pow_jump);
 
 		count++;
 
 		if (count % (16 * 1048576) == 0) {
+
+		//if (true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -230,7 +236,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
 
-	//printf_s("count: %d\n", count);
+	printf_s("count: %d\n", count);
 
 	if (SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n))
 		return false ;
