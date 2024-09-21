@@ -147,6 +147,13 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 			break;
 		}
 	}
+
+	for (int i = pos - 1; i >= 0; i--) {
+		if (me->Z[i]) {
+			me->Z[i] = false;
+			SATSolver_updateTF(me, i, false);
+		}
+	}
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
@@ -223,7 +230,7 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count % (16 * 1048576) == 0) {
+		if (count % (16 * 1024) == 0) {
 
 		//if (true) {
 
