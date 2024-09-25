@@ -75,57 +75,37 @@ void MyQSort(int arr [] , int low_parm, int high_parm)
 
 void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 
-	int** add_map = target ? me->master->pos_map : me->master->neg_map;
-	int* add_map_szs = target ? me->master->pos_map_szs : me->master->neg_map_szs;
-	int** sub_map = target ? me->master->neg_map : me->master->pos_map;
-	int* sub_map_szs = target ? me->master->neg_map_szs : me->master->pos_map_szs;
+	if (target) {
 
-	// first do the subtractions
-
-	for (int i = 0; i < sub_map_szs [zpos]; i++) {
-		int clause = sub_map[zpos][i];
-		int old_val = me->cls_tly[clause];
-		int new_val = old_val - 1;
-		me->cls_tly[clause] = new_val;
-
-		/*
-
-		if (old_val == 3 && new_val < 3) {
-
-			CLS_CTX* temp = me->cls_ctx[zpos];
-			while (temp->next != NULL && temp->next->cls_id != clause)
-				temp = temp->next;
-
-			if (temp->next != NULL && temp->next->cls_id == clause) {
-				CLS_CTX* temp = me->cls_ctx[zpos]->next->next;
-				CLS_CTX* dump = me->cls_ctx[zpos]->next;
-				me->cls_ctx[zpos]->next = temp;
-				delete dump;
-			}
-			if (me->cls_ctx[zpos]->next == NULL)
-				me->implies_arr[zpos] = -(zpos + 1);
+		for (int i = 0; i < me->master->pos_map_szs[zpos]; i++) {
+			int clause = me->master->pos_map[zpos][i];
+			int old_val = me->cls_tly[clause];
+			int new_val = old_val - 1;
+			me->cls_tly[clause] = new_val;
+		}
+		for (int i = 0; i < me->master->neg_map_szs[zpos]; i++) {
+			int clause = me->master->neg_map[zpos][i];
+			int old_val = me->cls_tly[clause];
+			int new_val = old_val + 1;
+			me->cls_tly[clause] = new_val;
 		}
 
-		*/
-	}
+	} 
+	else {
 
-	// now do the additions
-
-	for (int i = 0; i < add_map_szs[zpos]; i++) {
-		int clause = add_map[zpos] [i];
-		int old_val = me->cls_tly[clause];
-		int new_val = old_val + 1;
-		me->cls_tly[clause] = new_val;
-
-		/*
-
-		if (old_val < 3 && new_val == 3) {
-			CLS_CTX* temp = me->cls_ctx[zpos]->next;
-			me->cls_ctx[zpos]->next = new CLS_CTX();
-			me->cls_ctx[zpos]->next->cls_id = clause;
-			me->cls_ctx[zpos]->next->next = temp;
+		for (int i = 0; i < me->master->neg_map_szs[zpos]; i++) {
+			int clause = me->master->neg_map[zpos][i];
+			int old_val = me->cls_tly[clause];
+			int new_val = old_val - 1;
+			me->cls_tly[clause] = new_val;
 		}
-		*/
+		for (int i = 0; i < me->master->pos_map_szs[zpos]; i++) {
+			int clause = me->master->pos_map[zpos][i];
+			int old_val = me->cls_tly[clause];
+			int new_val = old_val + 1;
+			me->cls_tly[clause] = new_val;
+		}
+
 	}
 }
 
@@ -435,19 +415,32 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	// populate clause tally with initial begin value
 
 	for (int i = 0; i < n_parm; i++) {
+		for (int j = 0; j < me->master->pos_map_szs[i]; j++) {
+			if (me->begin[i]) {
+				int cls_ix = me->master->pos_map[i][j];
+				int old_val = me->cls_tly[cls_ix];
+				me->cls_tly[cls_ix] = old_val + 1;
+			}
+		}
+		for (int j = 0; j < me->master->neg_map_szs[i]; j++) {
+			if (!me->begin[i]) {
+				int cls_ix = me->master->neg_map[i][j];
+				int old_val = me->cls_tly[cls_ix];
+				me->cls_tly[cls_ix] = old_val + 1;
+			}
+		}
+	}
+
+
+	/*
+
+	for (int i = 0; i < n_parm; i++) {
 		int decoded = me->master->decoding [ i ];
 		for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
 			if (me->begin[decoded]) {
 				int cls_ix = me->master->pos_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
-			}
-			else
-			{
-				int cls_ix = me->master->pos_map[decoded][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val - 1;
-
 			}
 		}
 		for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
@@ -456,14 +449,10 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
-			else {
-				int cls_ix = me->master->neg_map[decoded][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val - 1;
-
-			}
 		}
 	}
+
+	*/
 
 	// initialize implies_arr
 
