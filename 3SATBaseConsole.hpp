@@ -14,12 +14,12 @@
 #define FALSE_3SAT -1
 #define TRUE_3SAT 1
 
-typedef struct cls_lst {
+typedef struct CLS_CTX_struct {
 
-	int cls_id;		// clause id for implies context
-	cls_lst* next;	// linked list
+	int cls_id;
+	CLS_CTX_struct * next;
 
-} cls_lst ;
+} CLS_CTX ;
 
 typedef struct {
 
@@ -29,7 +29,6 @@ typedef struct {
 	int* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	int* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	int* powers;		// powers to jump forward by
-	cls_lst** pow_cls;	// powers to matching clauses list
 	int k;				// original number of clauses
 	int n;				// number of variables
 
@@ -39,11 +38,10 @@ typedef struct {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
 
-	//int*	  implies_arr;		// efficiency: what a power jump implies about a higher power jump
-	cls_lst** pos_imp_ctx;		// context of implies array for accounting of each higher jump implication: positive
-	cls_lst** neg_imp_ctx;		// context of implies array for accounting of each higher jump implication: negative
+	int * cls_tly;			// running tallies of the number of literals matched in clauses
+	CLS_CTX** cls_ctx;			// clause context for calculating whether to modify implies_arr (a Z[i] could have multiple false clauses)
 
-	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
+	__int64* implies_arr;		// what is implied by the encounter of a jump
 
 	bool* Z;					// current position in permutation space
 	__int64 pow_jump;			// current value of jump, to be updated each cycle
@@ -57,6 +55,7 @@ void MyQSort(int arr[], int low_parm, int high_parm);
 void SATSolver_updateTF(SATSolver* me, int lit, bool target);
 void SATSolver_add(SATSolver* me, int pos_parm);
 __int64 SATSolver_initializePowJump(SATSolver* me);
+__int64 SATSolver_ManageIncrement(SATSolver* me);
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b, int n);
 bool SATSolver_isSat(SATSolver* me, bool *arr);
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n);

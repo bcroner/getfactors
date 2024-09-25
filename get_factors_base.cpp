@@ -21,6 +21,8 @@ int main()
 
 const char * buf_3sat_src =
 
+/*
+
 "-48 -49 21\n\
 41 37 -42\n\
 -25 -22 10\n\
@@ -239,6 +241,8 @@ const char * buf_3sat_src =
 -3 -22 -33\n\
 -39 42 40\n\
 3 -5 14\n";// not satisfiable
+
+*/
 
 /*
 
@@ -463,7 +467,7 @@ const char * buf_3sat_src =
 
 */
 
-/*
+///*
 
 "-97 89 18\n\
 37 52 -71\n\
@@ -896,7 +900,7 @@ const char * buf_3sat_src =
 79 74 -35\n\
 71 47 -17\n";//satisfiable
 
-*/
+//*/
 
     strcpy_s(buf_3sat, 200000, buf_3sat_src);
 
