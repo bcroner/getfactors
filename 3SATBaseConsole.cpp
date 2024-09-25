@@ -88,6 +88,8 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int new_val = old_val - 1;
 		me->cls_tly[clause] = new_val;
 
+		/*
+
 		if (old_val == 3 && new_val < 3) {
 
 			CLS_CTX* temp = me->cls_ctx[zpos];
@@ -103,6 +105,8 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			if (me->cls_ctx[zpos]->next == NULL)
 				me->implies_arr[zpos] = -(zpos + 1);
 		}
+
+		*/
 	}
 
 	// now do the additions
@@ -113,12 +117,15 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 		int new_val = old_val + 1;
 		me->cls_tly[clause] = new_val;
 
+		/*
+
 		if (old_val < 3 && new_val == 3) {
 			CLS_CTX* temp = me->cls_ctx[zpos]->next;
 			me->cls_ctx[zpos]->next = new CLS_CTX();
 			me->cls_ctx[zpos]->next->cls_id = clause;
 			me->cls_ctx[zpos]->next->next = temp;
 		}
+		*/
 	}
 }
 
@@ -412,7 +419,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// create the running clause tally cls_tly
 
-	me->cls_tly = new __int8[k_parm];
+	me->cls_tly = new int[k_parm];
 
 	for (int i = 0; i < k_parm; i++)
 		me->cls_tly[i] = 0;
@@ -429,18 +436,33 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	for (int i = 0; i < n_parm; i++) {
 		int decoded = me->master->decoding [ i ];
-		if (me->begin[decoded])
-			for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
+		for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
+			if (me->begin[decoded]) {
 				int cls_ix = me->master->pos_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
-		else
-			for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
+			else
+			{
+				int cls_ix = me->master->pos_map[decoded][j];
+				int old_val = me->cls_tly[cls_ix];
+				me->cls_tly[cls_ix] = old_val - 1;
+
+			}
+		}
+		for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
+			if (!me->begin[decoded]) {
 				int cls_ix = me->master->neg_map[decoded][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
+			else {
+				int cls_ix = me->master->neg_map[decoded][j];
+				int old_val = me->cls_tly[cls_ix];
+				me->cls_tly[cls_ix] = old_val - 1;
+
+			}
+		}
 	}
 
 	// initialize implies_arr
