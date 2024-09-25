@@ -547,6 +547,9 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - lowest) - 1 : (n_parm - 1 - lowest) + 1;
 
+		if (i == 229)
+			printf_s("");
+
 	}
 
 	// create the map looking into running tally based on literals pos_map
@@ -570,6 +573,10 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
+
+			if (j == 229)
+				printf_s("");
+
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
@@ -584,6 +591,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
+			if (j == 229)
+				printf_s("");
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
@@ -617,6 +626,9 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		int pos_neg = 0;
 
 		for (int j = 0; j < k_parm; j++) {
+
+			if (j == 229)
+				printf_s("");
 
 			for (int k = 0; k < 3; k++) {
 
