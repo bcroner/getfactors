@@ -418,6 +418,8 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		for (int j = 0; j < me->master->pos_map_szs[i]; j++) {
 			if (me->begin[i]) {
 				int cls_ix = me->master->pos_map[i][j];
+				if (cls_ix == 229)
+					printf_s("");;
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
@@ -425,6 +427,8 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		for (int j = 0; j < me->master->neg_map_szs[i]; j++) {
 			if (!me->begin[i]) {
 				int cls_ix = me->master->neg_map[i][j];
+				if (cls_ix == 229)
+					printf_s("");
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
