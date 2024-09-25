@@ -38,7 +38,7 @@ typedef struct {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
 
-	__int8 * cls_tly;			// running tallies of the number of literals matched in clauses
+	int * cls_tly;			// running tallies of the number of literals matched in clauses
 	CLS_CTX** cls_ctx;			// clause context for calculating whether to modify implies_arr (a Z[i] could have multiple false clauses)
 
 	__int64* implies_arr;		// what is implied by the encounter of a jump
