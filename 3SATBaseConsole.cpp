@@ -418,8 +418,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		for (int j = 0; j < me->master->pos_map_szs[i]; j++) {
 			if (me->begin[i]) {
 				int cls_ix = me->master->pos_map[i][j];
-				if (cls_ix == 229)
-					printf_s("");;
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
@@ -427,36 +425,11 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		for (int j = 0; j < me->master->neg_map_szs[i]; j++) {
 			if (!me->begin[i]) {
 				int cls_ix = me->master->neg_map[i][j];
-				if (cls_ix == 229)
-					printf_s("");
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 		}
 	}
-
-
-	/*
-
-	for (int i = 0; i < n_parm; i++) {
-		int decoded = me->master->decoding [ i ];
-		for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
-			if (me->begin[decoded]) {
-				int cls_ix = me->master->pos_map[decoded][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-			}
-		}
-		for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
-			if (!me->begin[decoded]) {
-				int cls_ix = me->master->neg_map[decoded][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-			}
-		}
-	}
-
-	*/
 
 	// initialize implies_arr
 
@@ -530,25 +503,24 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	master->powers = new int[k_parm];
 
 	for (int i = 0; i < k_parm; i++) {
-		int lowest = -1;
+		int highest = -1;
 		int lit_cur = 0;
 		for (int j = 0; j < 3; j++) {
 			// check for true TRUE_3SAT or false FALSE_3SAT
-			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
+			if (lst[i][j] == TRUE_3SAT)
+				break;
+			if (lst[i][j] == FALSE_3SAT)
 				continue;
 			int ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->decoding[ix] > lowest) {
-				lowest = master->decoding[ix];
-				lit_cur = lst[i][j] < 0 ? -lowest - 1 : lowest + 1;
+			if (master->decoding[ix] > highest) {
+				highest = master->decoding[ix];
+				lit_cur = lst[i][j] < 0 ? -highest - 1 : highest + 1;
 			}
 		}
 
 		// record the jump power of the clause at i
 
-		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - lowest) - 1 : (n_parm - 1 - lowest) + 1;
-
-		if (i == 229)
-			printf_s("");
+		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
 
 	}
 
