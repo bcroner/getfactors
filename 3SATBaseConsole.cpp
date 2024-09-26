@@ -135,12 +135,14 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 		}
 	}
 
+/*
 	for (int i = pos - 1; i >= 0; i--) {
 		if (me->Z[i]) {
 			me->Z[i] = false;
 			SATSolver_updateTF(me, i, false);
 		}
 	}
+	*/
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
@@ -217,9 +219,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count % (16 * 1024) == 0) {
+		//if (count % (16 * 1024) == 0) {
 
-		//if (true) {
+		if (true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -438,15 +440,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	for (__int64 i = 0; i < n_parm; i++)
 		me->implies_arr[i] = -(i+1);
 
-	// create clause context list
-
-	me->cls_ctx = new CLS_CTX * [n_parm];
-	for (int i = 0; i < n_parm; i++) {
-		me->cls_ctx[i] = new CLS_CTX();
-		me->cls_ctx[i]->cls_id = -1;
-		me->cls_ctx[i]->next = NULL;
-	}
-
 
 	// delete
 
@@ -514,13 +507,13 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			int ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
 			if (master->decoding[ix] > highest) {
 				highest = master->decoding[ix];
-				lit_cur = lst[i][j] < 0 ? -highest - 1 : highest + 1;
+				lit_cur = lst[i][j] > 0 ? -highest: highest;
 			}
 		}
 
 		// record the jump power of the clause at i
 
-		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
+		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - highest) : (n_parm - 1 - highest) ;
 
 	}
 
@@ -545,10 +538,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
-
-			if (j == 229)
-				printf_s("");
-
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
@@ -563,8 +552,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
-			if (j == 229)
-				printf_s("");
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
@@ -598,9 +585,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		int pos_neg = 0;
 
 		for (int j = 0; j < k_parm; j++) {
-
-			if (j == 229)
-				printf_s("");
 
 			for (int k = 0; k < 3; k++) {
 
@@ -652,20 +636,6 @@ void SATSolver_destroy(SATSolver * me) {
 		delete[] me->end;
 
 	}
-
-	for (int i = 0; i < me->master->n; i++) {
-
-		CLS_CTX* dump = me->cls_ctx[i];
-		CLS_CTX* temp = dump->next;
-		do {
-			delete dump;
-			dump = temp;
-			temp = temp->next;
-		} while (temp != NULL);
-
-	}
-
-	delete me->cls_ctx;
 
 	delete me->implies_arr;
 
