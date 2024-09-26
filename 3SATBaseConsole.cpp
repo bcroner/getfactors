@@ -134,13 +134,6 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 			break;
 		}
 	}
-
-	for (int i = pos - 1; i >= 0; i--) {
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me, i, false);
-		}
-	}
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
@@ -205,8 +198,8 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
 
-		//if ( me->Z[me->pow_jump])
-		//	me->pow_jump = SATSolver_ManageIncrement(me);
+		if ( me->Z[me->pow_jump])
+			me->pow_jump = SATSolver_ManageIncrement(me);
 
 		if (me->pow_jump >= me->master->n) {
 			me->Z[me->master->n] = true;
@@ -217,9 +210,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count % (16 * 1024) == 0) {
+		//if (count % 1024 == 0) {
 
-		//if (true) {
+		if (true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -418,8 +411,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		for (int j = 0; j < me->master->pos_map_szs[i]; j++) {
 			if (me->begin[i]) {
 				int cls_ix = me->master->pos_map[i][j];
-				if (cls_ix == 229)
-					printf_s("");;
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
@@ -427,36 +418,11 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		for (int j = 0; j < me->master->neg_map_szs[i]; j++) {
 			if (!me->begin[i]) {
 				int cls_ix = me->master->neg_map[i][j];
-				if (cls_ix == 229)
-					printf_s("");
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 		}
 	}
-
-
-	/*
-
-	for (int i = 0; i < n_parm; i++) {
-		int decoded = me->master->decoding [ i ];
-		for (int j = 0; j < me->master->pos_map_szs[decoded]; j++) {
-			if (me->begin[decoded]) {
-				int cls_ix = me->master->pos_map[decoded][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-			}
-		}
-		for (int j = 0; j < me->master->neg_map_szs[decoded]; j++) {
-			if (!me->begin[decoded]) {
-				int cls_ix = me->master->neg_map[decoded][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-			}
-		}
-	}
-
-	*/
 
 	// initialize implies_arr
 
@@ -464,15 +430,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	for (__int64 i = 0; i < n_parm; i++)
 		me->implies_arr[i] = -(i+1);
-
-	// create clause context list
-
-	me->cls_ctx = new CLS_CTX * [n_parm];
-	for (int i = 0; i < n_parm; i++) {
-		me->cls_ctx[i] = new CLS_CTX();
-		me->cls_ctx[i]->cls_id = -1;
-		me->cls_ctx[i]->next = NULL;
-	}
 
 
 	// delete
@@ -530,25 +487,26 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	master->powers = new int[k_parm];
 
 	for (int i = 0; i < k_parm; i++) {
-		int lowest = -1;
+		int highest = -1;
 		int lit_cur = 0;
 		for (int j = 0; j < 3; j++) {
 			// check for true TRUE_3SAT or false FALSE_3SAT
-			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
+			if (lst[i][j] == TRUE_3SAT)
+				break;
+			if (lst[i][j] == FALSE_3SAT)
 				continue;
 			int ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->decoding[ix] > lowest) {
-				lowest = master->decoding[ix];
-				lit_cur = lst[i][j] < 0 ? -lowest - 1 : lowest + 1;
+			if (master->decoding[ix] > highest) {
+				if (i == 229)
+					printf_s("");
+				highest = master->decoding[ix];
+				lit_cur = lst[i][j] > 0 ? -highest: highest;
 			}
 		}
 
 		// record the jump power of the clause at i
 
-		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - lowest) - 1 : (n_parm - 1 - lowest) + 1;
-
-		if (i == 229)
-			printf_s("");
+		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
 
 	}
 
@@ -573,10 +531,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
-
-			if (j == 229)
-				printf_s("");
-
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == -(i + 2))
 				master->pos_map_szs[master->decoding[i]]++;
@@ -591,8 +545,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < k_parm; j++) {
-			if (j == 229)
-				printf_s("");
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
 				master->neg_map_szs[master->decoding[i]]++;
@@ -610,7 +562,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		master->neg_map[master->decoding[i]] = new int[master->neg_map_szs[master->decoding[i]]];
 	}
 
-	// initialize pos_map and neg_map all to 3 minus non-T/F literals
+	// initialize pos_map and neg_map all to 0
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < master->pos_map_szs[master->decoding[i]]; j++)
@@ -627,12 +579,12 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 		for (int j = 0; j < k_parm; j++) {
 
-			if (j == 229)
-				printf_s("");
-
 			for (int k = 0; k < 3; k++) {
 
-				if (lst[j][k] == FALSE_3SAT || lst[j][k] == TRUE_3SAT)
+				if (lst[j][k] == TRUE_3SAT)
+					break;
+
+				if (lst[j][k] == FALSE_3SAT)
 					continue;
 
 				int pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
@@ -640,12 +592,15 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 				if (pos != i)
 					continue;
 
+				if (j == 229)
+					printf_s("");
+
 				if (lst[j][k] < 0) {
-					master->pos_map[master->decoding[pos]][pos_pos] = j;
+					master->pos_map[n_parm - 1 - master->decoding[pos]][pos_pos] = j;
 					pos_pos++;
 				}
 				else {
-					master->neg_map[master->decoding[pos]][pos_neg] = j;
+					master->neg_map[n_parm - 1 - master->decoding[pos]][pos_neg] = j;
 					pos_neg++;
 				}
 			}
@@ -680,20 +635,6 @@ void SATSolver_destroy(SATSolver * me) {
 		delete[] me->end;
 
 	}
-
-	for (int i = 0; i < me->master->n; i++) {
-
-		CLS_CTX* dump = me->cls_ctx[i];
-		CLS_CTX* temp = dump->next;
-		do {
-			delete dump;
-			dump = temp;
-			temp = temp->next;
-		} while (temp != NULL);
-
-	}
-
-	delete me->cls_ctx;
 
 	delete me->implies_arr;
 
