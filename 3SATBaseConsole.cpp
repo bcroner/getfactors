@@ -158,7 +158,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		if (me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
+		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
+		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 			max_jump = temp_jump;
 	}
 
@@ -508,8 +509,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 				continue;
 			int ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
 			if (master->decoding[ix] > highest) {
-				if (i == 229)
-					printf_s("");
 				highest = master->decoding[ix];
 				lit_cur = lst[i][j] > 0 ? -highest: highest;
 			}
@@ -602,9 +601,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 				if (pos != i)
 					continue;
-
-				if (j == 229)
-					printf_s("");
 
 				if (lst[j][k] < 0) {
 					master->pos_map[n_parm - 1 - master->decoding[pos]][pos_pos] = j;
