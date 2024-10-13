@@ -221,9 +221,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		if (count % 1024 == 0 /* (16 * 1048576) == 0*/) {
+		//if (count % 1024 == 0 /* (16 * 1048576) == 0*/) {
 
-		//if (true) {
+		if (true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
