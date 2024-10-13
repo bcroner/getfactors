@@ -244,7 +244,7 @@ const char * buf_3sat_src =
 
 */
 
-/*
+///*
 
 "14 35 3\n\
 -30 -7 -26\n\
@@ -465,9 +465,9 @@ const char * buf_3sat_src =
 11 34 18\n\
 -38 -22 -28\n";//satisfiable
 
-*/
+//*/
 
-///*
+/*
 
 "-97 89 18\n\
 37 52 -71\n\
@@ -900,7 +900,7 @@ const char * buf_3sat_src =
 79 74 -35\n\
 71 47 -17\n";//satisfiable
 
-//*/
+*/
 
     strcpy_s(buf_3sat, 200000, buf_3sat_src);
 
