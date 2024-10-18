@@ -420,20 +420,24 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	// populate clause tally with initial begin value
 
 	for (int i = 0; i < n_parm; i++) {
-		for (int j = 0; j < me->master->pos_map_szs[i]; j++) {
+		for (int j = 0; j < me->master->pos_map_szs[i]; j++)
 			if (me->begin[i]) {
 				int cls_ix = me->master->pos_map[i][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
+
+				if (cls_ix == 0)
+					cls_ix++;
 			}
-		}
-		for (int j = 0; j < me->master->neg_map_szs[i]; j++) {
+		for (int j = 0; j < me->master->neg_map_szs[i]; j++)
 			if (!me->begin[i]) {
 				int cls_ix = me->master->neg_map[i][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
+
+				if (cls_ix == 0)
+					cls_ix++;
 			}
-		}
 	}
 
 	// initialize implies_arr
@@ -505,8 +509,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			// check for true TRUE_3SAT or false FALSE_3SAT
 			if (lst[i][j] == TRUE_3SAT)
 				break;
-			if (lst[i][j] == FALSE_3SAT)
-				continue;
+//			if (lst[i][j] == FALSE_3SAT)
+//				continue;
 			int ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
 			if (master->decoding[ix] > highest) {
 				highest = master->decoding[ix];
