@@ -584,6 +584,15 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		for (int j = 0; j < master->neg_map_szs[master->decoding[i]]; j++)
 			master->neg_map[master->decoding[i]][j] = 0;
 	}
+	/*
+	for (int i = 0; i < k_parm; i++) {
+		printf_s("%d %d %d\n", lst[i][0], lst[i][1], lst[i][2]);
+
+		//if (lst[i][0] == 1 || lst[i][1] == 1 || lst[i][2] == 1 ||
+		//	lst[i][0] == -1 || lst[i][1] == -1 || lst[i][2] == -1)
+		//	printf_s("mofo\n");
+	}
+	*/
 
 	// populate pos_map, neg_map
 	for (int i = 0; i < n_parm; i++) {
