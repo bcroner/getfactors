@@ -907,8 +907,7 @@ const char * buf_3sat_src =
     int buf_3sat_sz = strnlen_s(buf_3sat, 200000);
 
     int k = 0;
-    //int** input = input_from_char_buf (buf_3sat, buf_3sat_sz, &k, true);
-    int** input = input_from_char_buf_std(buf_3sat, buf_3sat_sz, &k, true);
+    int** input = input_from_char_buf (buf_3sat, buf_3sat_sz, &k, true);
     bool* sln = NULL;
 
 
