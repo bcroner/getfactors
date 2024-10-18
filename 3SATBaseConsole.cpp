@@ -420,23 +420,17 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	// populate clause tally with initial begin value
 
 	for (int i = 0; i < n_parm; i++) {
-		for (int j = 0; j < me->master->pos_map_szs[i]; j++)
+		for (int j = 0; j < me->master->pos_map_szs[me->master->decoding[i]]; j++)
 			if (me->begin[i]) {
-				int cls_ix = me->master->pos_map[i][j];
+				int cls_ix = me->master->pos_map[me->master->decoding[i]][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
-
-				if (cls_ix == 0)
-					cls_ix++;
 			}
-		for (int j = 0; j < me->master->neg_map_szs[i]; j++)
+		for (int j = 0; j < me->master->neg_map_szs[me->master->decoding[i]]; j++)
 			if (!me->begin[i]) {
-				int cls_ix = me->master->neg_map[i][j];
+				int cls_ix = me->master->neg_map[me->master->decoding[i]][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
-
-				if (cls_ix == 0)
-					cls_ix++;
 			}
 	}
 
@@ -588,9 +582,9 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	for (int i = 0; i < k_parm; i++) {
 		printf_s("%d %d %d\n", lst[i][0], lst[i][1], lst[i][2]);
 
-		//if (lst[i][0] == 1 || lst[i][1] == 1 || lst[i][2] == 1 ||
-		//	lst[i][0] == -1 || lst[i][1] == -1 || lst[i][2] == -1)
-		//	printf_s("mofo\n");
+		if (lst[i][0] == 2 || lst[i][1] == 2 || lst[i][2] == 2 ||
+			lst[i][0] == -2 || lst[i][1] == -2 || lst[i][2] == -2)
+			printf_s("mofo\n");
 	}
 	*/
 
@@ -616,17 +610,35 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 					continue;
 
 				if (lst[j][k] < 0) {
-					master->pos_map[n_parm - 1 - master->decoding[pos]][pos_pos] = j;
+					master->pos_map[master->decoding[i]][pos_pos] = j;
 					pos_pos++;
 				}
 				else {
-					master->neg_map[n_parm - 1 - master->decoding[pos]][pos_neg] = j;
+					master->neg_map[master->decoding[i]][pos_neg] = j;
 					pos_neg++;
 				}
 			}
 
 		}
 	}
+
+	/*
+	printf_s("pos_map:\n");
+	for (int i = 0; i < n_parm; i++) {
+		printf_s("%d: ", i);
+		for (int j = 0; j < master->pos_map_szs[i]; j++)
+			printf_s("%d ", master->pos_map[i][j]);
+		printf_s("\n");
+	}
+
+	printf_s("neg_map:\n");
+	for (int i = 0; i < n_parm; i++) {
+		printf_s("%d: ", i);
+		for (int j = 0; j < master->neg_map_szs[i]; j++)
+			printf_s("%d ", master->neg_map[i][j]);
+		printf_s("\n");
+	}
+	*/
 }
 
 void SATSolverMaster_destroy(SATSolverMaster* master) {
