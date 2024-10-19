@@ -82,12 +82,18 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			int old_val = me->cls_tly[clause];
 			int new_val = old_val - 1;
 			me->cls_tly[clause] = new_val;
+
+			if (old_val == 3)
+				me->implies_arr[zpos] = -zpos;
 		}
 		for (int i = 0; i < me->master->neg_map_szs[zpos]; i++) {
 			int clause = me->master->neg_map[zpos][i];
 			int old_val = me->cls_tly[clause];
 			int new_val = old_val + 1;
 			me->cls_tly[clause] = new_val;
+			
+			if (new_val == 3)
+				me->implies_arr[zpos] = -(zpos + 1);
 		}
 
 	} 
@@ -98,12 +104,18 @@ void SATSolver_updateTF(SATSolver* me, int zpos, bool target) {
 			int old_val = me->cls_tly[clause];
 			int new_val = old_val - 1;
 			me->cls_tly[clause] = new_val;
+
+			if (old_val == 3)
+				me->implies_arr[zpos] = -zpos;
 		}
 		for (int i = 0; i < me->master->pos_map_szs[zpos]; i++) {
 			int clause = me->master->pos_map[zpos][i];
 			int old_val = me->cls_tly[clause];
 			int new_val = old_val + 1;
 			me->cls_tly[clause] = new_val;
+
+			if (new_val == 3)
+				me->implies_arr[zpos] = -(zpos + 1);
 		}
 
 	}
