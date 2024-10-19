@@ -134,15 +134,13 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 			break;
 		}
 	}
-	/*
+	
 	// zero out all lower bits of Z
-	for (int j = me->master->n - pos; j >= 0; j--)
+	for (int j = 0; j < pos; j++)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me, j, false);
 		}
-
-	*/
 
 }
 
@@ -221,9 +219,9 @@ bool SATSolver_isSat(SATSolver * me , bool *arr) {
 
 		count++;
 
-		//if (count % 1024 == 0 /* (16 * 1048576) == 0*/) {
+		if (count % 1024 /*(16 * 1048576)*/ == 0) {
 
-		if (true) {
+		//if (true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
