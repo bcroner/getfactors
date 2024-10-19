@@ -513,8 +513,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			// check for true TRUE_3SAT or false FALSE_3SAT
 			if (lst[i][j] == TRUE_3SAT)
 				break;
-//			if (lst[i][j] == FALSE_3SAT)
-//				continue;
+			if (lst[i][j] == FALSE_3SAT)
+				continue;
 			int ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
 			if (master->decoding[ix] > highest) {
 				highest = master->decoding[ix];
