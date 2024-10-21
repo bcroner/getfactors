@@ -914,7 +914,28 @@ const char * buf_3sat_src =
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
 
-    if ( ! SATSolver_threads(input, k, 100, &sln))
+    // count n
+
+    int counted = 0;
+
+    for (int i = 0; i < k; i++) {
+
+        int a = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int b = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+        if (a > counted)
+            counted = a;
+        if (b > counted)
+            counted = b;
+        if (c > counted)
+            counted = c;
+
+    }
+
+    counted = counted - 1;
+
+    if ( ! SATSolver_threads(input, k, counted, &sln))
         printf_s("not satisfiable\n");
     else
         printf_s("satisfiable\n");
