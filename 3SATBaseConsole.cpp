@@ -146,14 +146,14 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 			break;
 		}
 	}
-	
+	/*
 	// zero out all lower bits of Z
 	for (int j = 0; j < pos; j++)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me, j, false);
 		}
-
+	*/
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
