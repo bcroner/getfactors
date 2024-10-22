@@ -21,7 +21,7 @@ int main()
 
 const char * buf_3sat_src =
 
-///*
+/*
 
 "-48 -49 21\n\
 41 37 -42\n\
@@ -465,9 +465,9 @@ const char * buf_3sat_src =
 11 34 18\n\
 -38 -22 -28\n";//satisfiable
 
-*/
+//*/
 
-/*
+///*
 
 "-97 89 18\n\
 37 52 -71\n\
