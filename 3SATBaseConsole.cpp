@@ -16,6 +16,7 @@
 //	array, and places all smaller (smaller than pivot)
 //   to left of pivot and all greater elements to right
 //   of pivot */
+/*
 int MyQSort_partition(int arr_parm[], int low_parm, int high_parm)
 {
 	int pivot = arr_parm[high_parm];    // pivot
@@ -37,17 +38,93 @@ int MyQSort_partition(int arr_parm[], int low_parm, int high_parm)
 	arr_parm[high_parm] = t;
 	return (i + 1);
 }
+//*/
+
+// https://www.geeksforgeeks.org/c-program-for-iterative-quick-sort/
+
+// A utility function to swap two elements
+void swap(int* a, int* b)
+{
+	int t = *a;
+	*a = *b;
+	*b = t;
+}
+
+/* This function is same in both iterative and recursive*/
+int partition(int arr_parm[], int low_parm, int high_parm)
+{
+	int pivot = arr_parm[high_parm];    // pivot
+	int i = (low_parm - 1);  // Index of smaller element
+
+	for (int j = low_parm; j <= high_parm - 1; j++)
+	{
+		// swap if current element is greater than pivot
+		if (arr_parm[j] > pivot)
+		{
+			i++;    // increment index of smaller element
+			int t = arr_parm[i];
+			arr_parm[i] = arr_parm[j];
+			arr_parm[j] = t;
+		}
+	}
+	int t = arr_parm[i + 1];
+	arr_parm[i + 1] = arr_parm[high_parm];
+	arr_parm[high_parm] = t;
+	return (i + 1);
+}
+
+/* A[] --> Array to be sorted,
+   l  --> Starting index,
+   h  --> Ending index */
+void MyQSort(int arr[], int l, int h)
+{
+	// Create an auxiliary stack
+	int * stack = new int [h - l + 1];
+
+	// initialize top of stack
+	int top = -1;
+
+	// push initial values of l and h to stack
+	stack[++top] = l;
+	stack[++top] = h;
+
+	// Keep popping from stack while is not empty
+	while (top >= 0) {
+		// Pop h and l
+		h = stack[top--];
+		l = stack[top--];
+
+		// Set pivot element at its correct position
+		// in sorted array
+		int p = partition(arr, l, h);
+
+		// If there are elements on left side of pivot,
+		// then push left side to stack
+		if (p - 1 > l) {
+			stack[++top] = l;
+			stack[++top] = p - 1;
+		}
+
+		// If there are elements on right side of pivot,
+		// then push right side to stack
+		if (p + 1 < h) {
+			stack[++top] = p + 1;
+			stack[++top] = h;
+		}
+	}
+
+	delete[] stack;
+}
 
 /* The main function that implements QuickSort
  arr[] --> Array to be sorted,
   low  --> Starting index,
   high  --> Ending index */
+/*
 void MyQSort(int arr [] , int low_parm, int high_parm)
 {
 	if (low_parm < high_parm)
 	{
-		/* pi is partitioning index, arr[p] is now
-		   at right place */
 		int pi = MyQSort_partition(arr, low_parm, high_parm);
 
 		// Separately sort elements before
@@ -56,6 +133,8 @@ void MyQSort(int arr [] , int low_parm, int high_parm)
 		MyQSort(arr , pi + 1, high_parm);
 	}
 }
+
+//*/
 
 /*
 * 
@@ -172,21 +251,6 @@ __int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos) {
 
 }
 
-__int64 SATSolver_ManageIncrement(SATSolver* me) {
-
-	int pos = me->pow_jump;
-
-	while (pos < me->master->n && (me->implies_arr[pos] == -(pos + 2) || me->implies_arr[pos] == (pos + 2)))
-		pos++;
-
-	if (me->implies_arr[pos] == -(pos + 1))
-		me->implies_arr[pos] = pos + 1;
-	else if (me->implies_arr[pos] == (pos + 1))
-		me->implies_arr[pos] = -(pos + 2);
-
-	return me->implies_arr[pos] < 0 ? -me->implies_arr[pos] - 1 : me->implies_arr[pos] - 1;
-}
-
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
 
 	for (int i = n; i >= 0; i--)
@@ -231,7 +295,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (true) {
+		if (!true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -442,14 +506,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			}
 	}
 
-	// initialize implies_arr
-
-	me->implies_arr = new __int64[n_parm];
-
-	for (__int64 i = 0; i < n_parm; i++)
-		me->implies_arr[i] = -(i+1);
-
-
 	// delete
 
 	delete[] lst_t;
@@ -586,15 +642,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		for (int j = 0; j < master->neg_map_szs[master->decoding[i]]; j++)
 			master->neg_map[master->decoding[i]][j] = 0;
 	}
-	/*
-	for (int i = 0; i < k_parm; i++) {
-		printf_s("%d %d %d\n", lst[i][0], lst[i][1], lst[i][2]);
-
-		if (lst[i][0] == 2 || lst[i][1] == 2 || lst[i][2] == 2 ||
-			lst[i][0] == -2 || lst[i][1] == -2 || lst[i][2] == -2)
-			printf_s("mofo\n");
-	}
-	*/
 
 	// populate pos_map, neg_map
 	for (int i = 0; i < n_parm; i++) {
@@ -629,24 +676,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 		}
 	}
-
-	/*
-	printf_s("pos_map:\n");
-	for (int i = 0; i < n_parm; i++) {
-		printf_s("%d: ", i);
-		for (int j = 0; j < master->pos_map_szs[i]; j++)
-			printf_s("%d ", master->pos_map[i][j]);
-		printf_s("\n");
-	}
-
-	printf_s("neg_map:\n");
-	for (int i = 0; i < n_parm; i++) {
-		printf_s("%d: ", i);
-		for (int j = 0; j < master->neg_map_szs[i]; j++)
-			printf_s("%d ", master->neg_map[i][j]);
-		printf_s("\n");
-	}
-	*/
 }
 
 void SATSolverMaster_destroy(SATSolverMaster* master) {
@@ -675,9 +704,6 @@ void SATSolver_destroy(SATSolver * me) {
 		delete[] me->end;
 
 	}
-
-	delete me->implies_arr;
-
 }
 
 std::mutex m;
