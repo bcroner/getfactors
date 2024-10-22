@@ -19,7 +19,7 @@ int main()
 
     char buf_3sat[200000];
 
-const char * buf_3sat_src =
+//    const char * buf_3sat_src =
 
 /*
 
@@ -467,7 +467,7 @@ const char * buf_3sat_src =
 
 //*/
 
-///*
+/*
 
 "-97 89 18\n\
 37 52 -71\n\
@@ -902,6 +902,8 @@ const char * buf_3sat_src =
 
 //*/
 
+/*
+
     strcpy_s(buf_3sat, 200000, buf_3sat_src);
 
     int buf_3sat_sz = strnlen_s(buf_3sat, 200000);
@@ -915,6 +917,8 @@ const char * buf_3sat_src =
     sprintf_s(prime_str, 8, "prime");
 
     // count n
+
+    /*
 
     int counted = 0;
 
@@ -940,14 +944,16 @@ const char * buf_3sat_src =
     else
         printf_s("satisfiable\n");
 
-    //bit* a = create_bit(&num_parm);
-    //bit* b = create_bit(&num_parm);
-    //bit* c = NULL;
-    //char bitc_name[15];
-    //strcpy_s(bitc_name, 15, "bitc");
-    //printf("%s\n", and_3sat(&num_parm, bitc_name, c, a, b, &len_para));
+    //*/
+
+    ///*
+
+    //bit_3sat * a = create_bit(&num_parm);
+    //bit_3sat * b = create_bit(&num_parm);
+    //bit_3sat * c = NULL;;
+    //printf("%s\n", and_3sat(&num_parm, &c, a, b, &len_para));
     //char c_str[5];
-    //char c_str[2000];
+    char c_str[2000];
     /*
     strcpy_s(c_str, 2000,
         "BE88B9A8CA71030100C1798F81149B6F\
@@ -966,20 +972,24 @@ const char * buf_3sat_src =
         59D6AD59EC1AAF2A7EF65F40D8C282B3\
         CA90A2C1788723C9B226D84545356A2F\
         4DF3F73A85483E8C08D5855055E7BE4D");
-    */
-    /*
+    //*/
+    ///*
     strcpy_s(c_str, 2000,
         "04898102f980b7d6f2a263692d1dad\
         7355c722bd52bc5615facfe9b7a5b2\
         d615b9d2da021a9b3b86f659909fc1\
         6ffff83445962c809d95dadf4daa8a\
         8304d84267"); // https://gmail.com
-    */
+    //*/
+
+    ///*
+    //char c_str[2000];
     //strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
-    //char * factors = get_factors(c_str, 2000, & len_para);
-    //printf_s("%s\n", factors);
+    char * factors = get_factors(c_str, 2000, & len_para);
+    printf_s("%s\n", factors);
+    //*/
     /*
     int str_sz = 0;
     bool decodable_buf[] = {true, false, true, true, false, false, true, false , false};
@@ -996,7 +1006,7 @@ const char * buf_3sat_src =
     numa->bits[3] = create_bit(&num_parm);
     numa->bits[4] = create_bit(&num_parm);
     char* dec_str = dec_to_str(decodable_buf, numa, &str_sz);
-    */
+    //*/
     /*
     dec_3sat* c;
     dec_3sat* a = new dec_3sat();
@@ -1026,7 +1036,7 @@ const char * buf_3sat_src =
 
     printf_s("%s", sum_str);
 
-    */
+    //*/
 
     return 0;
 }
