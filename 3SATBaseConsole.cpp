@@ -209,64 +209,38 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	// main loop- until end condition
 
 	__int64 count = 0;
-	int prev_jump = 0;
-	bool skip = false;
 
-	__int64 temp_pow_jump = SATSolver_initializePowJump(me);
+	do {
 
-	prev_jump = temp_pow_jump;
+		int temp_pow_jump = SATSolver_initializePowJump(me);
 
-	if (temp_pow_jump == 0)
-		return false;
+		if (temp_pow_jump == 0)
+			break;
 
-	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
+		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
 
-	if (me->pow_jump >= me->master->n) {
-		me->Z[me->master->n] = true;
-		skip = true;
-	}
-
-	if (!skip) {
-		SATSolver_updateTF(me, me->pow_jump, temp_pow_jump < 0 ? true : false);
-		count++;
-	}
-	if (!skip)
-		while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n)) {
-
-			temp_pow_jump = SATSolver_initializePowJump(me);
-
-			if (temp_pow_jump == prev_jump)
-				break;
-
-			prev_jump = temp_pow_jump;
-
-			if (temp_pow_jump == 0)
-				break;
-
-			me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
-
-			if (me->pow_jump >= me->master->n) {
-				me->Z[me->master->n] = true;
-				break;
-			}
-
-			SATSolver_updateTF(me, me->pow_jump, temp_pow_jump < 0 ? true : false);
-
-			count++;
-
-			//if (count % (1 * 1048576) == 0) {
-
-			if (true) {
-
-				for (int i = 0; i <= me->master->n; i++)
-					printf_s("%d", me->Z[i]);
-				//printf_s(" jump: %d", me->pow_jump);
-				printf_s(" jump: %d", temp_pow_jump);
-				printf_s("\n");
-			}
-
-
+		if (me->pow_jump >= me->master->n) {
+			me->Z[me->master->n] = true;
+			break;
 		}
+
+		SATSolver_add(me, me->pow_jump);
+
+		count++;
+
+		//if (count % (1 * 1048576) == 0) {
+
+		if (true) {
+
+			for (int i = 0; i <= me->master->n; i++)
+				printf_s("%d", me->Z[i]);
+			//printf_s(" jump: %d", me->pow_jump);
+			printf_s(" jump: %d", temp_pow_jump);
+			printf_s("\n");
+		}
+
+
+	} while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n));
 
 	printf_s("count: %d\n", count);
 
