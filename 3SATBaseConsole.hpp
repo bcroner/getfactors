@@ -46,7 +46,7 @@ int MyQSort_partition(int arr_parm[], int low_parm, int high_parm);
 void MyQSort(int arr[], int low_parm, int high_parm);
 void SATSolver_updateTF(SATSolver* me, int lit, bool target);
 void SATSolver_add(SATSolver* me, int pos_parm);
-__int64 SATSolver_initializePowJump(SATSolver* me);
+__int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos);
 __int64 SATSolver_ManageIncrement(SATSolver* me);
 bool SATSolver_GreaterThanOrEqual(bool* a, bool* b, int n);
 bool SATSolver_isSat(SATSolver* me, bool *arr);
