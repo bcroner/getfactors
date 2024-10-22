@@ -215,7 +215,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	do {
 
-		int temp_pow_jump = SATSolver_initializePowJump(me);
+		int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 
 		if (temp_pow_jump == 0)
 			break;
