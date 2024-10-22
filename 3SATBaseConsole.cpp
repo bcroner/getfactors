@@ -138,15 +138,8 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 	}
 	*/
 
-	// if carry, continue loop, if no carry, break
-	if (me->Z[me->master->n - pos]) {
-		me->Z[me->master->n - pos] = false;
-		SATSolver_updateTF(me, pos, false);
-	}
-	else {
-		me->Z[me->master->n - pos] = true;
-		SATSolver_updateTF(me, pos, true);
-	}
+	me->Z[pos] = pos_parm > 0;
+	SATSolver_updateTF(me, pos, pos_parm > 0);
 
 	///*
 	// zero out all lower bits of Z
