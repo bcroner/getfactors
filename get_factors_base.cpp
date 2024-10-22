@@ -19,7 +19,7 @@ int main()
 
     char buf_3sat[200000];
 
-//    const char * buf_3sat_src =
+    const char * buf_3sat_src =
 
 /*
 
@@ -467,7 +467,7 @@ int main()
 
 //*/
 
-/*
+///*
 
 "-97 89 18\n\
 37 52 -71\n\
@@ -902,7 +902,7 @@ int main()
 
 //*/
 
-/*
+///*
 
     strcpy_s(buf_3sat, 200000, buf_3sat_src);
 
@@ -910,7 +910,6 @@ int main()
 
     int k = 0;
     int** input = input_from_char_buf (buf_3sat, buf_3sat_sz, &k, true);
-    bool* sln = NULL;
 
 
     char* prime_str = new char[8];
@@ -918,7 +917,7 @@ int main()
 
     // count n
 
-    /*
+    ///*
 
     int counted = 0;
 
@@ -939,14 +938,33 @@ int main()
 
     counted = counted - 1;
 
-    if ( ! SATSolver_threads(input, k, counted, &sln))
+    bool* sln = new bool[counted];
+
+    SATSolverMaster* master = new SATSolverMaster();
+    SATSolverMaster_create(master, input, k, counted);
+
+    SATSolver* s = new SATSolver();
+    SATSolver_create(s, master, input, k, counted, 0, 0);
+
+    if (!SATSolver_isSat(s, sln)) {
         printf_s("not satisfiable\n");
-    else
-        printf_s("satisfiable\n");
+    }
+    else {
+        printf_s("satisfiable: \n");
+        for (int i = 0; i < counted; i++)
+            printf_s("%d", (int)sln[i]);
+        printf_s("\n");
+
+    }
+
+    //if ( ! SATSolver_threads(input, k, counted, &sln))
+    //    printf_s("not satisfiable\n");
+    //else
+    //    printf_s("satisfiable\n");
 
     //*/
 
-    ///*
+    /*
 
     //bit_3sat * a = create_bit(&num_parm);
     //bit_3sat * b = create_bit(&num_parm);
@@ -973,7 +991,7 @@ int main()
         CA90A2C1788723C9B226D84545356A2F\
         4DF3F73A85483E8C08D5855055E7BE4D");
     //*/
-    ///*
+    /*
     strcpy_s(c_str, 2000,
         "04898102f980b7d6f2a263692d1dad\
         7355c722bd52bc5615facfe9b7a5b2\
@@ -982,7 +1000,7 @@ int main()
         8304d84267"); // https://gmail.com
     //*/
 
-    ///*
+    /*
     //char c_str[2000];
     //strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
