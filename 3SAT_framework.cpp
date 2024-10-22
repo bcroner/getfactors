@@ -1460,11 +1460,30 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
 
     delete[] buf_3sat;
 
+    int counted = 0;
+
+    for (int i = 0; i < k; i++) {
+
+        int a = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int b = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+        if (a > counted)
+            counted = a;
+        if (b > counted)
+            counted = b;
+        if (c > counted)
+            counted = c;
+
+    }
+
+    counted = counted - 1;
+
     SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, num_parm-1);
+    SATSolverMaster_create(master, input, k, counted);
 
     SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, num_parm-1, 0, 0);
+    SATSolver_create(s, master, input, k, counted, 0, 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
