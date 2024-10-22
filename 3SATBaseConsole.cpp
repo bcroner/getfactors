@@ -227,44 +227,44 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	}
 
 	if (!skip) {
-		SATSolver_updateTF(me, me->pow_jump < 0 ? me->pow_jump + 1 : me->pow_jump - 1, me->pow_jump < 0 ? false : true);
+		SATSolver_updateTF(me, me->pow_jump < 0 ? -me->pow_jump - 1 : me->pow_jump - 1, me->pow_jump < 0 ? false : true);
 		count++;
 	}
+	if (!skip)
+		while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n)) {
 
-	while (!skip && !SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n)) {
+			temp_pow_jump = SATSolver_initializePowJump(me);
 
-		temp_pow_jump = SATSolver_initializePowJump(me);
+			if (temp_pow_jump == prev_jump)
+				break;
 
-		if (temp_pow_jump == prev_jump)
-			break;
+			if (temp_pow_jump == 0)
+				break;
 
-		if (temp_pow_jump == 0)
-			break;
+			me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
 
-		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1: temp_pow_jump - 1;
+			if (me->pow_jump >= me->master->n) {
+				me->Z[me->master->n] = true;
+				break;
+			}
 
-		if (me->pow_jump >= me->master->n) {
-			me->Z[me->master->n] = true;
-			break;
+			SATSolver_updateTF(me, me->pow_jump < 0 ? -me->pow_jump - 1 : me->pow_jump - 1, me->pow_jump < 0 ? false : true);
+
+			count++;
+
+			//if (count % (1 * 1048576) == 0) {
+
+			if (true) {
+
+				for (int i = 0; i <= me->master->n; i++)
+					printf_s("%d", me->Z[i]);
+				//printf_s(" jump: %d", me->pow_jump);
+				printf_s(" jump: %d", temp_pow_jump);
+				printf_s("\n");
+			}
+
+
 		}
-
-		SATSolver_updateTF(me, me->pow_jump < 0 ? me->pow_jump + 1 : me->pow_jump - 1, me->pow_jump < 0 ? false : true);
-
-		count++;
-
-		//if (count % (1 * 1048576) == 0) {
-
-		if (true) {
-
-			for (int i = 0; i <= me->master->n; i++)
-				printf_s("%d", me->Z[i]);
-			//printf_s(" jump: %d", me->pow_jump);
-			printf_s(" jump: %d", temp_pow_jump);
-			printf_s("\n");
-		}
-
-
-	}
 
 	printf_s("count: %d\n", count);
 
