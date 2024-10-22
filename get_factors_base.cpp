@@ -21,7 +21,7 @@ int main()
 
 const char * buf_3sat_src =
 
-/*
+///*
 
 "-48 -49 21\n\
 41 37 -42\n\
@@ -242,9 +242,9 @@ const char * buf_3sat_src =
 -39 42 40\n\
 3 -5 14\n";// not satisfiable
 
-*/
+//*/
 
-///*
+/*
 
 "14 35 3\n\
 -30 -7 -26\n\
