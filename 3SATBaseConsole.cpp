@@ -208,7 +208,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	// main loop- until end condition
 
-	int count = 0;
+	__int64 count = 0;
 	int prev_jump = 0;
 	bool skip = false;
 
@@ -217,7 +217,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	prev_jump = temp_pow_jump;
 
 	if (temp_pow_jump == 0)
-		skip = true;
+		return false;
 
 	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
@@ -227,7 +227,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	}
 
 	if (!skip) {
-		SATSolver_updateTF(me, me->pow_jump < 0 ? -me->pow_jump - 1 : me->pow_jump - 1, me->pow_jump < 0 ? false : true);
+		SATSolver_updateTF(me, me->pow_jump, temp_pow_jump < 0 ? true : false);
 		count++;
 	}
 	if (!skip)
@@ -237,6 +237,8 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 			if (temp_pow_jump == prev_jump)
 				break;
+
+			prev_jump = temp_pow_jump;
 
 			if (temp_pow_jump == 0)
 				break;
@@ -248,7 +250,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 				break;
 			}
 
-			SATSolver_updateTF(me, me->pow_jump < 0 ? -me->pow_jump - 1 : me->pow_jump - 1, me->pow_jump < 0 ? false : true);
+			SATSolver_updateTF(me, me->pow_jump, temp_pow_jump < 0 ? true : false);
 
 			count++;
 
