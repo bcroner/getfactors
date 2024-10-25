@@ -84,11 +84,9 @@ void MyQSort(int arr[], int l, int h)
 	// initialize top of stack
 	int top = -1;
 
-	top++;
-
 	// push initial values of l and h to stack
-	stack[top] = l;
-	stack[top] = h;
+	stack[++top] = l;
+	stack[++top] = h;
 
 	// Keep popping from stack while is not empty
 	while (top >= 0) {
@@ -103,17 +101,15 @@ void MyQSort(int arr[], int l, int h)
 		// If there are elements on left side of pivot,
 		// then push left side to stack
 		if (p - 1 > l) {
-			top++;
-			stack[top] = l;
-			stack[top] = p - 1;
+			stack[++top] = l;
+			stack[++top] = p - 1;
 		}
 
 		// If there are elements on right side of pivot,
 		// then push right side to stack
 		if (p + 1 < h) {
-			top++;
-			stack[top] = p + 1;
-			stack[top] = h;
+			stack[++top] = p + 1;
+			stack[++top] = h;
 		}
 	}
 
