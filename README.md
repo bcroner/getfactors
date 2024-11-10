@@ -41,36 +41,36 @@ We accept the above relationship to be true as defined above.
 
 The entirety of mathematics then is discoverable and definable by a series of statements in the following form:
 
-C = A NAND B
+C = A NAND B  
 
-Where C, A, and B are binary variables.
+Where C, A, and B are binary variables.  
 
-For example:
-
-C = A NAND B
-F = D NAND E
-G = F NAND C
-H = G NAND G
-.
-.
-.
-
-We also represent AND, OR, and NOT with NAND:
-
-C = A AND B:
-
-D = A NAND B
-C = D NAND D
-
-C = A OR B:
-
-D = A NAND A
-E = B NAND B
-C = D NAND E
-
-B = NOT A:
-
-B = A NAND A
+For example:  
+  
+C = A NAND B  
+F = D NAND E  
+G = F NAND C  
+H = G NAND G  
+.  
+.  
+.  
+  
+We also represent AND, OR, and NOT with NAND:  
+  
+C = A AND B  
+  
+D = A NAND B  
+C = D NAND D  
+  
+C = A OR B  
+  
+D = A NAND A    
+E = B NAND B  
+C = D NAND E  
+  
+B = NOT A  
+  
+B = A NAND A  
 
 These are simply ways to expand other logic gates into NAND gate expressions.
 
@@ -80,23 +80,23 @@ Negation is just NOT for each of the gates and then adding 1 and discarding the 
 
 We can define i (root (-1)) like this:
 
-i = Negate (1)
-C = i * i
+i = Negate (1)  
+C = i * i  
 
-Division is discoverable, too.
+Division is discoverable, too.  
 
-C/B = A:
+C/B = A
 
-Define C = A mul B.
-A is the result.
+Define C = A mul B.  
+A is the result.  
 
-And subtraction is simple.
+And subtraction is simple.  
 
-C = A sub B:
+C = A sub B  
 
-D = Negate (B)
-C = A add D
-
+D = Negate (B)  
+C = A add D  
+  
 So, let’s prove the theorem that if 1/1 + x/1 = 2/1, then x = 1. We have the left side of the equation, where we have two instances of the number 1. We express this as a ratio of two 2-bit integers. We assign truth values to the bits to express both instances of the number 1. We also express their addition in terms of NAND expressions as described above. On the right side we have the number 2, and we express the number as the truth values that are assigned to the two bits. Now what do we do to use this theorem proving system to show that the two are equivalent? We need to show that the left system of NANDs and variables is equivalent to the right side’s variables. And this is very simple. 1/1 + x/1 results in a sum that is unknown, but is expressed as a 2-bit number, or in other words as two bits, bits A and B. The right side is two bits, C and D, which are assigned. We produce the NAND equivalents of the following:
 
 E = A XNOR C
