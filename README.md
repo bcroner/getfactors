@@ -99,15 +99,15 @@ C = A add D
   
 So, let’s prove the theorem that if 1/1 + x/1 = 2/1, then x = 1. We have the left side of the equation, where we have two instances of the number 1. We express this as a ratio of two 2-bit integers. We assign truth values to the bits to express both instances of the number 1. We also express their addition in terms of NAND expressions as described above. On the right side we have the number 2, and we express the number as the truth values that are assigned to the two bits. Now what do we do to use this theorem proving system to show that the two are equivalent? We need to show that the left system of NANDs and variables is equivalent to the right side’s variables. And this is very simple. 1/1 + x/1 results in a sum that is unknown, but is expressed as a 2-bit number, or in other words as two bits, bits A and B. The right side is two bits, C and D, which are assigned. We produce the NAND equivalents of the following:
 
-E = A XNOR C
-F = B XNOR D
-G = E AND F
-
-And we assign G the truth value TRUE.
-
-Then we check for satisfiability. If satisfiable (which it would be), then we have proven the theorem that if 1/1 + x/1 = 2, then x = 1.
-
-Here is the final format consisting first of the independent boolean variables followed by the tabular NAND operator cells:
+E = A XNOR C  
+F = B XNOR D  
+G = E AND F  
+  
+And we assign G the truth value TRUE.  
+  
+Then we check for satisfiability. If satisfiable (which it would be), then we have proven the theorem that if 1/1 + x/1 = 2, then x = 1.  
+  
+Here is the final format consisting first of the independent boolean variables followed by the tabular NAND operator cells:  
 
 
 0	reserved  
