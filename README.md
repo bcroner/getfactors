@@ -80,7 +80,7 @@ Negation is just NOT for each of the gates and then adding 1 and discarding the 
 
 We can define i (root (-1)) like this:
 
-i = Negate (1)  
+C = Negate (1)  
 C = i * i  
 
 Division is discoverable, too.  
