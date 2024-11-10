@@ -131,22 +131,22 @@ To represent physics with this axiomatic system, for example, we would encode th
 
 We wish to discover a proof that 1/1 + x/1 = 2/1 where we may have up to N different variables.
 
-[Number] => [Dividend] [Divisor]
-[Dividend] => [VARCONST]
-[Divisor] => [VARCONST]
-[NULL] => one bit spacer
-[VARCONST] => [two’s complement signed Integer]
-[VARCONST] => X1
-[VARCONST] => X2
-.
-.
-.
-[VARCONST] => XN
-[two’s complement signed Integer] = bit sequence
-[Sum] => [Number] [Number]
-[Side] = Left
-[Side] = Right
-[Equates] = [Side] [Side]
+[Number] => [Dividend] [Divisor]  
+[Dividend] => [VARCONST]  
+[Divisor] => [VARCONST]  
+[NULL] => one bit spacer  
+[VARCONST] => [two’s complement signed Integer]  
+[VARCONST] => X1  
+[VARCONST] => X2  
+.  
+.  
+.  
+[VARCONST] => XN  
+[two’s complement signed Integer] = bit sequence  
+[Sum] => [Number] [Number]  
+[Side] = Left  
+[Side] = Right  
+[Equates] = [Side] [Side]  
 
 This grammar is capable of producing an equation having a sum, a left side, and a right side. This is the design of the mathematics we are investigating for discoveries.
 
@@ -154,78 +154,78 @@ Following is another example of such a grammar.
 
 We wish to discover a gun that is capable of firing 200 rounds in 2 minutes. We need to construct a grammar that describes the gun resulting from the discovery. Following are the parts of a gun that are related together in positions that expand an anatomy: Anatomy, Barrel, Magazine, Stock, Action, Muzzle, Grip, Sight, Cylinder, Hammer, Slide, Breech, Chamber, Firing pin, Safety, Bolt, Bore, Ejector, Trigger, Trigger Guard, Receiver, Butt, Ejection port, Frame.
 
-[Anatomy] => [Barrel] [Magazine] [Stock] [Action] [Muzzle] [Grip] [Sight] [Cylinder] [Hammer] [Slide] [Breech] [Chamber] [Firing pin] [Safety] [Bolt] [Bore] [Ejector] [Trigger] [Trigger Guard] [Receiver] [Butt] [Ejection port] [Frame]
+[Anatomy] => [Barrel] [Magazine] [Stock] [Action] [Muzzle] [Grip] [Sight] [Cylinder] [Hammer] [Slide] [Breech] [Chamber] [Firing pin] [Safety] [Bolt] [Bore] [Ejector] [Trigger] [Trigger Guard] [Receiver] [Butt] [Ejection port] [Frame]  
 
-[Barrel] => [Material] [Shape] [Grooves] [Dimensions]
-[Magazine] => [Tubular]
-[Magazine] => [Box]
-[Magazine] => [Internal box]
-[Magazine] => [Detachable box]
-[Magazine] => [Casket]
-[Magazine] => [Tandem]
-[Magazine] => [Rotary]
-[Magazine] => [Capsule]
-[Magazine] => [Drum]
-[Magazine] => [Saddle-drum]
-[Magazine] => [Pan]
-[Magazine] => [Helical]
-[Magazine] => [Hopper]
-[Tubular] => [T1]
-[Box] => [B1]
-[Internal box] => [I1]
-[Detachable box] => [D1]
-[Detachable box] => [Stanag]
-[Casket] => [C1]
-[Tandem] => [T1]
-[Rotary] => [R1]
-[Capsule] => [P1]
-[Drum] => [U1]
-[Saddle-drum] => [L1]
-[Pan] => [N1]
-[Helical] => [H1]
-[Hopper] => [E1]
-[T1] => [Magazine options]
-[B1] => [Magazine options]
-[I1] => [Magazine options]
-[D1] => [Magazine options]
-[Stanag] => [Magazine options]
-[C1] => [Magazine options]
-[T1] => [Magazine options]
-[R1] => [Magazine options]
-[P1] => [Magazine options]
-[U1] => [Magazine options]
-[L1] => [Magazine options]
-[N1] => [Magazine options]
-[H1] => [Magazine options]
-[E1] => [Magazine options]
-[Magazine options] => [Ammunition] [Capacity]
-[Ammunition] => Hollow point
-[Ammunition] => 22LR
-[Ammunition] => Soft point
-[Ammunition] => Remington Arms
-[Ammunition] => 56x45mm NATO
-[Ammunition] => Boat tail bullets
-[Ammunition] => Shotgun
-[Ammunition] => 9mm ammo
-[Ammunition] => Ballistic Tip
-[Ammunition] => Birdshot
-[Ammunition] => Magnum
-[Ammunition] => OTM
-[Ammunition] => Rimfire
-[Ammunition] => Round nose bullets
-[Ammunition] => 17HMR
-[Ammunition] => Creedmoor
-[Ammunition] => Jacketed hollow points
-[Ammunition] => Pistol
-[Capacity] => INTEGER
-
-[Stock]
-[Action]
-.
-.
-.
-[Ejection port]
-[Frame]
+[Barrel] => [Material] [Shape] [Grooves] [Dimensions]  
+[Magazine] => [Tubular]  
+[Magazine] => [Box]  
+[Magazine] => [Internal box]  
+[Magazine] => [Detachable box]  
+[Magazine] => [Casket]  
+[Magazine] => [Tandem]  
+[Magazine] => [Rotary]  
+[Magazine] => [Capsule]  
+[Magazine] => [Drum]  
+[Magazine] => [Saddle-drum]  
+[Magazine] => [Pan]  
+[Magazine] => [Helical]  
+[Magazine] => [Hopper]  
+[Tubular] => [T1]  
+[Box] => [B1]  
+[Internal box] => [I1]  
+[Detachable box] => [D1]  
+[Detachable box] => [Stanag]  
+[Casket] => [C1]  
+[Tandem] => [T1]  
+[Rotary] => [R1]  
+[Capsule] => [P1]  
+[Drum] => [U1]  
+[Saddle-drum] => [L1]  
+[Pan] => [N1]  
+[Helical] => [H1]  
+[Hopper] => [E1]  
+[T1] => [Magazine options]  
+[B1] => [Magazine options]  
+[I1] => [Magazine options]  
+[D1] => [Magazine options]  
+[Stanag] => [Magazine options]  
+[C1] => [Magazine options]  
+[T1] => [Magazine options]  
+[R1] => [Magazine options]  
+[P1] => [Magazine options]  
+[U1] => [Magazine options]  
+[L1] => [Magazine options]  
+[N1] => [Magazine options]  
+[H1] => [Magazine options]  
+[E1] => [Magazine options]  
+[Magazine options] => [Ammunition] [Capacity]  
+[Ammunition] => Hollow point  
+[Ammunition] => 22LR  
+[Ammunition] => Soft point  
+[Ammunition] => Remington Arms  
+[Ammunition] => 56x45mm NATO  
+[Ammunition] => Boat tail bullets  
+[Ammunition] => Shotgun  
+[Ammunition] => 9mm ammo  
+[Ammunition] => Ballistic Tip  
+[Ammunition] => Birdshot  
+[Ammunition] => Magnum  
+[Ammunition] => OTM  
+[Ammunition] => Rimfire  
+[Ammunition] => Round nose bullets  
+[Ammunition] => 17HMR  
+[Ammunition] => Creedmoor  
+[Ammunition] => Jacketed hollow points  
+[Ammunition] => Pistol  
+[Capacity] => INTEGER  
+  
+[Stock]  
+[Action]  
+.  
+.  
+.  
+[Ejection port]  
+[Frame]  
 
 
 Each expansion of a given grammar element is identified with an integer unique within this grammar element. These are stored in a table for the decoding of the final design. Everything eventually expands to numerical variables. The criteria for the gun are stated and the operations relating the numbers together are determined based on knowledge from ballistics science. For example, the groove pattern of the barrel is a variable that determines how quickly the bullet rotates as it approaches its target. The speed of rotation is a trade-off, where the higher the speed of rotation, the more stable the bullet is, but the more energy that is needed to produce this rate of rotation.
