@@ -230,8 +230,8 @@ We wish to discover a gun that is capable of firing 200 rounds in 2 minutes. We 
 
 Each expansion of a given grammar element is identified with an integer unique within this grammar element. These are stored in a table for the decoding of the final design. Everything eventually expands to numerical variables. The criteria for the gun are stated and the operations relating the numbers together are determined based on knowledge from ballistics science. For example, the groove pattern of the barrel is a variable that determines how quickly the bullet rotates as it approaches its target. The speed of rotation is a trade-off, where the higher the speed of rotation, the more stable the bullet is, but the more energy that is needed to produce this rate of rotation.
 
-The claims are as follows:
-
-    1. The use of the NAND gate or a logical equivalent as the base axiom.
-    2. The structure of the data layout with first the independent boolean variables followed by the tabular NAND operator cells.
-    3. The development of a grammar to express the variable design of the final theorem which is to be proven.
+The claims are as follows:  
+  
+    1. The use of the NAND gate or a logical equivalent as the base axiom.  
+    2. The structure of the data layout with first the independent boolean variables followed by the tabular NAND operator cells.  
+    3. The development of a grammar to express the variable design of the final theorem which is to be proven.  
