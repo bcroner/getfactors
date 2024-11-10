@@ -110,20 +110,20 @@ Then we check for satisfiability. If satisfiable (which it would be), then we ha
 Here is the final format consisting first of the independent boolean variables followed by the tabular NAND operator cells:
 
 
-0	reserved
-1	Reserved for true/false
-2	Boolean variable 0
-3	Boolean variable 1
-…	…
-n	Boolean variable n - 2
-n+1	 Cell n + 1 = X0 NAND Y0
-n+2	 Cell n + 2 = X1 NAND Y1
-n+3	 Cell n + 3 = X2 NAND Y2
-n+4	 Cell n + 4 = X3 NAND Y3
-n+5	 Cell n + 5 = X4 NAND Y4
-n+6	 Cell n + 6 = X5 NAND Y5
-…	…
-n+z	 Cell n + z = XN NAND YN
+0	reserved  
+1	Reserved for true/false  
+2	Boolean variable 0  
+3	Boolean variable 1  
+…	…  
+n	Boolean variable n - 2  
+n+1	 Cell n + 1 = X0 NAND Y0  
+n+2	 Cell n + 2 = X1 NAND Y1  
+n+3	 Cell n + 3 = X2 NAND Y2  
+n+4	 Cell n + 4 = X3 NAND Y3  
+n+5	 Cell n + 5 = X4 NAND Y4  
+n+6	 Cell n + 6 = X5 NAND Y5  
+…	…  
+n+z	 Cell n + z = XN NAND YN  
 
 Here, each NAND operator inversely conjoins two boolean variables, yielding a third variable that represents the cell. We force both of these variables to reference cell variables and allotted variables of lower order than the cell itself with no self-referential variables to avoid contradictions, Russell’s Paradox, and other related issues. The consistency of using a standard NAND gate every time means that it’s very easy to produce the data set and very easy to interpret the results. When otherwise using multiple types of logic gates, things get complicated and messy.
 
