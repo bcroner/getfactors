@@ -28,11 +28,11 @@ The axioms are as follows:
 A NAND B = C
 
 
-A	B	C
-0	0	1
-0	1	1
-1	0	1
-1	1	0
+A	B	C  
+0	0	1  
+0	1	1  
+1	0	1  
+1	1	0  
 
 
 (~A | ~B | ~C) & (A | C) & (B | C) (Tseytin transformation as represented by my 3SAT solver)
