@@ -303,6 +303,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n) && 
 		!SATSolver_GreaterThanOrEqual(prev_Z, me->Z, me->master->n)) {
 
+		for (int i = 0; i < me->master->n; i++)
+			prev_Z[i] = me->Z[i];
+
 		int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 
 		if (temp_pow_jump == 0)
