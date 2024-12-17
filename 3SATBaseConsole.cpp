@@ -261,10 +261,7 @@ bool SATSolver_GreaterThan(bool* a, bool* b, int n) {
 		else if (!a[i] && b[i])
 			return false;
 
-	if (i == 0)
-		return false;
-	else
-		return true;
+	return false;
 
 }
 
