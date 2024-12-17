@@ -251,15 +251,20 @@ __int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos) {
 
 }
 
-bool SATSolver_GreaterThanOrEqual(bool* a, bool* b , int n) {
+bool SATSolver_GreaterThan(bool* a, bool* b, int n) {
 
-	for (int i = n; i >= 0; i--)
+	int i;
+
+	for (i = n; i >= 0; i--)
 		if (a[i] && !b[i])
 			return true;
 		else if (!a[i] && b[i])
 			return false;
 
-	return true;
+	if (i == 0)
+		return false;
+	else
+		return true;
 
 }
 
@@ -271,7 +276,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	int prev_pos = 0;	// de-exponentializer variable
 	bool zero_jump = false;
 
-	while (!SATSolver_GreaterThanOrEqual(me->Z, me->end, me->master->n)) {
+	while (!SATSolver_GreaterThan(me->Z, me->end, me->master->n)) {
 
 		int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 
