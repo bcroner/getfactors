@@ -272,10 +272,47 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	__int64 count = 0;
 	int prev_pos = 0;	// de-exponentializer variable
 	bool zero_jump = false;
+	bool* prev_Z;
 
-	while (!SATSolver_GreaterThan(me->Z, me->end, me->master->n)) {
+	prev_Z = new bool[me->master->n];
 
-		int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
+	for (int i = 0; i < me->master->n; i++)
+		prev_Z[i] = me->begin[i];
+
+	int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
+
+	if (temp_pow_jump == 0) {
+		delete[] prev_Z;
+		return false;
+	}
+
+	// using prev_pos: de-exponentialize
+	if (temp_pow_jump > 0)
+		prev_pos = temp_pow_jump;
+	else
+		prev_pos = 0;
+
+	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
+
+	SATSolver_add(me, me->pow_jump);
+
+	count++;
+
+	//if (count % (1 * 1048576) == 0) {
+
+	if (true) {
+
+		for (int i = 0; i <= me->master->n; i++)
+			printf_s("%d", me->Z[i]);
+		//printf_s(" jump: %d", me->pow_jump);
+		printf_s(" jump: %d", temp_pow_jump);
+		printf_s("\n");
+	}
+
+	while (!SATSolver_GreaterThan(me->Z, me->end, me->master->n) &&
+		!SATSolver_GreaterThan(prev_Z, me->Z, me->master->n) ) {
+
+		temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 
 		if (temp_pow_jump == 0) {
 			zero_jump = true;
@@ -309,11 +346,16 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	printf_s("count: %d\n", count);
 
-	if (zero_jump)
+	if (!zero_jump && (SATSolver_GreaterThan(me->Z, me->end, me->master->n) ||
+		SATSolver_GreaterThan(prev_Z, me->Z, me->master->n))) {
+		delete[] prev_Z;
 		return false;
+	}
 	
 	for (int i = 0; i < me->master->n; i++)
 		arr[i] = me->Z[me->master->decoding[i]];
+
+	delete[] prev_Z;
 
 	return true;
 }
