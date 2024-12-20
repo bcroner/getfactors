@@ -255,7 +255,7 @@ bool SATSolver_GreaterThan(bool* a, bool* b, int n) {
 
 	int i;
 
-	for (i = n; i >= 0; i--)
+	for (i = n - 1; i >= 0; i--)
 		if (a[i] && !b[i])
 			return true;
 		else if (!a[i] && b[i])
@@ -312,6 +312,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	while (!SATSolver_GreaterThan(me->Z, me->end, me->master->n) &&
 		!SATSolver_GreaterThan(prev_Z, me->Z, me->master->n) ) {
 
+		for (int i = 0; i < me->master->n; i++)
+			prev_Z[i] = me->Z[i];
+
 		temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 
 		if (temp_pow_jump == 0) {
@@ -346,7 +349,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	printf_s("count: %d\n", count);
 
-	if (!zero_jump && (SATSolver_GreaterThan(me->Z, me->end, me->master->n) ||
+	if (zero_jump && (SATSolver_GreaterThan(me->Z, me->end, me->master->n) ||
 		SATSolver_GreaterThan(prev_Z, me->Z, me->master->n))) {
 		delete[] prev_Z;
 		return false;
@@ -416,6 +419,25 @@ bool* SATSolver_bool_add(bool* a, bool* b, int n) {
 
 }
 
+bool* SATSolver_bool_prepare_end(bool* a, bool* b, int n) {
+
+	bool carry = false;
+
+	bool* ret = new bool[n];
+
+	int position_first_true_bit;
+
+	for (position_first_true_bit = n; !b[position_first_true_bit] && position_first_true_bit >= 0; position_first_true_bit--)
+		;
+
+	for (int i = position_first_true_bit - 1; i >= 0; i--)
+		ret[i] = true;
+
+	return ret;
+
+}
+
+
 bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 
 	// create the return boolean array and initialize
@@ -470,15 +492,15 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	// instantiate class member variables
 
 	me->master = master;
-	me->Z = new bool [n_parm + 1];
+	me->Z = new bool [n_parm];
 
 	// set up first and last element to check: me->begin, me->end
 
-	bool * two = SATSolver_int2bool(2, n_parm + 1);
+	bool * two = SATSolver_int2bool(2, n_parm);
 	bool * unit = SATSolver_bool_pow(two, n_parm - chop, n_parm + 1);
-	bool * offs = SATSolver_int2bool(pos, n_parm + 1);
-	me->begin = SATSolver_bool_mul ( unit, offs, n_parm + 1) ;
-	me->end = SATSolver_bool_add ( me->begin, unit, n_parm + 1);
+	bool * offs = SATSolver_int2bool(pos, n_parm);
+	me->begin = SATSolver_bool_mul ( unit, offs, n_parm) ;
+	me->end = SATSolver_bool_prepare_end ( me->begin, unit, n_parm);
 
 	delete[] two;
 	delete[] unit;
