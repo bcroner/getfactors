@@ -300,7 +300,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (true) {
+	if (!true) {
 
 		for (int i = 0; i <= me->master->n; i++)
 			printf_s("%d", me->Z[i]);
@@ -336,7 +336,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (true) {
+		if (!true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
