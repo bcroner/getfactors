@@ -21,7 +21,7 @@ int main()
 
     const char * buf_3sat_src =
 
-/*
+///*
 
 "-48 -49 21\n\
 41 37 -42\n\
@@ -467,7 +467,7 @@ int main()
 
 //*/
 
-///*
+/*
 
 "-97 89 18\n\
 37 52 -71\n\
@@ -964,7 +964,7 @@ int main()
 
     //*/
 
-    /*
+    ///*
 
     //bit_3sat * a = create_bit(&num_parm);
     //bit_3sat * b = create_bit(&num_parm);
@@ -998,6 +998,15 @@ int main()
         d615b9d2da021a9b3b86f659909fc1\
         6ffff83445962c809d95dadf4daa8a\
         8304d84267"); // https://gmail.com
+    //*/
+
+    /*
+    strcpy_s(c_str, 2000,
+        "04296895a7038ff658c9531c799321\
+        b31ae82d973f5ff59dd93f481a46cd\
+        07d27760db4e151236ec5b0db99ead\
+        6a94c856fadff9045f6011be6b3f6e\
+        cf909a12a7"); // https://gmail.com
     //*/
 
     /*
