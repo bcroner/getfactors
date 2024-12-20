@@ -52,6 +52,7 @@ bool SATSolver_GreaterThan(bool* a, bool* b, int n);
 bool SATSolver_isSat(SATSolver* me, bool *arr);
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n);
 bool * SATSolver_bool_add(bool *a, bool *b, int n);
+bool* SATSolver_bool_prepare_end(bool* a, bool* b, int n);
 bool * SATSolver_bool_mul(bool *a, bool *b, int n);
 bool* SATSolver_int2bool(__int64 a, __int64 n_parm);
 void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int n_parm);
