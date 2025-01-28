@@ -21,7 +21,7 @@ typedef struct {
 	int** neg_map;		// map of negated literals to clauses for tallying
 	int* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	int* neg_map_szs;	// list of sizes of each literal mapped in neg map
-	int* powers;		// powers to jump forward by
+	int** powers;		// powers to jump forward by
 	int k;				// original number of clauses
 	int n;				// number of variables
 
@@ -42,12 +42,12 @@ typedef struct {
 } SATSolver;
 
 
-int MyQSort_partition(int arr_parm[], int low_parm, int high_parm);
+//int MyQSort_partition(int arr_parm[], int low_parm, int high_parm);
 void MyQSort(int arr[], int low_parm, int high_parm);
 void SATSolver_updateTF(SATSolver* me, int lit, bool target);
 void SATSolver_add(SATSolver* me, int pos_parm);
 __int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos);
-__int64 SATSolver_ManageIncrement(SATSolver* me);
+//__int64 SATSolver_ManageIncrement(SATSolver* me);
 bool SATSolver_GreaterThan(bool* a, bool* b, int n);
 bool SATSolver_isSat(SATSolver* me, bool *arr);
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n);
