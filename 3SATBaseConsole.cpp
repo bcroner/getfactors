@@ -622,9 +622,17 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
-	master->powers = new int[k_parm];
+	master->powers = new int*[k_parm];
+	for (int i = 0; i < k_parm; i++) {
+		master->powers[i] = new int[3];
+		master->powers[i][0] = -1;
+		master->powers[i][1] = -1;
+		master->powers[i][2] = -1;
+	}
 
 	for (int i = 0; i < k_parm; i++) {
+
+		/*
 		int highest = -1;
 		int lit_cur = 0;
 		for (int j = 0; j < 3; j++) {
@@ -643,6 +651,97 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		// record the jump power of the clause at i
 
 		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
+		*/
+
+		int count = 3;
+
+		if (lst[i][0] == TRUE_3SAT || lst[i][1] == TRUE_3SAT || lst[i][2] == TRUE_3SAT) {
+			master->powers[i] = -1;
+			continue;
+		}
+
+		int a ;
+		int b ;
+		int c ;
+		int temp ;
+
+		if (lst[i][0] == FALSE_3SAT )
+			count--;
+		if (lst[i][1] == FALSE_3SAT)
+			count--;
+		if (lst[i][2] == FALSE_3SAT)
+			count--;
+
+		if (count == 0)
+			continue;
+
+		if (count == 1) {
+
+			if (lst[i][0] != FALSE_3SAT)
+				a = lst[i][0] < 0 ? (-lst[i][0] : lst[i][0]) - 2;
+			else if (lst[i][1] != FALSE_3SAT)
+				a = lst[i][1] < 0 ? (-lst[i][1] : lst[i][1]) - 2;
+			else 
+				a = lst[i][2] < 0 ? (-lst[i][2] : lst[i][2]) - 2;
+
+			master->powers[i][0] = n_parm - 1 - a;
+		}
+		else if (count == 2) {
+
+			if (lst[i][0] == FALSE_3SAT) {
+				a = lst[i][1] < 0 ? (-lst[i][1] : lst[i][1]) - 2;
+				b = lst[i][2] < 0 ? (-lst[i][2] : lst[i][2]) - 2;
+			}
+			else if (lst[i][1] == FALSE_3SAT) {
+				a = lst[i][0] < 0 ? (-lst[i][0] : lst[i][0]) - 2;
+				b = lst[i][2] < 0 ? (-lst[i][2] : lst[i][2]) - 2;
+			}
+			else {
+				a = lst[i][0] < 0 ? (-lst[i][0] : lst[i][0]) - 2;
+				b = lst[i][1] < 0 ? (-lst[i][1] : lst[i][1]) - 2;
+			}
+
+			if (a < b) {
+
+				master->powers[i][0] = n_parm - 1 - a;
+				master->powers[i][1] = n_parm - 1 - b;
+
+			}
+			else {
+
+				master->powers[i][0] = n_parm - 1 - b;
+				master->powers[i][1] = n_parm - 1 - a;
+
+			}
+
+		}
+		else {
+
+			a = lst[i][0] < 0 ? (-lst[i][0] : lst[i][0]) - 2;
+			b = lst[i][1] < 0 ? (-lst[i][1] : lst[i][1]) - 2;
+			c = lst[i][2] < 0 ? (-lst[i][2] : lst[i][2]) - 2;
+
+			// Sort the variables in ascending order
+			if (a > b) {
+				temp = a;
+				a = b;
+				b = temp;
+			}
+			if (a > c) {
+				temp = a;
+				a = c;
+				c = temp;
+			}
+			if (b > c) {
+				temp = b;
+				b = c;
+				c = temp;
+			}
+
+			master->powers[i][0] = n_parm - 1 - c;
+			master->powers[i][1] = n_parm - 1 - b;
+			master->powers[i][2] = n_parm - 1 - a;
+		}
 
 	}
 
