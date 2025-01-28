@@ -701,19 +701,16 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 				b = lst[i][1] < 0 ? (-lst[i][1] : lst[i][1]) - 2;
 			}
 
-			if (a < b) {
+			if (a > b) {
 
-				master->powers[i][0] = n_parm - a;
-				master->powers[i][1] = n_parm - b;
-
-			}
-			else {
-
-				master->powers[i][0] = n_parm - b;
-				master->powers[i][1] = n_parm - a;
+				temp = a;
+				a = b;
+				b = temp;
 
 			}
 
+			master->powers[i][0] = n_parm - b;
+			master->powers[i][1] = n_parm - a;
 		}
 		else {
 
