@@ -684,7 +684,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			else 
 				a = lst[i][2] < 0 ? (-lst[i][2] : lst[i][2]) - 2;
 
-			master->powers[i][0] = n_parm - 1 - a;
+			master->powers[i][0] = n_parm - a;
 		}
 		else if (count == 2) {
 
@@ -703,14 +703,14 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 			if (a < b) {
 
-				master->powers[i][0] = n_parm - 1 - a;
-				master->powers[i][1] = n_parm - 1 - b;
+				master->powers[i][0] = n_parm - a;
+				master->powers[i][1] = n_parm - b;
 
 			}
 			else {
 
-				master->powers[i][0] = n_parm - 1 - b;
-				master->powers[i][1] = n_parm - 1 - a;
+				master->powers[i][0] = n_parm - b;
+				master->powers[i][1] = n_parm - a;
 
 			}
 
@@ -738,9 +738,9 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 				c = temp;
 			}
 
-			master->powers[i][0] = n_parm - 1 - c;
-			master->powers[i][1] = n_parm - 1 - b;
-			master->powers[i][2] = n_parm - 1 - a;
+			master->powers[i][0] = n_parm - c;
+			master->powers[i][1] = n_parm - b;
+			master->powers[i][2] = n_parm - a;
 		}
 
 	}
