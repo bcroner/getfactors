@@ -854,7 +854,11 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 	delete [] master->neg_map;
 	delete [] master->pos_map_szs;
 	delete [] master->neg_map_szs;
-	delete [] master->powers;
+
+	for ( int i = 0 ; i < master->k; i++)
+		delete[] master->powers[i];
+
+	delete master->powers;
 }
 
 void SATSolver_destroy(SATSolver * me) {
