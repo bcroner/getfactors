@@ -622,17 +622,13 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
-	master->powers = new int*[k_parm];
-	for (int i = 0; i < k_parm; i++) {
-		master->powers[i] = new int[3];
-		master->powers[i][0] = -1;
-		master->powers[i][1] = -1;
-		master->powers[i][2] = -1;
-	}
+	master->powers = new int[k_parm];
+	for (int i = 0; i < k_parm; i++)
+		master->powers[i] = 0;
 
 	for (int i = 0; i < k_parm; i++) {
 
-		/*
+		///*
 		int highest = -1;
 		int lit_cur = 0;
 		for (int j = 0; j < 3; j++) {
@@ -651,7 +647,9 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		// record the jump power of the clause at i
 
 		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
-		*/
+		//*/
+
+		/*
 
 		int count = 3;
 
@@ -739,6 +737,8 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 			master->powers[i][1] = n_parm - b;
 			master->powers[i][2] = n_parm - a;
 		}
+
+		*/
 
 	}
 
@@ -852,10 +852,7 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 	delete [] master->pos_map_szs;
 	delete [] master->neg_map_szs;
 
-	for ( int i = 0 ; i < master->k; i++)
-		delete[] master->powers[i];
-
-	delete master->powers;
+	delete [] master->powers;
 }
 
 void SATSolver_destroy(SATSolver * me) {
