@@ -24,6 +24,7 @@ typedef struct {
 	int* powers;		// powers to jump forward by
 	int k;				// original number of clauses
 	int n;				// number of variables
+	int chops;			// number of equal-sized partitions chopping up search space: 2^chops 
 
 } SATSolverMaster;
 
@@ -37,8 +38,8 @@ typedef struct {
 
 	bool* Z;					// current position in permutation space
 	__int64 pow_jump;			// current value of jump, to be updated each cycle
-	bool* begin;				// first element begin of search space
-	bool* end;					// last element end of search space
+	bool** begin;				// first element begin of search space
+	bool** end;					// last element end of search space
 } SATSolver;
 
 
@@ -55,8 +56,8 @@ bool * SATSolver_bool_add(bool *a, bool *b, int n);
 bool* SATSolver_bool_prepare_end(bool* a, bool* b, int n);
 bool * SATSolver_bool_mul(bool *a, bool *b, int n);
 bool* SATSolver_int2bool(__int64 a, __int64 n_parm);
-void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int n_parm);
-void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop, int pos);
+void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int n_parm, int chops_parm);
+void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int pos);
 void SATSolverMaster_destroy(SATSolverMaster* master);
 void SATSolver_destroy(SATSolver* me);
 void thread_3SAT(int tid, SATSolverMaster* master, bool* arr, int** lst, int k_parm, int n_parm, __int64 chop, __int64 pos);
