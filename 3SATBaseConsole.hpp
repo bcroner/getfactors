@@ -21,7 +21,7 @@ typedef struct {
 	int** neg_map;		// map of negated literals to clauses for tallying
 	int* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	int* neg_map_szs;	// list of sizes of each literal mapped in neg map
-	int** powers;		// powers to jump forward by
+	int* powers;		// powers to jump forward by
 	int k;				// original number of clauses
 	int n;				// number of variables
 
