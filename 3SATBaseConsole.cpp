@@ -245,9 +245,10 @@ __int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos, bool * jump_occ
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
-		jump_occurred = ( sign_match && me->cls_tly[i] == 3 ) ;
-		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && abs_temp_jump > prev_pos)	// prev_pos: this criterion is the de-exponentialization step
+		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && abs_temp_jump > prev_pos) {	// prev_pos: this criterion is the de-exponentialization step
 			max_jump = temp_jump;
+			jump_occurred = true;
+		}
 	}
 
 	return max_jump;
