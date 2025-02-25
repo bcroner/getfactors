@@ -230,7 +230,7 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 		}
 }
 
-__int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos, bool * jump_occurred) {
+__int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos) {
 
 	// initialize return value
 
@@ -245,10 +245,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos, bool * jump_occ
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
-		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && abs_temp_jump > prev_pos) {	// prev_pos: this criterion is the de-exponentialization step
+		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && abs_temp_jump > prev_pos)	// prev_pos: this criterion is the de-exponentialization step
 			max_jump = temp_jump;
-			jump_occurred = true;
-		}
 	}
 
 	return max_jump;
@@ -288,12 +286,14 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 		for (int i = 0; i < me->master->n; i++)
 			prev_Z[i] = me->begin[chop][i];
 
-		int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos, & jump_occurred);
+		int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 
 		if (temp_pow_jump == 0) {
 			delete[] prev_Z;
 			return false;
 		}
+		else
+			jump_occurred = true;
 
 		// using prev_pos: de-exponentialize
 		if (temp_pow_jump > 0)
@@ -334,12 +334,14 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 			if (count_matches == me->master->n)
 				prev_is_end = true;
 
-			temp_pow_jump = SATSolver_initializePowJump(me, prev_pos, & jump_occurred);
+			temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 
 			if (temp_pow_jump == 0) {
 				zero_jump = true;
 				break;
 			}
+			else
+				jump_occurred = true;
 
 			// using prev_pos: de-exponentialize
 			if (temp_pow_jump > 0)
