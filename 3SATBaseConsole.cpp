@@ -270,6 +270,9 @@ bool SATSolver_GreaterThan(bool* a, bool* b, int n) {
 
 bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
+	bool jump_occurred = false;
+	bool prev_is_end = false;
+
 	for (int chop = 0; chop < me->master->chops; chop++) {
 
 		// main loop- until end condition
@@ -278,9 +281,6 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 		int prev_pos = 0;	// de-exponentializer variable
 		bool zero_jump = false;
 		bool* prev_Z;
-
-		bool jump_occurred = false;
-		bool prev_is_end = false;
 
 		prev_Z = new bool[me->master->n];
 
@@ -367,9 +367,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		printf_s("count: %d\n", count);
 
-		if ( prev_is_end && jump_occurred) {
+		if (prev_is_end && jump_occurred) {
 			delete[] prev_Z;
-			return false;
+			continue;
 		}
 
 		for (int i = 0; i < me->master->n; i++)
@@ -380,6 +380,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 		return true;
 
 	}
+
+	if (prev_is_end && jump_occurred)
+		return false;
 }
 
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n) {
