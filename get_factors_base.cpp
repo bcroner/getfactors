@@ -21,7 +21,7 @@ int main()
 
     const char * buf_3sat_src =
 
-///*
+/*
 
 "-48 -49 21\n\
 41 37 -42\n\
@@ -902,7 +902,7 @@ int main()
 
 //*/
 
-///*
+/*
 
     strcpy_s(buf_3sat, 200000, buf_3sat_src);
 
@@ -1009,7 +1009,7 @@ int main()
         cf909a12a7"); // https://gmail.com
     //*/
 
-    /*
+    ///*
     //char c_str[2000];
     strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
