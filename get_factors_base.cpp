@@ -17,9 +17,9 @@ int main()
     int num_parm = 2;
     int len_para = 0;
 
-    char buf_3sat[200000];
+    //char buf_3sat[200000];
 
-    const char * buf_3sat_src =
+    //const char * buf_3sat_src =
 
 /*
 
