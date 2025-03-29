@@ -1480,14 +1480,14 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     counted = counted - 1;
 
     SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, counted);
-
-    SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, counted, 0, 0);
+    SATSolverMaster_create(master, input, k, counted , 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
-    
+
+    SATSolver* s = new SATSolver();
+    SATSolver_create(s, master, input, k, counted, 0);
+
     if (!SATSolver_isSat(s, sln))
         return prime_str;
 
