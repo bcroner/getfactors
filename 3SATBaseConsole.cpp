@@ -289,7 +289,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 		for (int i = 0; i < me->master->n; i++)
 			prev_Z[i] = me->begin[chop][i];
 
-		int temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
+		int temp_pow_jump = (int) SATSolver_initializePowJump(me, prev_pos);
 
 		if (temp_pow_jump == 0) {
 			delete[] prev_Z;
@@ -306,7 +306,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-		SATSolver_add(me, me->pow_jump);
+		SATSolver_add(me, (int)me->pow_jump);
 
 		count++;
 
@@ -337,7 +337,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 			if (count_matches == me->master->n)
 				prev_is_end = true;
 
-			temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
+			temp_pow_jump = (int)SATSolver_initializePowJump(me, prev_pos);
 
 			if (temp_pow_jump == 0) {
 				zero_jump = true;
@@ -354,7 +354,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 			me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-			SATSolver_add(me, me->pow_jump);
+			SATSolver_add(me, (int)me->pow_jump);
 
 			count++;
 
@@ -371,7 +371,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		}
 
-		printf_s("count: %d\n", count);
+		printf_s("count: %d\n", (int)count);
 
 		if (prev_is_end && jump_occurred) {
 			delete[] prev_Z;
@@ -389,6 +389,8 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	if (prev_is_end && jump_occurred)
 		return false;
+	else
+		return true;
 }
 
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n) {
@@ -926,7 +928,7 @@ int thread_id = -1;
 void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
 
 	SATSolver* s = new SATSolver();
-	SATSolver_create(s, master, lst, k_parm, n_parm, pos);
+	SATSolver_create(s, master, lst, k_parm, n_parm, (int)pos);
 
 	bool sat = SATSolver_isSat(s, arr);
 
