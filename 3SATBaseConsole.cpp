@@ -236,8 +236,6 @@ __int64 SATSolver_initializePowJump(SATSolver* me, int prev_pos) {
 
 	__int64 max_jump = 0;
 
-	*jump_occurred = false;
-
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
 	for (int i = 0; i < me->master->k; i++) {
@@ -272,7 +270,12 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 	bool jump_occurred = false;
 	bool prev_is_end = false;
 
-	for (int chop = 0; chop < me->master->chops; chop++) {
+	__int64 search_sz = 1;
+
+	for (int i = 0; i < me->master->chops; i++)
+		search_sz *= 2;
+
+	for (int chop = 0; chop < search_sz; chop++) {
 
 		// main loop- until end condition
 
@@ -328,7 +331,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 			int count_matches = 0;
 
 			for (int i = 0; i < me->master->n; i++)
-				if (prev_Z[i] == me->end[i])
+				if (prev_Z[i] == me->end[chop][i])
 					count_matches++;
 
 			if (count_matches == me->master->n)
@@ -514,15 +517,25 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 	if (n_parm <= 0)
 		return;
 
+	// calculate chops
+
+	if (master->chops < 2)
+		master->chops = 2;
+
+	__int64 search_sz = 1;
+
+	for (int i = 0; i < master->chops; i++)
+		search_sz *= 2;
+
 	// instantiate class member variables
 
 	me->master = master;
 	me->Z = new bool [n_parm];
 
-	me->begin = new bool* [master->chops];
-	me->end   = new bool* [master->chops];
+	me->begin = new bool * [search_sz];
+	me->end   = new bool * [search_sz];
 
-	for (int chop = 0; chop < master->chops; chop++) {
+	for (int chop = 0; chop < search_sz; chop++) {
 
 		// set up first and last element to check: me->begin, me->end
 
@@ -530,7 +543,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 		bool* unit = SATSolver_bool_pow(two, n_parm - chop, n_parm + 1);
 		bool* offs = SATSolver_int2bool(pos, n_parm);
 		me->begin[chop] = SATSolver_bool_mul(unit, offs, n_parm);
-		me->end[chop] = SATSolver_bool_prepare_end(me->begin, unit, n_parm);
+		me->end[chop] = SATSolver_bool_prepare_end(me->begin[chop], unit, n_parm);
 
 		delete[] two;
 		delete[] unit;
@@ -913,7 +926,7 @@ int thread_id = -1;
 void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop, __int64 pos) {
 
 	SATSolver* s = new SATSolver();
-	SATSolver_create(s, master, lst, k_parm, n_parm, chop, pos);
+	SATSolver_create(s, master, lst, k_parm, n_parm, pos);
 
 	bool sat = SATSolver_isSat(s, arr);
 
@@ -942,8 +955,10 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	for (int i = 0; i < num_threads; i++)
 		arrs[i] = new bool[n_parm];
 
+	int chops = num_threads < 4 ? 4 : num_threads;
+
 	SATSolverMaster* master = new SATSolverMaster();
-	SATSolverMaster_create(master, lst, k_parm, n_parm);
+	SATSolverMaster_create(master, lst, k_parm, n_parm, chops);
 
 	__int64 top = 1;
 
