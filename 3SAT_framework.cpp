@@ -1392,19 +1392,33 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     int c_bit_count = inbuffer_sz - leading_zeros;
 
     dec_3sat* c_equals = new dec_3sat();
-    c_equals->sz = c_bit_count + 1;
+    c_equals->sz = c_bit_count * 2 + 1;
     c_equals->ad_sz = 0;
-    c_equals->bd_sz = c_bit_count + 1;
-    c_equals->bits = new bit_3sat * [c_bit_count + 1];
+    c_equals->bd_sz = c_bit_count * 2 + 1;
+    c_equals->bits = new bit_3sat * [c_bit_count * 2 + 1];
 
     c_equals->bits[0] = new bit_3sat();
     c_equals->bits[0]->id = FALSE_3SAT;
 
+    // copy over leading multiply zeros
+
+    for ( int i = 0 ; i < c_bit_count; i++) {
+        c_equals->bits[1 + i] = new bit_3sat();
+        c_equals->bits[1 + i]->id = FALSE_3SAT;
+    }
+
+    // copy over leading c zeros
+
+    for (int i = 0; i < leading_zeros; i++) {
+        c_equals->bits[1 + c_bit_count + i] = new bit_3sat();
+        c_equals->bits[1 + c_bit_count + i]->id = FALSE_3SAT;
+    }
+
     // transfer over inbuffer
 
     for (int i = leading_zeros; i < inbuffer_sz; i++) {
-        c_equals->bits[1 + i - leading_zeros] = new bit_3sat();
-        c_equals->bits[1 + i - leading_zeros]->id = inbuffer[i] ? TRUE_3SAT : FALSE_3SAT;
+        c_equals->bits[1 + c_bit_count + i] = new bit_3sat();
+        c_equals->bits[1 + c_bit_count + i]->id = inbuffer[i] ? TRUE_3SAT : FALSE_3SAT;
     }
 
     delete[] inbuffer;
@@ -1437,7 +1451,7 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
 
     __int64 mul_str_len = 0;
 
-    char* mul_str = dec_mul(&num_parm, &c, a, b, c_bit_count + 1, 0, & mul_str_len);
+    char* mul_str = dec_mul(&num_parm, &c, a, b, c_bit_count * 2 + 1, 0, & mul_str_len);
 
     __int64 equals_str_len = 0;
 
