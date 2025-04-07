@@ -1392,10 +1392,10 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     int c_bit_count = inbuffer_sz - leading_zeros;
 
     dec_3sat* c_equals = new dec_3sat();
-    c_equals->sz = c_bit_count * 2 + 1;
+    c_equals->sz = c_bit_count * 2;
     c_equals->ad_sz = 0;
-    c_equals->bd_sz = c_bit_count * 2 + 1;
-    c_equals->bits = new bit_3sat * [c_bit_count * 2 + 1];
+    c_equals->bd_sz = c_bit_count * 2;
+    c_equals->bits = new bit_3sat * [c_bit_count * 2];
 
     c_equals->bits[0] = new bit_3sat();
     c_equals->bits[0]->id = FALSE_3SAT;
@@ -1451,7 +1451,7 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
 
     __int64 mul_str_len = 0;
 
-    char* mul_str = dec_mul(&num_parm, &c, a, b, c_bit_count * 2 + 1, 0, & mul_str_len);
+    char* mul_str = dec_mul(&num_parm, &c, a, b, c_bit_count * 2, 0, & mul_str_len);
 
     __int64 equals_str_len = 0;
 
