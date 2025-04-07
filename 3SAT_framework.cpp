@@ -902,7 +902,7 @@ char* dec_mul(int* num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, int bd_sz, 
             itmd_a->bits[itmd_a->sz - j - 1] = new bit_3sat();
             itmd_a->bits[itmd_a->sz - j - 1]->id = FALSE_3SAT;
         }
-        int limit = a->sz + i < bd_sz + ad_sz ? a->sz + i : bd_sz + ad_sz;
+        int limit = a->sz + i; // < bd_sz + ad_sz ? a->sz + i : bd_sz + ad_sz;
         for (int j = i; j < limit; j++) {
             char* and_str = and_3sat(num_parm, &itmd_a->bits[itmd_a->sz - j - 1], a->bits[a->sz - 1 - (j - i)],
                 b->bits[b->sz - i - 1], &(and_str_itmd_ab[i][j-i]));
