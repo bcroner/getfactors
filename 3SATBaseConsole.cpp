@@ -293,7 +293,8 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		if (temp_pow_jump == 0) {
 			delete[] prev_Z;
-			return false;
+			jump_occurred = false;
+			continue;
 		}
 		else
 			jump_occurred = true;
