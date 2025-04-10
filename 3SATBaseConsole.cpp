@@ -277,6 +277,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	for (int chop = 0; chop < search_sz; chop++) {
 
+		for (int i = 0; i < me->master->n; i++)
+			me->Z[i] = me->begin[chop][i];
+
 		// main loop- until end condition
 
 		__int64 count = 0;
@@ -313,7 +316,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (!true) {
+		if (true) {
 
 			for (int i = 0; i <= me->master->n; i++)
 				printf_s("%d", me->Z[i]);
@@ -361,7 +364,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 			//if (count % (1 * 1048576) == 0) {
 
-			if (!true) {
+			if (true) {
 
 				for (int i = 0; i <= me->master->n; i++)
 					printf_s("%d", me->Z[i]);
