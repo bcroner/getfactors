@@ -388,10 +388,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 	}
 
-	if (prev_is_end && jump_occurred)
-		return false;
-	else
-		return true;
+	return false;
 }
 
 bool * SATSolver_bool_pow(bool* base, __int64 pow, int n) {
