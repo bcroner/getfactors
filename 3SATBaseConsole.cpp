@@ -668,7 +668,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		int pos = 0;
 		while (histogram[pos] != count)
 			pos++;
-		master->decoding[i] = pos;
+		master->decoding[pos] = i;
 		histogram[pos] = -1;
 	}
 
