@@ -1499,10 +1499,24 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
 
-    SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, counted);
+    int search_sz = 1;
 
-    if (!SATSolver_isSat(s, sln))
+    for (int i = 0; i < master->chops; i++)
+        search_sz *= 2;
+
+    bool is_sat = false;
+
+    for (int i = 0; i < search_sz; i++) {
+
+        SATSolver* s = new SATSolver();
+        SATSolver_create(s, master, input, k, counted, i);
+
+        is_sat = SATSolver_isSat(s, i, sln);
+        if (is_sat)
+            break;
+    }
+
+    if (!is_sat)
         return prime_str;
 
     int a_str_sz = 0;
