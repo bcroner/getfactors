@@ -827,7 +827,7 @@ bool ready = true;
 bool solved = false;
 int thread_id = -1;
 
-void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, __int64 chop) {
+void thread_3SAT(int tid, SATSolverMaster *master, bool * arr, int ** lst, int k_parm, int n_parm, int chop) {
 
 	SATSolver* s = new SATSolver();
 	SATSolver_create(s, master, lst, k_parm, n_parm, chop);
@@ -883,7 +883,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	SATSolverMaster* master = new SATSolverMaster();
 	SATSolverMaster_create(master, lst, k_parm, n_parm, chops);
 
-	/*
+	///*
 
 	int search_sz = 1;
 
@@ -893,7 +893,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	int pos = 0;
 	for (pos = 0; pos < num_threads; pos++)
-		threadblock[pos % num_threads] = new std::thread(thread_3SAT, pos % num_threads , master, arrs[pos % num_threads], lst, k_parm, n_parm, pos);
+		threadblock[pos % num_threads] = new std::thread(thread_3SAT, pos , master, arrs[pos], lst, k_parm, n_parm, pos);
 
 	do {
 		{
@@ -914,7 +914,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 		pos++;
 	} while (pos < search_sz && !solved);
 
-	*/
+	//*/
 
 
 	for (int i = 0; i < num_threads; i++)
