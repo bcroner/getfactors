@@ -60,7 +60,7 @@ void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int 
 void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int chop);
 void SATSolverMaster_destroy(SATSolverMaster* master);
 void SATSolver_destroy(SATSolver* me);
-void thread_3SAT(int tid, SATSolverMaster* master, bool* arr, int** lst, int k_parm, int n_parm, __int64 chop, __int64 pos);
+void thread_3SAT(int tid, SATSolverMaster* master, bool* arr, int** lst, int k_parm, int n_parm, int chop);
 bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool **arr);
 
 #endif
