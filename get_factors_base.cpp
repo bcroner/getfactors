@@ -944,7 +944,7 @@ int main()
     SATSolverMaster_create(master, input, k, counted);
 
     SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, counted, 0, 0);
+    SATSolver_create(s, master, input, k, counted, 0);
 
     if (!SATSolver_isSat(s, sln)) {
         printf_s("not satisfiable\n");
