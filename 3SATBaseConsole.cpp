@@ -793,6 +793,21 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 void SATSolverMaster_destroy(SATSolverMaster* master) {
 
+	int count_chops = 1;
+
+	for (int i = 0; i < master->chops; i++)
+		count_chops *= 2;
+
+	for (int i = 0; i < count_chops; i++) {
+
+		delete[] master->begin[i];
+		delete[] master->end[i];
+
+	}
+
+	delete[] master->begin;
+	delete[] master->end;
+
 	delete [] master->decoding;
 
 	for (int i = 0; i < master->n; i++) {
@@ -810,14 +825,8 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 
 void SATSolver_destroy(SATSolver * me) {
 
-	for (int i = 0; i < me->master->n; i++) {
-
-		delete[] me->cls_tly;
-		delete[] me->Z;
-		delete[] me->begin;
-		delete[] me->end;
-
-	}
+	delete[] me->cls_tly;
+	delete[] me->Z;
 }
 
 std::mutex m;
