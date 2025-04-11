@@ -579,8 +579,8 @@ char* dec_add(int * num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool disca
         delete[] sum_strs[i];
         delete[] cout_strs[i];
     }
-    //delete[] sum_strs;
-    //delete[] cout_strs;
+    delete[] sum_strs;
+    delete[] cout_strs;
     delete[] sum_str_len;
     delete[] cout_str_len;
 
