@@ -917,7 +917,7 @@ int main()
 
     // count n
 
-    ///*
+    /*
 
     int counted = 0;
 
@@ -941,14 +941,28 @@ int main()
     bool* sln = new bool[counted];
 
     SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, counted);
+    SATSolverMaster_create(master, input, k, counted, 2);
 
-    SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, counted, 0);
+    int count_sz = 1;
 
-    if (!SATSolver_isSat(s, sln)) {
-        printf_s("not satisfiable\n");
+    for (int i = 0; i < master->chops; i++)
+        count_sz *= 2;
+
+    bool is_sat = false;
+
+    for (int i = 0; i < count_sz; i++) {
+
+        SATSolver* s = new SATSolver();
+        SATSolver_create(s, master, input, k, counted, i);
+
+        is_sat = SATSolver_isSat(s, i, sln);
+
+        if (is_sat)
+            break;
     }
+
+    if (! is_sat)
+        printf_s("not satisfiable\n");
     else {
         printf_s("satisfiable: \n");
         for (int i = 0; i < counted; i++)
@@ -956,6 +970,7 @@ int main()
         printf_s("\n");
 
     }
+
 
     //if ( ! SATSolver_threads(input, k, counted, &sln))
     //    printf_s("not satisfiable\n");
