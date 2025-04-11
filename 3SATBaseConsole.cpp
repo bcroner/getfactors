@@ -276,6 +276,8 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 		search_sz *= 2;
 
 	for (int chop = 0; chop < search_sz; chop++) {
+		
+		printf_s("chop: %d\n", chop);
 
 		for (int i = 0; i < me->master->n; i++)
 			me->Z[i] = me->begin[chop][i];
@@ -290,7 +292,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 		prev_Z = new bool[me->master->n];
 
 		for (int i = 0; i < me->master->n; i++)
-			prev_Z[i] = me->begin[chop][i];
+			prev_Z[i] = me->Z[i];
 
 		int temp_pow_jump = (int) SATSolver_initializePowJump(me, prev_pos);
 
@@ -316,9 +318,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (!true) {
+		if (true) {
 
-			for (int i = 0; i <= me->master->n; i++)
+			for (int i = 0; i < me->master->n; i++)
 				printf_s("%d", me->Z[i]);
 			//printf_s(" jump: %d", me->pow_jump);
 			printf_s(" jump: %d", temp_pow_jump);
@@ -329,9 +331,6 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 			jump_occurred = false;
 
-			for (int i = 0; i < me->master->n; i++)
-				prev_Z[i] = me->Z[i];
-
 			int count_matches = 0;
 
 			for (int i = 0; i < me->master->n; i++)
@@ -340,6 +339,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 			if (count_matches == me->master->n)
 				prev_is_end = true;
+
+			for (int i = 0; i < me->master->n; i++)
+				prev_Z[i] = me->Z[i];
 
 			temp_pow_jump = (int)SATSolver_initializePowJump(me, prev_pos);
 
@@ -364,9 +366,9 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 
 			//if (count % (1 * 1048576) == 0) {
 
-			if (!true) {
+			if (true) {
 
-				for (int i = 0; i <= me->master->n; i++)
+				for (int i = 0; i < me->master->n; i++)
 					printf_s("%d", me->Z[i]);
 				//printf_s(" jump: %d", me->pow_jump);
 				printf_s(" jump: %d", temp_pow_jump);
