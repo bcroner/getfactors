@@ -383,7 +383,7 @@ bool SATSolver_isSat(SATSolver* me, bool* arr) {
 		}
 
 		for (int i = 0; i < me->master->n; i++)
-			arr[me->master->decoding[i]] = me->Z[i];
+			arr[i] = me->Z[me->master->decoding[i]];
 
 		delete[] prev_Z;
 
