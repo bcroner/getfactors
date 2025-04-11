@@ -581,11 +581,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 			lst_t[i]++;
 	}
 
-	// set value of Z to begin, decoded
-
-	for (int i = 0; i <= n_parm; i++)
-		me->Z[i] = me->begin [ i ];
-
 	// create the running clause tally cls_tly
 
 	me->cls_tly = new int[k_parm];
