@@ -859,10 +859,35 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 	for (int i = 0; i < num_threads; i++)
 		arrs[i] = new bool[n_parm];
 
-	int chops = num_threads < 4 ? 4 : num_threads;
+	// get the right number of chops- at least 2^chops
+
+	int chops = 2;
+	
+	if (num_threads > 4) {
+
+		int count_chops = 1;
+
+		int counter = 0;
+
+		for (counter = 0; count_chops < num_threads; counter++)
+			count_chops *= 2;
+
+		if (count_chops == num_threads)
+			chops = counter;
+
+		else
+			chops = counter + 1;
+
+	}
 
 	SATSolverMaster* master = new SATSolverMaster();
 	SATSolverMaster_create(master, lst, k_parm, n_parm, chops);
+
+	int search_sz = 1;
+
+	for (int i = 0; i < master->chops; i++)
+		search_sz *= 2;
+
 
 	for (int i = 0; i < num_threads; i++)
 		threadblock[i] = new std::thread(thread_3SAT, i , master, arrs[i], lst, k_parm, n_parm, i);
@@ -879,7 +904,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 			if (solved)
 				break;
 			if (pos < num_threads) {
-				threadblock[thread_id] = new std::thread(thread_3SAT, thread_id, master, arrs[thread_id], lst, k_parm, n_parm, chop, pos);
+				threadblock[thread_id] = new std::thread(thread_3SAT, thread_id, master, arrs[thread_id], lst, k_parm, n_parm, );
 				ready = true;
 				thread_id = -1;
 				cv.notify_all();
