@@ -607,21 +607,24 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	master->begin = new bool* [search_sz];
 	master->end = new bool* [search_sz];
 
+	bool* two = SATSolver_int2bool(2, n_parm);
+	bool* unit = SATSolver_bool_pow(two, n_parm - chops_parm, n_parm);
+
 	for (int chop = 0; chop < search_sz; chop++) {
 
 		// set up first and last element to check: me->begin, me->end
 
-		bool* two = SATSolver_int2bool(2, n_parm);
-		bool* unit = SATSolver_bool_pow(two, n_parm - chop, n_parm);
-		bool* offs = SATSolver_int2bool(chop, n_parm);
+		bool* offs = SATSolver_int2bool(chops_parm, n_parm);
+
 		master->begin[chop] = SATSolver_bool_mul(unit, offs, n_parm);
 		master->end[chop] = SATSolver_bool_prepare_end(master->begin[chop], unit, n_parm);
 
-		delete[] two;
-		delete[] unit;
 		delete[] offs;
-
 	}
+
+	delete[] two;
+	delete[] unit;
+
 
 	// populate histogram of the variables
 
