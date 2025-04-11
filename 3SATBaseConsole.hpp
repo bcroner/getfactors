@@ -57,7 +57,7 @@ bool* SATSolver_bool_prepare_end(bool* a, bool* b, int n);
 bool * SATSolver_bool_mul(bool *a, bool *b, int n);
 bool* SATSolver_int2bool(__int64 a, __int64 n_parm);
 void SATSolverMaster_create(SATSolverMaster* master, int** lst, int k_parm, int n_parm, int chops_parm);
-void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm, int pos);
+void SATSolver_create(SATSolver* me, SATSolverMaster * master, int** lst, int k_parm, int n_parm);
 void SATSolverMaster_destroy(SATSolverMaster* master);
 void SATSolver_destroy(SATSolver* me);
 void thread_3SAT(int tid, SATSolverMaster* master, bool* arr, int** lst, int k_parm, int n_parm, __int64 chop, __int64 pos);
