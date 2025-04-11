@@ -615,7 +615,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 		bool* unit = SATSolver_bool_pow(two, n_parm - chop, n_parm);
 		bool* offs = SATSolver_int2bool(chop, n_parm);
 		master->begin[chop] = SATSolver_bool_mul(unit, offs, n_parm);
-		master->end[chop] = SATSolver_bool_prepare_end(me->begin[chop], unit, n_parm);
+		master->end[chop] = SATSolver_bool_prepare_end(master->begin[chop], unit, n_parm);
 
 		delete[] two;
 		delete[] unit;
