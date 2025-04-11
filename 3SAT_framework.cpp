@@ -1500,7 +1500,7 @@ char* get_factors(char* c_str, int c_str_buf_sz, int * len_para) {
     sprintf_s(prime_str, 8, "prime");
 
     SATSolver* s = new SATSolver();
-    SATSolver_create(s, master, input, k, counted, 0);
+    SATSolver_create(s, master, input, k, counted);
 
     if (!SATSolver_isSat(s, sln))
         return prime_str;
