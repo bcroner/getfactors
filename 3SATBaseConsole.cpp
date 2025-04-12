@@ -497,6 +497,30 @@ bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 
 }
 
+bool* SATSolver_create_boundary(bool begin, int chop, int offs, int n) {
+
+	bool* ret = new bool[n];
+
+	for (int i = 0; i < chop; i++) {
+
+		int pow2 = 1;
+		for (int j = chop - 1 - i; j > 0; j--)
+			pow2 *= 2;
+
+		if (offs >= pow2) {
+			ret[i] = true;
+			offs -= pow2;
+		}
+		else
+			ret[i] = false;
+	}
+
+	for (int i = chop; i < n; i++)
+		ret[i] = begin ? false : true;
+
+	return ret;
+
+}
 
 /* instantiate SATSolver class with list of clauses
 * 
@@ -607,24 +631,14 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 	master->begin = new bool* [search_sz];
 	master->end = new bool* [search_sz];
 
-	bool* two = SATSolver_int2bool(2, n_parm);
-	bool* unit = SATSolver_bool_pow(two, n_parm - chops_parm, n_parm);
-
 	for (int chop = 0; chop < search_sz; chop++) {
 
 		// set up first and last element to check: me->begin, me->end
 
-		bool* offs = SATSolver_int2bool(chops_parm, n_parm);
+		master->begin[chop] = SATSolver_create_boundary(true, master->chops, chop, n_parm);
+		master->end[chop] = SATSolver_create_boundary(false, master->chops, chop, n_parm);
 
-		master->begin[chop] = SATSolver_bool_mul(unit, offs, n_parm);
-		master->end[chop] = SATSolver_bool_prepare_end(master->begin[chop], unit, n_parm);
-
-		delete[] offs;
 	}
-
-	delete[] two;
-	delete[] unit;
-
 
 	// populate histogram of the variables
 
@@ -905,7 +919,7 @@ bool SATSolver_threads(int** lst, int k_parm, int n_parm, bool ** arr) {
 
 	int pos = 0;
 	for (pos = 0; pos < num_threads; pos++)
-		threadblock[pos % num_threads] = new std::thread(thread_3SAT, pos , master, arrs[pos], lst, k_parm, n_parm, pos);
+		threadblock[pos] = new std::thread(thread_3SAT, pos , master, arrs[pos], lst, k_parm, n_parm, pos);
 
 	do {
 		{
