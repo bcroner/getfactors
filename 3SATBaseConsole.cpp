@@ -330,7 +330,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 		printf_s("\n");
 	}
 
-	while ( Z_got_bigger || ( !prev_is_end && jump_occurred ) ) {
+	while ( Z_got_bigger ) {
 
 		jump_occurred = false;
 
