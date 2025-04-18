@@ -596,38 +596,19 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 
 	// populate clause tally with initial begin value
 
-	/*
+	//for (int i = 0; i < me->master->k; i++)
+	//	//if (lst[i][0] < 0 && lst[i][1] < 0 && lst[i][2] < 0)
+	//		printf_s("%d: %d %d %d\n", i, lst[i][0], lst[i][1], lst[i][2]);
 
 	for (int i = 0; i < n_parm; i++) {
 		for (int j = 0; j < me->master->pos_map_szs[me->master->decoding[i]]; j++)
-			if (me->master->begin[chop][i]) {
-				int cls_ix = me->master->pos_map[me->master->decoding[i]][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-			}
-		for (int j = 0; j < me->master->neg_map_szs[me->master->decoding[i]]; j++)
-			if (!me->master->begin[chop][i]) {
-				int cls_ix = me->master->neg_map[me->master->decoding[i]][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-			}
-	}
-
-	*/
-
-	for (int i = 0; i < me->master->k; i++)
-		if (lst[i][0] < 0 && lst[i][1] < 0 && lst[i][2] < 0)
-			printf_s("%d: %d %d %d\n", i, lst[i][0], lst[i][1], lst[i][2]);
-
-	for (int i = 0; i < n_parm; i++) {
-		for (int j = 0; j < me->master->pos_map_szs[me->master->decoding[i]]; j++)
-			if (me->master->begin[chop][me->master->decoding[i]]) {
-				int cls_ix = me->master->pos_map[me->master->decoding[i]][j];
-				int old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-			}
-		for (int j = 0; j < me->master->neg_map_szs[me->master->decoding[i]]; j++)
 			if (!me->master->begin[chop][me->master->decoding[i]]) {
+				int cls_ix = me->master->pos_map[me->master->decoding[i]][j];
+				int old_val = me->cls_tly[cls_ix];
+				me->cls_tly[cls_ix] = old_val + 1;
+			}
+		for (int j = 0; j < me->master->neg_map_szs[me->master->decoding[i]]; j++)
+			if (me->master->begin[chop][me->master->decoding[i]]) {
 				int cls_ix = me->master->neg_map[me->master->decoding[i]][j];
 				int old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
@@ -822,6 +803,9 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 				if (pos != i)
 					continue;
+
+				if (j == 6 && pos == 6)
+					printf_s("mofo\n");
 
 				if (lst[j][k] < 0) {
 					master->pos_map[master->decoding[i]][pos_pos] = j;
