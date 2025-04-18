@@ -232,7 +232,7 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 
 __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos) {
 
-	printf_s("initializePowJump ");
+	//printf_s("initializePowJump ");
 
 	// initialize return value
 
