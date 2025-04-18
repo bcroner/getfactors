@@ -252,7 +252,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos) {
 		}
 	}
 
-	printf_s("\n");
+	//printf_s("\n");
 
 	return max_jump;
 
