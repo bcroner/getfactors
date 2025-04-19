@@ -718,7 +718,7 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 		// record the jump power of the clause at i
 
-		master->powers[i] = lit_cur < 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
+		master->powers[i] = lit_cur > 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
 
 	}
 
@@ -803,9 +803,6 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 
 				if (pos != i)
 					continue;
-
-				if (j == 6 && pos == 6)
-					printf_s("mofo\n");
 
 				if (lst[j][k] < 0) {
 					master->pos_map[master->decoding[i]][pos_pos] = j;
