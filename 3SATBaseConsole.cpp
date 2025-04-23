@@ -200,23 +200,6 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 
 	int pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
-	/*
-
-	for (int i = 0; i < me->master->n + 1 - pos; i++) {
-
-		// if carry, continue loop, if no carry, break
-		if (me->Z[pos + i]) {
-			me->Z[pos + i] = false;
-			SATSolver_updateTF(me , pos + i, false);
-		}
-		else {
-			me->Z[pos + i] = true;
-			SATSolver_updateTF(me , pos + i, true);
-			break;
-		}
-	}
-	*/
-
 	bool sign = me->Z[pos];
 
 	me->Z[pos] = !sign;
@@ -230,12 +213,9 @@ void SATSolver_add(SATSolver * me , int pos_parm) {
 	//	}
 }
 
-__int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos, int count) {
+__int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos) {
 
 	//printf_s("initializePowJump ");
-
-	if (count >= 49)
-		printf_s("initializePowJump\n");
 
 	// initialize return value
 
@@ -248,7 +228,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos, int count) 
 		int abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		int abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
-		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)// && (abs_temp_jump > prev_pos || temp_jump < 0))
+		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && (abs_temp_jump > prev_pos || temp_jump < 0))
 		{
 			max_jump = temp_jump;
 			printf_s("%d ", (int)max_jump);
@@ -299,7 +279,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 	for (int i = 0; i < me->master->n; i++)
 		prev_Z[i] = me->Z[i];
 
-	__int64 temp_pow_jump = SATSolver_initializePowJump(me, prev_pos, count);
+	__int64 temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 	__int64 abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
 
 	if (temp_pow_jump == 0) {
@@ -350,7 +330,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 		for (int i = 0; i < me->master->n; i++)
 			prev_Z[i] = me->Z[i];
 
-		temp_pow_jump = SATSolver_initializePowJump(me, prev_pos, count);
+		temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
 		abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
 
 		if (temp_pow_jump == 0) {
