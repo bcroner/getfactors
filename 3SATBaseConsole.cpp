@@ -791,11 +791,13 @@ void SATSolverMaster_create(SATSolverMaster * master, int** lst, int k_parm, int
 					continue;
 
 				if (lst[j][k] < 0) {
-					master->pos_map[master->decoding[i]][pos_pos] = j;
+					//master->pos_map[master->decoding[i]][pos_pos] = j;
+					master->pos_map[i][pos_pos] = j;
 					pos_pos++;
 				}
 				else {
-					master->neg_map[master->decoding[i]][pos_neg] = j;
+					//master->neg_map[master->decoding[i]][pos_neg] = j;
+					master->neg_map[i][pos_neg] = j;
 					pos_neg++;
 				}
 			}
