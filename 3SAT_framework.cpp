@@ -1800,7 +1800,7 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz) {
 
     // copy over boolean bits
 
-    for (int i = 0; i < a->sz - first_nonzero_offs + lpad; i++) {
+    for (int i = 0; i < a->sz - first_nonzero_offs; i++) {
         if (a->bits[first_nonzero_offs + i]->id == TRUE_3SAT)
             bool_buf[lpad + i] = 1;
         else if (a->bits[first_nonzero_offs + i]->id == FALSE_3SAT)
@@ -2093,30 +2093,27 @@ char* nat_get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
 
     nat_3sat* c_equals = new nat_3sat();
     c_equals->sz = c_bit_count * 2;
-    c_equals->bits = new bit_3sat * [c_bit_count * 2];
-
-    c_equals->bits[0] = new bit_3sat();
-    c_equals->bits[0]->id = FALSE_3SAT;
+    c_equals->bits = new bit_3sat * [(c_bit_count - 1) * 2];
 
     // copy over leading multiply zeros
 
     for (int i = 0; i < c_bit_count; i++) {
-        c_equals->bits[1 + i] = new bit_3sat();
-        c_equals->bits[1 + i]->id = FALSE_3SAT;
+        c_equals->bits[i] = new bit_3sat();
+        c_equals->bits[i]->id = FALSE_3SAT;
     }
 
     // copy over leading c zeros
 
     for (int i = 0; i < leading_zeros; i++) {
-        c_equals->bits[1 + c_bit_count + i] = new bit_3sat();
-        c_equals->bits[1 + c_bit_count + i]->id = FALSE_3SAT;
+        c_equals->bits[c_bit_count + i] = new bit_3sat();
+        c_equals->bits[c_bit_count + i]->id = FALSE_3SAT;
     }
 
     // transfer over inbuffer
 
     for (int i = leading_zeros; i < inbuffer_sz; i++) {
-        c_equals->bits[1 + c_bit_count + i] = new bit_3sat();
-        c_equals->bits[1 + c_bit_count + i]->id = inbuffer[i] ? TRUE_3SAT : FALSE_3SAT;
+        c_equals->bits[c_bit_count + i] = new bit_3sat();
+        c_equals->bits[c_bit_count + i]->id = inbuffer[i] ? TRUE_3SAT : FALSE_3SAT;
     }
 
     delete[] inbuffer;
@@ -2124,24 +2121,17 @@ char* nat_get_factors(char* c_str, int c_str_buf_sz, int* len_para) {
     nat_3sat* c = NULL;
 
     nat_3sat* a = new nat_3sat();
-    a->sz = c_bit_count;
-    a->bits = new bit_3sat * [c_bit_count];
+    a->sz = c_bit_count - 1;
+    a->bits = new bit_3sat * [c_bit_count - 1];
 
     nat_3sat* b = new nat_3sat();
-    b->sz = c_bit_count;
-    b->bits = new bit_3sat * [c_bit_count];
+    b->sz = c_bit_count - 1;
+    b->bits = new bit_3sat * [c_bit_count - 1];
 
-    a->bits[0] = new bit_3sat();
-    a->bits[0]->id = FALSE_3SAT;
-
-    for (int i = 1; i < c_bit_count; i++)
+    for (int i = 0; i < c_bit_count - 1; i++) {
         a->bits[i] = create_bit(&num_parm);
-
-    b->bits[0] = new bit_3sat();
-    b->bits[0]->id = FALSE_3SAT;
-
-    for (int i = 1; i < c_bit_count; i++)
         b->bits[i] = create_bit(&num_parm);
+    }
 
     __int64 mul_str_len = 0;
 
