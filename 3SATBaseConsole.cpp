@@ -354,9 +354,6 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 		count++;
 
-		if ( count >= 49)
-			printf_s("count: %d\n", count);
-
 		//if (count % (1 * 1048576) == 0) {
 
 		if (true) {
