@@ -224,11 +224,11 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos) {
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
 	for (int i = 0; i < me->master->k; i++) {
-		int temp_jump = me->master->powers[i];
-		int abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
-		int abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
+		__int64 temp_jump = me->master->powers[i];
+		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
+		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
-		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && (abs_temp_jump > prev_pos || temp_jump < 0))
+		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && (abs_temp_jump > prev_pos || temp_jump > 0))
 		{
 			max_jump = temp_jump;
 			printf_s("%d ", (int)max_jump);
@@ -271,6 +271,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 	__int64 count = 0;
 	__int64 prev_pos = 0;	// de-exponentializer variable
+	__int64 abs_prev_pos = 0;
 	bool zero_jump = false;
 	bool* prev_Z;
 
@@ -310,15 +311,16 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 		for (int i = 0; i < me->master->n; i++)
 			printf_s("%d", me->Z[i]);
 		//printf_s(" jump: %d", me->pow_jump);
-		printf_s(" jump: %d", temp_pow_jump);
+		printf_s(" jump: %I64d", temp_pow_jump);
 		printf_s("\n");
 	}
 
 	while ( Z_got_bigger ) {
 
 		jump_occurred = false;
+		abs_prev_pos = prev_pos < 0 ? -prev_pos : prev_pos;
 
-		int count_matches = 0;
+		__int64 count_matches = 0;
 
 		for (int i = 0; i < me->master->n; i++)
 			if (prev_Z[i] == me->master->end[chop][i])
@@ -341,7 +343,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 			jump_occurred = true;
 
 		// using prev_pos: de-exponentialize
-		if (temp_pow_jump > 0)
+		if (temp_pow_jump > 0 && abs_temp_pow_jump > abs_prev_pos)
 			prev_pos = temp_pow_jump;
 		else if (abs_temp_pow_jump > prev_pos)
 			prev_pos = 0;
@@ -361,7 +363,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 			for (int i = 0; i < me->master->n; i++)
 				printf_s("%d", me->Z[i]);
 			//printf_s(" jump: %d", me->pow_jump);
-			printf_s(" jump: %d count_matches: %d", temp_pow_jump, count_matches);
+			printf_s(" jump: %I64d count_matches: %I64d", temp_pow_jump, count_matches);
 			printf_s("\n");
 		}
 
