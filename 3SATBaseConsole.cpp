@@ -206,11 +206,11 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	SATSolver_updateTF(me, pos, !sign);
 
 	// zero out all lower bits of Z
-	//for (int j = 0; j < pos; j++)
-	//	if (me->Z[j]) {
-	//		me->Z[j] = false;
-	//		SATSolver_updateTF(me, j, false);
-	//	}
+	for (int j = 0; j < pos; j++)
+		if (me->Z[j]) {
+			me->Z[j] = false;
+			SATSolver_updateTF(me, j, false);
+		}
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos) {
@@ -298,7 +298,8 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-	SATSolver_add(me, me->pow_jump);
+	if (temp_pow_jump > 0)
+		SATSolver_add(me, me->pow_jump);
 
 	Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
@@ -350,7 +351,8 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-		SATSolver_add(me, me->pow_jump);
+		if ( temp_pow_jump > 0 )
+			SATSolver_add(me, me->pow_jump);
 
 		Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
