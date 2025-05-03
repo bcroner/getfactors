@@ -298,8 +298,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-	if (temp_pow_jump > 0)
-		SATSolver_add(me, me->pow_jump);
+	SATSolver_add(me, me->pow_jump);
 
 	Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
@@ -351,8 +350,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-		if ( temp_pow_jump > 0 )
-			SATSolver_add(me, me->pow_jump);
+		SATSolver_add(me, me->pow_jump);
 
 		Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
