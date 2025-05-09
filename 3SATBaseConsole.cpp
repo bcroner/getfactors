@@ -213,7 +213,7 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 		}
 }
 
-__int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos) {
+__int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos, bool end) {
 
 	//printf_s("initializePowJump ");
 
@@ -228,7 +228,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos) {
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
-		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && (abs_temp_jump > prev_pos || temp_jump < 0) && abs_temp_jump != prev_pos)
+		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump && (end || ((abs_temp_jump > prev_pos || temp_jump < 0) && abs_temp_jump != prev_pos)))
 		{
 			max_jump = temp_jump;
 			printf_s("%d ", (int)max_jump);
@@ -280,7 +280,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 	for (int i = 0; i < me->master->n; i++)
 		prev_Z[i] = me->Z[i];
 
-	__int64 temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
+	__int64 temp_pow_jump = SATSolver_initializePowJump(me, prev_pos, prev_is_end);
 	__int64 abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
 
 	if (temp_pow_jump == 0) {
@@ -332,7 +332,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 		for (int i = 0; i < me->master->n; i++)
 			prev_Z[i] = me->Z[i];
 
-		temp_pow_jump = SATSolver_initializePowJump(me, prev_pos);
+		temp_pow_jump = SATSolver_initializePowJump(me, prev_pos, prev_is_end);
 		abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
 
 		if (temp_pow_jump == 0) {
