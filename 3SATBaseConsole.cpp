@@ -206,6 +206,7 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	SATSolver_updateTF(me, pos, !sign);
 
 	// zero out all lower bits of Z
+
 	for (int j = 0; j < pos; j++)
 		if (me->Z[j]) {
 			me->Z[j] = false;
@@ -215,7 +216,7 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev_pos, bool end) {
 
-	//printf_s("initializePowJump ");
+	printf_s("initializePowJump prev_pos: %d ", (int)prev_pos);
 
 	// initialize return value
 
@@ -599,7 +600,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , int** lst, int 
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 	}
-
 
 	// delete
 
