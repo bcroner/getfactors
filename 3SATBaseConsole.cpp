@@ -313,7 +313,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 	SATSolver_add(me, me->pow_jump);
 
-	Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
+	//Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
 	count++;
 
@@ -365,7 +365,7 @@ bool SATSolver_isSat(SATSolver* me, int chop, bool* arr) {
 
 		SATSolver_add(me, me->pow_jump);
 
-		Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
+		//Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
 		count++;
 
