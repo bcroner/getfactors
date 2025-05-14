@@ -23,7 +23,7 @@ typedef struct {
 
 typedef struct {
 
-    bit_3sat ** bits; // bit string
+    bit_3sat** bits; // bit string
     int   sz; // size in bits of number
     int   bd_sz; // before decimal size
     int   ad_sz; // after decimal size
