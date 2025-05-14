@@ -1780,6 +1780,24 @@ char* dec_to_str(bool * decodable_buf, dec_3sat * a, int * str_sz) {
 
 char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz) {
 
+    int bool_buf_sz = a->sz + a->sz % 4;
+
+    int* bool_buf = new int[bool_buf_sz];
+
+    for (int i = 0; i < bool_buf_sz; i++)
+        bool_buf[i] = 0;
+
+    for (int i = 0; i < a->sz; i++)
+        if (a->bits[i]->id == TRUE_3SAT)
+            bool_buf[i] = 1;
+        else if (a->bits[i]->id == FALSE_3SAT)
+            bool_buf[i] = 0;
+        else
+            bool_buf[i] = decodable_buf[a->bits[i]->id];
+
+
+    /*
+
     // find first nonzero bit and calculate lpad out to a multiple of 4
     int first_nonzero_offs = 0;
     while (first_nonzero_offs < a->sz && a->bits[first_nonzero_offs]->id == FALSE_3SAT &&
@@ -1811,6 +1829,8 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz) {
             bool_buf[lpad + i] = decodable_buf[a->bits[first_nonzero_offs + i]->id - 2];
     }
 
+    */
+
     int num_hex = bool_buf_sz / 4;
 
     *str_sz = num_hex + 1;
@@ -1820,6 +1840,20 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz) {
 
     // position in return string
     int ret_str_pos = 0;
+
+    for (int i = 0; i < num_hex; i++) {
+
+        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
+
+        for (int j = 0; j < 4; j++)
+            hexbits[3 - j] = bool_buf[bool_buf_sz - 1 - i * 4 - j];
+
+        ret_str[ret_str_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+        ret_str_pos++;
+
+    }
+
+    /*
 
     // do the before-the-decimal part
 
@@ -1836,6 +1870,7 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz) {
         hex_pos++;
         ret_str_pos++;
     }
+    */
 
     ret_str[ret_str_pos] = '\0';
 
