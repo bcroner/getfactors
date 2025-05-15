@@ -1780,7 +1780,9 @@ char* dec_to_str(bool * decodable_buf, dec_3sat * a, int * str_sz) {
 
 char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz) {
 
-    int bool_buf_sz = a->sz + a->sz % 4;
+    int amod4 = a->sz % 4;
+
+    int bool_buf_sz = a->sz + amod4;
 
     int* bool_buf = new int[bool_buf_sz];
 
@@ -1789,11 +1791,11 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz) {
 
     for (int i = 0; i < a->sz; i++)
         if (a->bits[i]->id == TRUE_3SAT)
-            bool_buf[i] = 1;
+            bool_buf[amod4 + i] = 1;
         else if (a->bits[i]->id == FALSE_3SAT)
-            bool_buf[i] = 0;
+            bool_buf[amod4 + i] = 0;
         else
-            bool_buf[i] = decodable_buf[a->bits[i]->id];
+            bool_buf[amod4 + i] = decodable_buf[a->bits[a->sz - 1 - i]->id - 2];
 
 
     /*
