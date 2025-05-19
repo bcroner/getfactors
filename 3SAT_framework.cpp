@@ -1450,7 +1450,6 @@ char* nat_mul(int* num_parm, nat_3sat** c, nat_3sat* a, nat_3sat* b, int sz, __i
     *len_para = pos;
 
     return ret;
-
 }
 //*/
 
