@@ -12,6 +12,349 @@
 
 using namespace std;
 
+char* nat_test_add(char* c_str, int c_str_buf_sz, int* len_para) {
+
+    if (c_str == NULL or c_str == "")
+        return NULL;
+
+    int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
+
+    // get length of c_str
+    int strln = 0;
+    for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
+        ;
+
+    // transform hex input into bool buffer
+
+    int inbuffer_sz = strln * 4;
+    bool* inbuffer = new bool[inbuffer_sz];
+
+    for (int i = 0; i < strln; i++) {
+
+        // decode the hex into bits
+
+        int hexbits[4];
+        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
+
+        int hexval = int_from_hex_char(c_str[i]);
+
+        if (hexval >= 8) {
+            hexbits[3] = 1;
+            hexval = hexval - 8;
+        }
+        if (hexval >= 4) {
+            hexbits[2] = 1;
+            hexval = hexval - 4;
+        }
+        if (hexval >= 2) {
+            hexbits[1] = 1;
+            hexval = hexval - 2;
+        }
+        hexbits[0] = hexval;
+
+        for (int j = 0; j < 4; j++)
+            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
+    }
+
+    // count leading zeros
+
+    int leading_zeros = 0;
+    for (leading_zeros = 0; !inbuffer[leading_zeros]; leading_zeros++)
+        ;
+
+    int c_bit_count = inbuffer_sz - leading_zeros;
+
+    nat_3sat* c_equals = new nat_3sat();
+    c_equals->sz = (c_bit_count - 1) * 2;
+    c_equals->bits = new bit_3sat * [(c_bit_count - 1) * 2];
+
+    // copy over leading multiply zeros
+
+    for (int i = 0; i < (c_bit_count - 1) * 2; i++) {
+        c_equals->bits[i] = new bit_3sat();
+        c_equals->bits[i]->id = FALSE_3SAT;
+    }
+
+    // transfer over inbuffer
+
+    for (int i = 0; i < inbuffer_sz; i++)
+        c_equals->bits[c_equals->sz - 1 - i]->id = inbuffer[inbuffer_sz - 1 - i] ? TRUE_3SAT : FALSE_3SAT;
+
+    delete[] inbuffer;
+
+    nat_3sat* c = NULL;
+
+    nat_3sat* a = new nat_3sat();
+    a->sz = c_bit_count - 1;
+    a->bits = new bit_3sat * [c_bit_count - 1];
+
+    nat_3sat* b = new nat_3sat();
+    b->sz = c_bit_count - 1;
+    b->bits = new bit_3sat * [c_bit_count - 1];
+
+    for (int i = 0; i < c_bit_count - 1; i++) {
+        a->bits[i] = create_bit(&num_parm);
+        b->bits[i] = create_bit(&num_parm);
+    }
+
+    __int64 mul_str_len = 0;
+
+    char* mul_str = nat_mul(&num_parm, &c, a, b, (c_bit_count - 1) * 2, &mul_str_len);
+
+    __int64 equals_str_len = 0;
+
+    char* equals_str = nat_equals(&num_parm, c, c_equals, true, &equals_str_len);
+
+    __int64 buf_3sat_sz = mul_str_len + equals_str_len + 1;
+    char* buf_3sat = new char[buf_3sat_sz];
+    strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
+    strcpy_s(&(buf_3sat[mul_str_len]), buf_3sat_sz - mul_str_len, equals_str);
+
+    delete[] mul_str;
+    delete[] equals_str;
+
+    int k = 0;
+    int** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
+    bool* sln = new bool[num_parm - 1];
+
+    delete[] buf_3sat;
+
+    int counted = 0;
+
+    for (int i = 0; i < k; i++) {
+
+        int a = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int b = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+        if (a > counted)
+            counted = a;
+        if (b > counted)
+            counted = b;
+        if (c > counted)
+            counted = c;
+
+    }
+
+    counted = counted - 1;
+
+    SATSolverMaster* master = new SATSolverMaster();
+    SATSolverMaster_create(master, input, k, counted, 0);
+
+    char* prime_str = new char[8];
+    sprintf_s(prime_str, 8, "prime");
+
+    int search_sz = 1;
+
+    for (int i = 0; i < master->chops; i++)
+        search_sz *= 2;
+
+    bool is_sat = false;
+
+    for (int i = 0; i < search_sz; i++) {
+
+        SATSolver* s = new SATSolver();
+        SATSolver_create(s, master, input, k, counted, i);
+
+        is_sat = SATSolver_isSat(s, i, sln);
+        if (is_sat)
+            break;
+    }
+
+    if (!is_sat)
+        return prime_str;
+
+    int a_str_sz = 0;
+
+    char* a_str = nat_to_str(sln, a, &a_str_sz);
+    int b_str_sz = 0;
+
+    char* b_str = nat_to_str(sln, b, &b_str_sz);
+
+    int ret_buf_sz = a_str_sz + (int)strnlen_s("\n\n", 4) + b_str_sz + 1;
+    char* ret_buf = new char[ret_buf_sz];
+    sprintf_s(ret_buf, ret_buf_sz, "%s\n\n%s", a_str, b_str);
+
+    *len_para = ret_buf_sz - 1;
+
+    delete[] a_str;
+    delete[] b_str;
+
+    return ret_buf;
+}
+
+char* nat_test_mul(char* c_str, int c_str_buf_sz, int* len_para) {
+
+    if (c_str == NULL or c_str == "")
+        return NULL;
+
+    int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
+
+    // get length of c_str
+    int strln = 0;
+    for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
+        ;
+
+    // transform hex input into bool buffer
+
+    int inbuffer_sz = strln * 4;
+    bool* inbuffer = new bool[inbuffer_sz];
+
+    for (int i = 0; i < strln; i++) {
+
+        // decode the hex into bits
+
+        int hexbits[4];
+        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
+
+        int hexval = int_from_hex_char(c_str[i]);
+
+        if (hexval >= 8) {
+            hexbits[3] = 1;
+            hexval = hexval - 8;
+        }
+        if (hexval >= 4) {
+            hexbits[2] = 1;
+            hexval = hexval - 4;
+        }
+        if (hexval >= 2) {
+            hexbits[1] = 1;
+            hexval = hexval - 2;
+        }
+        hexbits[0] = hexval;
+
+        for (int j = 0; j < 4; j++)
+            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
+    }
+
+    // count leading zeros
+
+    int leading_zeros = 0;
+    for (leading_zeros = 0; !inbuffer[leading_zeros]; leading_zeros++)
+        ;
+
+    int c_bit_count = inbuffer_sz - leading_zeros;
+
+    nat_3sat* c_equals = new nat_3sat();
+    c_equals->sz = (c_bit_count - 1) * 2;
+    c_equals->bits = new bit_3sat * [(c_bit_count - 1) * 2];
+
+    // copy over leading multiply zeros
+
+    for (int i = 0; i < (c_bit_count - 1) * 2; i++) {
+        c_equals->bits[i] = new bit_3sat();
+        c_equals->bits[i]->id = FALSE_3SAT;
+    }
+
+    // transfer over inbuffer
+
+    for (int i = 0; i < inbuffer_sz; i++)
+        c_equals->bits[c_equals->sz - 1 - i]->id = inbuffer[inbuffer_sz - 1 - i] ? TRUE_3SAT : FALSE_3SAT;
+
+    delete[] inbuffer;
+
+    nat_3sat* c = NULL;
+
+    nat_3sat* a = new nat_3sat();
+    a->sz = c_bit_count - 1;
+    a->bits = new bit_3sat * [c_bit_count - 1];
+
+    nat_3sat* b = new nat_3sat();
+    b->sz = c_bit_count - 1;
+    b->bits = new bit_3sat * [c_bit_count - 1];
+
+    for (int i = 0; i < c_bit_count - 1; i++) {
+        a->bits[i] = create_bit(&num_parm);
+        b->bits[i] = create_bit(&num_parm);
+    }
+
+    __int64 mul_str_len = 0;
+
+    char* mul_str = nat_mul(&num_parm, &c, a, b, (c_bit_count - 1) * 2, &mul_str_len);
+
+    __int64 equals_str_len = 0;
+
+    char* equals_str = nat_equals(&num_parm, c, c_equals, true, &equals_str_len);
+
+    __int64 buf_3sat_sz = mul_str_len + equals_str_len + 1;
+    char* buf_3sat = new char[buf_3sat_sz];
+    strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
+    strcpy_s(&(buf_3sat[mul_str_len]), buf_3sat_sz - mul_str_len, equals_str);
+
+    delete[] mul_str;
+    delete[] equals_str;
+
+    int k = 0;
+    int** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
+    bool* sln = new bool[num_parm - 1];
+
+    delete[] buf_3sat;
+
+    int counted = 0;
+
+    for (int i = 0; i < k; i++) {
+
+        int a = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int b = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        int c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+        if (a > counted)
+            counted = a;
+        if (b > counted)
+            counted = b;
+        if (c > counted)
+            counted = c;
+
+    }
+
+    counted = counted - 1;
+
+    SATSolverMaster* master = new SATSolverMaster();
+    SATSolverMaster_create(master, input, k, counted, 0);
+
+    char* prime_str = new char[8];
+    sprintf_s(prime_str, 8, "prime");
+
+    int search_sz = 1;
+
+    for (int i = 0; i < master->chops; i++)
+        search_sz *= 2;
+
+    bool is_sat = false;
+
+    for (int i = 0; i < search_sz; i++) {
+
+        SATSolver* s = new SATSolver();
+        SATSolver_create(s, master, input, k, counted, i);
+
+        is_sat = SATSolver_isSat(s, i, sln);
+        if (is_sat)
+            break;
+    }
+
+    if (!is_sat)
+        return prime_str;
+
+    int a_str_sz = 0;
+
+    char* a_str = nat_to_str(sln, a, &a_str_sz);
+    int b_str_sz = 0;
+
+    char* b_str = nat_to_str(sln, b, &b_str_sz);
+
+    int ret_buf_sz = a_str_sz + (int)strnlen_s("\n\n", 4) + b_str_sz + 1;
+    char* ret_buf = new char[ret_buf_sz];
+    sprintf_s(ret_buf, ret_buf_sz, "%s\n\n%s", a_str, b_str);
+
+    *len_para = ret_buf_sz - 1;
+
+    delete[] a_str;
+    delete[] b_str;
+
+    return ret_buf;
+}
+
+
 int main()
 {
     int num_parm = 2;
