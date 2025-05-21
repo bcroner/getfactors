@@ -12,13 +12,10 @@
 
 using namespace std;
 
-char* nat_test_add(char* c_str, int c_str_buf_sz, int* len_para) {
+char* nat_test_add() {
 
     const char* a_str = "2";
     const char* b_str = "3";
-
-    if (c_str == NULL or c_str == "")
-        return NULL;
 
     int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
@@ -145,13 +142,10 @@ char* nat_test_add(char* c_str, int c_str_buf_sz, int* len_para) {
     return ret_buf;
 }
 
-char* nat_test_mul(char* c_str, int c_str_buf_sz, int* len_para) {
+char* nat_test_mul() {
 
     const char* a_str = "2";
     const char* b_str = "3";
-
-    if (c_str == NULL or c_str == "")
-        return NULL;
 
     int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
