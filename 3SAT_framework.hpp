@@ -101,13 +101,15 @@ inline int int_from_hex_char(char c);
 
 inline char hex_char_from_int(int a);
 
+bool* hex2bool(const char* a, int sz);
+
 //void bignum_from_str_dec(bn* c_bn, char* c_str, int len);
 
 int** input_from_char_buf(char* buf_3sat, __int64 buf_3sat_sz, int* k, bool cnf);
 
 char* dec_to_str(bool* decodable_buf, dec_3sat* a, int* str_sz);
 
-char* nat_to_str(bool* decodable_buf, dec_3sat* a, int* str_sz);
+char* nat_to_str(bool* decodable_buf, nat_3sat* a, int* str_sz);
 
 char* dec_get_factors(char* c_str, int c_str_buf_sz, int * len_para);
 
