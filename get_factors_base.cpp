@@ -14,104 +14,69 @@ using namespace std;
 
 char* nat_test_add(char* c_str, int c_str_buf_sz, int* len_para) {
 
+    const char* a_str = "2";
+    const char* b_str = "3";
+
     if (c_str == NULL or c_str == "")
         return NULL;
 
     int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
-    // get length of c_str
-    int strln = 0;
-    for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
+    // get lengths of a_str and b_str
+    int astrln = 0;
+    for (astrln = 0; a_str[astrln] != '\0'; astrln++)
+        ;
+
+    int bstrln = 0;
+    for (bstrln = 0; b_str[astrln] != '\0'; bstrln++)
         ;
 
     // transform hex input into bool buffer
 
-    int inbuffer_sz = strln * 4;
-    bool* inbuffer = new bool[inbuffer_sz];
+    bool* ainbuffer = hex2bool(a_str, astrln);
+    bool* binbuffer = hex2bool(b_str, bstrln);
 
-    for (int i = 0; i < strln; i++) {
-
-        // decode the hex into bits
-
-        int hexbits[4];
-        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
-
-        int hexval = int_from_hex_char(c_str[i]);
-
-        if (hexval >= 8) {
-            hexbits[3] = 1;
-            hexval = hexval - 8;
-        }
-        if (hexval >= 4) {
-            hexbits[2] = 1;
-            hexval = hexval - 4;
-        }
-        if (hexval >= 2) {
-            hexbits[1] = 1;
-            hexval = hexval - 2;
-        }
-        hexbits[0] = hexval;
-
-        for (int j = 0; j < 4; j++)
-            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
-    }
+    int ainbuffer_sz = astrln * 4;
+    int binbuffer_sz = bstrln * 4;
 
     // count leading zeros
 
-    int leading_zeros = 0;
-    for (leading_zeros = 0; !inbuffer[leading_zeros]; leading_zeros++)
+    int aleading_zeros = 0;
+    for (aleading_zeros = 0; !ainbuffer[aleading_zeros]; aleading_zeros++)
         ;
 
-    int c_bit_count = inbuffer_sz - leading_zeros;
+    int bleading_zeros = 0;
+    for (bleading_zeros = 0; !binbuffer[bleading_zeros]; bleading_zeros++)
+        ;
 
-    nat_3sat* c_equals = new nat_3sat();
-    c_equals->sz = (c_bit_count - 1) * 2;
-    c_equals->bits = new bit_3sat * [(c_bit_count - 1) * 2];
-
-    // copy over leading multiply zeros
-
-    for (int i = 0; i < (c_bit_count - 1) * 2; i++) {
-        c_equals->bits[i] = new bit_3sat();
-        c_equals->bits[i]->id = FALSE_3SAT;
-    }
-
-    // transfer over inbuffer
-
-    for (int i = 0; i < inbuffer_sz; i++)
-        c_equals->bits[c_equals->sz - 1 - i]->id = inbuffer[inbuffer_sz - 1 - i] ? TRUE_3SAT : FALSE_3SAT;
-
-    delete[] inbuffer;
-
-    nat_3sat* c = NULL;
+    int a_bit_count = ainbuffer_sz - aleading_zeros;
+    int b_bit_count = binbuffer_sz - bleading_zeros;
 
     nat_3sat* a = new nat_3sat();
-    a->sz = c_bit_count - 1;
-    a->bits = new bit_3sat * [c_bit_count - 1];
+    a->sz = a_bit_count;
+    a->bits = new bit_3sat * [a_bit_count];
 
     nat_3sat* b = new nat_3sat();
-    b->sz = c_bit_count - 1;
-    b->bits = new bit_3sat * [c_bit_count - 1];
+    b->sz = b_bit_count;
+    b->bits = new bit_3sat * [b_bit_count];
 
-    for (int i = 0; i < c_bit_count - 1; i++) {
-        a->bits[i] = create_bit(&num_parm);
-        b->bits[i] = create_bit(&num_parm);
-    }
+    nat_3sat* c = new nat_3sat();
+    c->sz = a_bit_count + b_bit_count + 1;
+    c->bits = new bit_3sat * [a_bit_count + b_bit_count + 1];
 
-    __int64 mul_str_len = 0;
+    delete[] ainbuffer;
+    delete[] binbuffer;
 
-    char* mul_str = nat_mul(&num_parm, &c, a, b, (c_bit_count - 1) * 2, &mul_str_len);
+    __int64 add_str_len = 0;
 
-    __int64 equals_str_len = 0;
+    char* add_str = nat_add(&num_parm, &c, a, b, false, &add_str_len);
 
-    char* equals_str = nat_equals(&num_parm, c, c_equals, true, &equals_str_len);
+    __int64 buf_3sat_sz = add_str_len + 1;
 
-    __int64 buf_3sat_sz = mul_str_len + equals_str_len + 1;
     char* buf_3sat = new char[buf_3sat_sz];
-    strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
-    strcpy_s(&(buf_3sat[mul_str_len]), buf_3sat_sz - mul_str_len, equals_str);
+    strcpy_s(buf_3sat, buf_3sat_sz, add_str);
 
-    delete[] mul_str;
-    delete[] equals_str;
+    delete[] add_str;
 
     int k = 0;
     int** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
@@ -164,16 +129,13 @@ char* nat_test_add(char* c_str, int c_str_buf_sz, int* len_para) {
     if (!is_sat)
         return prime_str;
 
-    int a_str_sz = 0;
+    int c_str_sz = 0;
 
-    char* a_str = nat_to_str(sln, a, &a_str_sz);
-    int b_str_sz = 0;
+    char* c_str = nat_to_str(sln, c, &c_str_sz);
 
-    char* b_str = nat_to_str(sln, b, &b_str_sz);
-
-    int ret_buf_sz = a_str_sz + (int)strnlen_s("\n\n", 4) + b_str_sz + 1;
+    int ret_buf_sz = c_str_sz + (int)strnlen_s("\n\n", 4) + 1;
     char* ret_buf = new char[ret_buf_sz];
-    sprintf_s(ret_buf, ret_buf_sz, "%s\n\n%s", a_str, b_str);
+    sprintf_s(ret_buf, ret_buf_sz, "%s\n\n", c_str);
 
     *len_para = ret_buf_sz - 1;
 
@@ -185,104 +147,69 @@ char* nat_test_add(char* c_str, int c_str_buf_sz, int* len_para) {
 
 char* nat_test_mul(char* c_str, int c_str_buf_sz, int* len_para) {
 
+    const char* a_str = "2";
+    const char* b_str = "3";
+
     if (c_str == NULL or c_str == "")
         return NULL;
 
     int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
-    // get length of c_str
-    int strln = 0;
-    for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
+    // get lengths of a_str and b_str
+    int astrln = 0;
+    for (astrln = 0; a_str[astrln] != '\0'; astrln++)
+        ;
+
+    int bstrln = 0;
+    for (bstrln = 0; b_str[astrln] != '\0'; bstrln++)
         ;
 
     // transform hex input into bool buffer
 
-    int inbuffer_sz = strln * 4;
-    bool* inbuffer = new bool[inbuffer_sz];
+    bool* ainbuffer = hex2bool(a_str, astrln);
+    bool* binbuffer = hex2bool(b_str, bstrln);
 
-    for (int i = 0; i < strln; i++) {
-
-        // decode the hex into bits
-
-        int hexbits[4];
-        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
-
-        int hexval = int_from_hex_char(c_str[i]);
-
-        if (hexval >= 8) {
-            hexbits[3] = 1;
-            hexval = hexval - 8;
-        }
-        if (hexval >= 4) {
-            hexbits[2] = 1;
-            hexval = hexval - 4;
-        }
-        if (hexval >= 2) {
-            hexbits[1] = 1;
-            hexval = hexval - 2;
-        }
-        hexbits[0] = hexval;
-
-        for (int j = 0; j < 4; j++)
-            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
-    }
+    int ainbuffer_sz = astrln * 4;
+    int binbuffer_sz = bstrln * 4;
 
     // count leading zeros
 
-    int leading_zeros = 0;
-    for (leading_zeros = 0; !inbuffer[leading_zeros]; leading_zeros++)
+    int aleading_zeros = 0;
+    for (aleading_zeros = 0; !ainbuffer[aleading_zeros]; aleading_zeros++)
         ;
 
-    int c_bit_count = inbuffer_sz - leading_zeros;
+    int bleading_zeros = 0;
+    for (bleading_zeros = 0; !binbuffer[bleading_zeros]; bleading_zeros++)
+        ;
 
-    nat_3sat* c_equals = new nat_3sat();
-    c_equals->sz = (c_bit_count - 1) * 2;
-    c_equals->bits = new bit_3sat * [(c_bit_count - 1) * 2];
-
-    // copy over leading multiply zeros
-
-    for (int i = 0; i < (c_bit_count - 1) * 2; i++) {
-        c_equals->bits[i] = new bit_3sat();
-        c_equals->bits[i]->id = FALSE_3SAT;
-    }
-
-    // transfer over inbuffer
-
-    for (int i = 0; i < inbuffer_sz; i++)
-        c_equals->bits[c_equals->sz - 1 - i]->id = inbuffer[inbuffer_sz - 1 - i] ? TRUE_3SAT : FALSE_3SAT;
-
-    delete[] inbuffer;
-
-    nat_3sat* c = NULL;
+    int a_bit_count = ainbuffer_sz - aleading_zeros;
+    int b_bit_count = binbuffer_sz - bleading_zeros;
 
     nat_3sat* a = new nat_3sat();
-    a->sz = c_bit_count - 1;
-    a->bits = new bit_3sat * [c_bit_count - 1];
+    a->sz = a_bit_count;
+    a->bits = new bit_3sat * [a_bit_count];
 
     nat_3sat* b = new nat_3sat();
-    b->sz = c_bit_count - 1;
-    b->bits = new bit_3sat * [c_bit_count - 1];
+    b->sz = b_bit_count;
+    b->bits = new bit_3sat * [b_bit_count];
 
-    for (int i = 0; i < c_bit_count - 1; i++) {
-        a->bits[i] = create_bit(&num_parm);
-        b->bits[i] = create_bit(&num_parm);
-    }
+    nat_3sat* c = new nat_3sat();
+    c->sz = a_bit_count + b_bit_count + 1;
+    c->bits = new bit_3sat * [a_bit_count + b_bit_count + 1];
+
+    delete[] ainbuffer;
+    delete[] binbuffer;
 
     __int64 mul_str_len = 0;
 
-    char* mul_str = nat_mul(&num_parm, &c, a, b, (c_bit_count - 1) * 2, &mul_str_len);
+    char* mul_str = nat_mul(&num_parm, &c, a, b, false, &mul_str_len);
 
-    __int64 equals_str_len = 0;
+    __int64 buf_3sat_sz = mul_str_len + 1;
 
-    char* equals_str = nat_equals(&num_parm, c, c_equals, true, &equals_str_len);
-
-    __int64 buf_3sat_sz = mul_str_len + equals_str_len + 1;
     char* buf_3sat = new char[buf_3sat_sz];
     strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
-    strcpy_s(&(buf_3sat[mul_str_len]), buf_3sat_sz - mul_str_len, equals_str);
 
     delete[] mul_str;
-    delete[] equals_str;
 
     int k = 0;
     int** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
@@ -335,16 +262,13 @@ char* nat_test_mul(char* c_str, int c_str_buf_sz, int* len_para) {
     if (!is_sat)
         return prime_str;
 
-    int a_str_sz = 0;
+    int c_str_sz = 0;
 
-    char* a_str = nat_to_str(sln, a, &a_str_sz);
-    int b_str_sz = 0;
+    char* c_str = nat_to_str(sln, c, &c_str_sz);
 
-    char* b_str = nat_to_str(sln, b, &b_str_sz);
-
-    int ret_buf_sz = a_str_sz + (int)strnlen_s("\n\n", 4) + b_str_sz + 1;
+    int ret_buf_sz = c_str_sz + (int)strnlen_s("\n\n", 4) + 1;
     char* ret_buf = new char[ret_buf_sz];
-    sprintf_s(ret_buf, ret_buf_sz, "%s\n\n%s", a_str, b_str);
+    sprintf_s(ret_buf, ret_buf_sz, "%s\n\n", c_str);
 
     *len_para = ret_buf_sz - 1;
 
