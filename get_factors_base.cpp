@@ -12,7 +12,7 @@
 
 using namespace std;
 
-char* nat_test_add() {
+char* nat_test_add(__int64 * len_para) {
 
     const char* a_str = "2";
     const char* b_str = "3";
@@ -142,7 +142,7 @@ char* nat_test_add() {
     return ret_buf;
 }
 
-char* nat_test_mul() {
+char* nat_test_mul(__int64 * len_para) {
 
     const char* a_str = "2";
     const char* b_str = "3";
