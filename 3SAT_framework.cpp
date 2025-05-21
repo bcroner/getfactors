@@ -427,7 +427,7 @@ char* implies_3sat(int * num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int *
 
 // dec_add c = a + b
 
-char* dec_add(int * num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool discard_final_c_out, int *len_para) {
+char* dec_add(int * num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool discard_final_c_out, __int64 *len_para) {
 
     // find the largest number of bits
 
@@ -602,7 +602,7 @@ char* dec_add(int * num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool disca
 
 }
 
-char* nat_add(int* num_parm, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool discard_final_c_out, int* len_para) {
+char* nat_add(int* num_parm, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool discard_final_c_out, __int64 * len_para) {
 
     // find the largest number of bits
 
