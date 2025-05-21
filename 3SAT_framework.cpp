@@ -1599,6 +1599,40 @@ inline int decimal_from_char(char c) {
     }
 }
 
+bool* hex2bool(const char* a, int sz) {
+
+    bool* inbuffer = new bool[inbuffer_sz];
+
+    for (int i = 0; i < sz; i++) {
+
+        // decode the hex into bits
+
+        int hexbits[4];
+        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
+
+        int hexval = int_from_hex_char(c_str[i]);
+
+        if (hexval >= 8) {
+            hexbits[3] = 1;
+            hexval = hexval - 8;
+        }
+        if (hexval >= 4) {
+            hexbits[2] = 1;
+            hexval = hexval - 4;
+        }
+        if (hexval >= 2) {
+            hexbits[1] = 1;
+            hexval = hexval - 2;
+        }
+        hexbits[0] = hexval;
+
+        for (int j = 0; j < 4; j++)
+            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
+    }
+
+    return inbuffer;
+}
+
 int** input_from_char_buf(char * buf_3sat, __int64 buf_3sat_sz, int * k, bool cnf) {
 
     // count the newlines for k where no clause has a TRUE value in it
