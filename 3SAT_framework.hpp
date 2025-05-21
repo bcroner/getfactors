@@ -65,9 +65,9 @@ char* bitaddcout_3sat(int* num_parm, bit_3sat** c_out, bit_3sat* c_in, bit_3sat*
 
 char* implies_3sat(int* num_parm, bit_3sat** c, bit_3sat* a, bit_3sat* b, int* len_para);
 
-char* dec_add(int* num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool discard_final_c_out, int* len_para);
+char* dec_add(int* num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool discard_final_c_out, __int64* len_para);
 
-char* nat_add(int* num_parm, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool discard_final_c_out, int* len_para);
+char* nat_add(int* num_parm, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool discard_final_c_out, __int64* len_para);
 
 char* twos_comp_3sat(int* num_parm, dec_3sat** c, dec_3sat* a, int* len_para);
 
