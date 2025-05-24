@@ -81,17 +81,17 @@ char* dec_not_equals(__int64 * num_para, dec_3sat* a, dec_3sat* b, __int64* len_
 
 char* nat_not_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, __int64* len_para);
 
-char* dec_mul(__int64 * num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, int bd_sz, int ad_sz, __int64* len_para);
+char* dec_mul(__int64 * num_parm, dec_3sat** c, dec_3sat* a, dec_3sat* b, __int64 bd_sz, __int64 ad_sz, __int64* len_para);
 
-char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, int sz, __int64* len_para);
+char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int64 sz, __int64* len_para);
 
 char* dec_div(__int64 * num_parm, dec_3sat * c, dec_3sat * a, dec_3sat ** b, __int64* len_para);
 
 char* dec_sqrt(__int64 * num_para, dec_3sat* c, dec_3sat** a, __int64* len_para);
 
-//void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
+//void bignum_from_str_oct(bn* c_bn, char* c_str, __int64 len);
 
-inline int octal_from_char(char c);
+inline __int64 octal_from_char(char c);
 
 //void bignum_from_str_oct(bn* c_bn, char* c_str, int len);
 
