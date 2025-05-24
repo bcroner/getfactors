@@ -322,7 +322,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	if (true) {
 
 		for (__int64 i = 0; i < me->master->n; i++)
-			printf_s("%lld", me->Z[i]);
+			printf_s("%lld", (__int64) me->Z[i]);
 		//printf_s(" jump: %lld", me->pow_jump);
 		printf_s(" jump: %I64d", temp_pow_jump);
 		printf_s("\n");
@@ -374,7 +374,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		if (true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
-				printf_s("%lld", me->Z[i]);
+				printf_s("%lld", (__int64) me->Z[i]);
 			//printf_s(" jump: %lld", me->pow_jump);
 			printf_s(" jump: %I64d count_matches: %I64d", temp_pow_jump, count_matches);
 			printf_s("\n");
