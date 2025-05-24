@@ -276,7 +276,7 @@ char* nat_test_mul(__int64 * len_para) {
 int main()
 {
     int num_parm = 2;
-    int len_para = 0;
+    __int64 len_para = 0;
 
     //char buf_3sat[200000];
 
@@ -1285,14 +1285,17 @@ int main()
         cf909a12a7"); // https://gmail.com
     //*/
 
+    char* nat_add_str = nat_test_add(&len_para);
+    printf_s("%s\n", nat_add_str, len_para);
+
     ///*
     //char c_str[2000];
-    strcpy_s(c_str, 2000, "6");
+    //strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
     //char * factors = dec_get_factors(c_str, 2000, & len_para);
-    char* factors = nat_get_factors(c_str, 2000, &len_para);
-    printf_s("%s\n", factors);
+    //char* factors = nat_get_factors(c_str, 2000, &len_para);
+    //printf_s("%s\n", factors);
     //*/
     /*
     int str_sz = 0;
