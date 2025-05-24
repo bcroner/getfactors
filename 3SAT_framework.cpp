@@ -66,10 +66,10 @@ char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
     */
 
     sprintf_s(lst[0], 64, "%lld %lld %lld", -a->id, -b->id, (*c)->id);
-    sprintf_s(lst[1], 64, "%lld %lld %lld", a->id, -(*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 64, "%lld %lld %lld", b->id, -(*c)->id, FALSE_3SAT);
+    sprintf_s(lst[1], 64, "%lld %lld %lld", a->id, -(*c)->id, (__int64) FALSE_3SAT);
+    sprintf_s(lst[2], 64, "%lld %lld %lld", b->id, -(*c)->id, (__int64) FALSE_3SAT);
 
-    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + 1;
+    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + (__int64) 1;
     char* ret = new char[ret_len];
 
     __int64 len = 0;
@@ -103,10 +103,10 @@ char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
     */
 
     sprintf_s(lst[0], 64, "%lld %lld %lld", -a->id, -b->id, -(*c)->id);
-    sprintf_s(lst[1], 64, "%lld %lld %lld", a->id, (*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 64, "%lld %lld %lld", b->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[1], 64, "%lld %lld %lld", a->id, (*c)->id, (__int64) FALSE_3SAT);
+    sprintf_s(lst[2], 64, "%lld %lld %lld", b->id, (*c)->id, (__int64) FALSE_3SAT);
 
-    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64)+ 3 * (__int64)strnlen_s("\n", 2) + 1;
+    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64)+ 3 * (__int64)strnlen_s("\n", 2) + (__int64) 1;
     char* ret = new char[ret_len];
 
     __int64 len = 0;
@@ -140,10 +140,10 @@ char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int6
     */
 
     sprintf_s(lst[0], 64, "%lld %lld %lld", a->id, b->id, -(*c)->id);
-    sprintf_s(lst[1], 64, "%lld %lld %lld", -a->id, (*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 64, "%lld %lld %lld", -b->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[1], 64, "%lld %lld %lld", -a->id, (*c)->id, (__int64) FALSE_3SAT);
+    sprintf_s(lst[2], 64, "%lld %lld %lld", -b->id, (*c)->id, (__int64) FALSE_3SAT);
 
-    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + 1;
+    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + (__int64) 1;
     char* ret = new char[ret_len];
 
     __int64 len = 0;
@@ -177,10 +177,10 @@ char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
     */
 
     sprintf_s(lst[0], 64, "%lld %lld %lld", a->id, b->id, (*c)->id);
-    sprintf_s(lst[1], 64, "%lld %lld %lld", -a->id, -(*c)->id, FALSE_3SAT);
-    sprintf_s(lst[2], 64, "%lld %lld %lld", -b->id, -(*c)->id, FALSE_3SAT);
+    sprintf_s(lst[1], 64, "%lld %lld %lld", -a->id, -(*c)->id, (__int64) FALSE_3SAT);
+    sprintf_s(lst[2], 64, "%lld %lld %lld", -b->id, -(*c)->id, (__int64) FALSE_3SAT);
 
-    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + 1;
+    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + (__int64) 1;
     char* ret = new char[ret_len];
 
     __int64 len = 0;
@@ -212,10 +212,10 @@ char* not_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, __int64 * len_para
     sprintf_s(lst[1], "%lld %lld", a->id, c->id);
     */
 
-    sprintf_s(lst[0], 64, "%lld %lld %lld", -a->id, -(*c)->id, FALSE_3SAT);
-    sprintf_s(lst[1], 64, "%lld %lld %lld", a->id, (*c)->id, FALSE_3SAT);
+    sprintf_s(lst[0], 64, "%lld %lld %lld", -a->id, -(*c)->id, (__int64) FALSE_3SAT);
+    sprintf_s(lst[1], 64, "%lld %lld %lld", a->id, (*c)->id, (__int64) FALSE_3SAT);
 
-    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + 2 * (__int64)strnlen_s("\n", 2) + 1;
+    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + 2 * (__int64)strnlen_s("\n", 2) + (__int64) 1;
 
     char* ret = new char[ret_len];
 
@@ -1534,7 +1534,7 @@ inline __int64 octal_from_char(char c) {
     }
 }
 
-inline __int64 __int64_from_hex_char(char c) {
+inline __int64 int_from_hex_char(char c) {
 
     if (c >= 'A' && c <= 'F')
         c = c + ('a' - 'A');
@@ -1560,7 +1560,7 @@ inline __int64 __int64_from_hex_char(char c) {
     }
 }
 
-inline char hex_char_from___int64(__int64 a) {
+inline char hex_char_from_int(__int64 a) {
     switch (a) {
     case 0: return '0';
     case 1: return '1';
@@ -1601,6 +1601,13 @@ inline __int64 decimal_from_char(char c) {
 
 bool* hex2bool(const char* a, __int64 sz) {
 
+    // get length of c_str
+    __int64 strln = 0;
+    for (strln = 0; strln < sz && a[strln] != '\0'; strln++)
+        ;
+
+    __int64 inbuffer_sz = strln * 4;
+
     bool* inbuffer = new bool[inbuffer_sz];
 
     for (__int64 i = 0; i < sz; i++) {
@@ -1610,7 +1617,7 @@ bool* hex2bool(const char* a, __int64 sz) {
         __int64 hexbits[4];
         hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
 
-        __int64 hexval = __int64_from_hex_char(c_str[i]);
+        __int64 hexval = int_from_hex_char(a[i]);
 
         if (hexval >= 8) {
             hexbits[3] = 1;
@@ -1776,7 +1783,7 @@ char* dec_to_str(bool * decodable_buf, dec_3sat * a, __int64 * str_sz) {
 
         for (__int64 i = 0; i < 4; i++)
             hexbits[3 - i] = bool_buf[bd_hex_pos * 4 + i];
-        ret_str[ret_str_pos] = hex_char_from___int64(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+        ret_str[ret_str_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
         
         bd_hex_pos++;
         ret_str_pos++;
@@ -1798,7 +1805,7 @@ char* dec_to_str(bool * decodable_buf, dec_3sat * a, __int64 * str_sz) {
 
         for (__int64 i = 0; i < 4; i++)
             hexbits[3 - i] = bool_buf[num_hex_bd * 4 + ad_hex_pos * 4 + i];
-        ret_str[ret_str_pos + ad_hex_pos] = hex_char_from___int64(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+        ret_str[ret_str_pos + ad_hex_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
 
         ad_hex_pos++;
         ret_str_pos++;
@@ -1883,7 +1890,7 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
         for (__int64 j = 0; j < 4; j++)
             hexbits[3 - j] = bool_buf[bool_buf_sz - 1 - i * 4 - j];
 
-        ret_str[ret_str_pos] = hex_char_from___int64(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+        ret_str[ret_str_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
         ret_str_pos++;
 
     }
@@ -1900,7 +1907,7 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
 
         for (__int64 i = 0; i < 4; i++)
             hexbits[3 - i] = bool_buf[hex_pos * 4 + i];
-        ret_str[ret_str_pos] = hex_char_from___int64(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+        ret_str[ret_str_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
 
         hex_pos++;
         ret_str_pos++;
@@ -1936,7 +1943,7 @@ char* dec_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
         __int64 hexbits[4];
         hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
 
-        __int64 hexval = __int64_from_hex_char ( c_str[i] );
+        __int64 hexval = int_from_hex_char ( c_str[i] );
 
         if (hexval >= 8) {
             hexbits[3] = 1;
@@ -2024,7 +2031,7 @@ char* dec_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
 
     __int64 mul_str_len = 0;
 
-    char* mul_str = dec_mul(&num_para, &c, a, b, c_bit_count * 2, 0, & mul_str_len);
+    char* mul_str = dec_mul(&num_para, &c, a, b, c_bit_count * 2, (__int64) 0, & mul_str_len);
 
     __int64 equals_str_len = 0;
 
@@ -2135,7 +2142,7 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
         __int64 hexbits[4];
         hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
 
-        __int64 hexval = __int64_from_hex_char(c_str[i]);
+        __int64 hexval = int_from_hex_char(c_str[i]);
 
         if (hexval >= 8) {
             hexbits[3] = 1;
