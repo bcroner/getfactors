@@ -17,14 +17,14 @@ char* nat_test_add(__int64 * len_para) {
     const char* a_str = "2";
     const char* b_str = "3";
 
-    int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
+    __int64 num_para = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
     // get lengths of a_str and b_str
-    int astrln = 0;
+    __int64 astrln = 0;
     for (astrln = 0; a_str[astrln] != '\0'; astrln++)
         ;
 
-    int bstrln = 0;
+    __int64 bstrln = 0;
     for (bstrln = 0; b_str[astrln] != '\0'; bstrln++)
         ;
 
@@ -33,21 +33,21 @@ char* nat_test_add(__int64 * len_para) {
     bool* ainbuffer = hex2bool(a_str, astrln);
     bool* binbuffer = hex2bool(b_str, bstrln);
 
-    int ainbuffer_sz = astrln * 4;
-    int binbuffer_sz = bstrln * 4;
+    __int64 ainbuffer_sz = astrln * 4;
+    __int64 binbuffer_sz = bstrln * 4;
 
     // count leading zeros
 
-    int aleading_zeros = 0;
+    __int64 aleading_zeros = 0;
     for (aleading_zeros = 0; !ainbuffer[aleading_zeros]; aleading_zeros++)
         ;
 
-    int bleading_zeros = 0;
+    __int64 bleading_zeros = 0;
     for (bleading_zeros = 0; !binbuffer[bleading_zeros]; bleading_zeros++)
         ;
 
-    int a_bit_count = ainbuffer_sz - aleading_zeros;
-    int b_bit_count = binbuffer_sz - bleading_zeros;
+    __int64 a_bit_count = ainbuffer_sz - aleading_zeros;
+    __int64 b_bit_count = binbuffer_sz - bleading_zeros;
 
     nat_3sat* a = new nat_3sat();
     a->sz = a_bit_count;
@@ -66,7 +66,7 @@ char* nat_test_add(__int64 * len_para) {
 
     __int64 add_str_len = 0;
 
-    char* add_str = nat_add(&num_parm, &c, a, b, false, &add_str_len);
+    char* add_str = nat_add(&num_para, &c, a, b, false, &add_str_len);
 
     __int64 buf_3sat_sz = add_str_len + 1;
 
@@ -75,19 +75,19 @@ char* nat_test_add(__int64 * len_para) {
 
     delete[] add_str;
 
-    int k = 0;
-    int** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
-    bool* sln = new bool[num_parm - 1];
+    __int64 k = 0;
+    __int64** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
+    bool* sln = new bool[num_para - 1];
 
     delete[] buf_3sat;
 
-    int counted = 0;
+    __int64 counted = 0;
 
-    for (int i = 0; i < k; i++) {
+    for (__int64 i = 0; i < k; i++) {
 
-        int a = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        int b = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        int c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
 
         if (a > counted)
             counted = a;
@@ -126,11 +126,11 @@ char* nat_test_add(__int64 * len_para) {
     if (!is_sat)
         return prime_str;
 
-    int c_str_sz = 0;
+    __int64 c_str_sz = 0;
 
     char* c_str = nat_to_str(sln, c, &c_str_sz);
 
-    int ret_buf_sz = c_str_sz + (int)strnlen_s("\n\n", 4) + 1;
+    __int64 ret_buf_sz = c_str_sz + (__int64)strnlen_s("\n\n", 4) + (__int64) 1;
     char* ret_buf = new char[ret_buf_sz];
     sprintf_s(ret_buf, ret_buf_sz, "%s\n\n", c_str);
 
@@ -147,7 +147,7 @@ char* nat_test_mul(__int64 * len_para) {
     const char* a_str = "2";
     const char* b_str = "3";
 
-    int num_parm = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
+    __int64 num_para = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
     // get lengths of a_str and b_str
     int astrln = 0;
@@ -196,7 +196,7 @@ char* nat_test_mul(__int64 * len_para) {
 
     __int64 mul_str_len = 0;
 
-    char* mul_str = nat_mul(&num_parm, &c, a, b, false, &mul_str_len);
+    char* mul_str = nat_mul(&num_para, &c, a, b, false, &mul_str_len);
 
     __int64 buf_3sat_sz = mul_str_len + 1;
 
@@ -205,19 +205,19 @@ char* nat_test_mul(__int64 * len_para) {
 
     delete[] mul_str;
 
-    int k = 0;
-    int** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
-    bool* sln = new bool[num_parm - 1];
+    __int64 k = 0;
+    __int64 ** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
+    bool* sln = new bool[num_para - 1];
 
     delete[] buf_3sat;
 
-    int counted = 0;
+    __int64 counted = 0;
 
     for (int i = 0; i < k; i++) {
 
-        int a = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        int b = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        int c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
 
         if (a > counted)
             counted = a;
@@ -256,15 +256,15 @@ char* nat_test_mul(__int64 * len_para) {
     if (!is_sat)
         return prime_str;
 
-    int c_str_sz = 0;
+    __int64 c_str_sz = 0;
 
     char* c_str = nat_to_str(sln, c, &c_str_sz);
 
-    int ret_buf_sz = c_str_sz + (int)strnlen_s("\n\n", 4) + 1;
+    __int64 ret_buf_sz = c_str_sz + (__int64)strnlen_s("\n\n", 4) + (__int64) 1;
     char* ret_buf = new char[ret_buf_sz];
     sprintf_s(ret_buf, ret_buf_sz, "%s\n\n", c_str);
 
-    *len_para = ret_buf_sz - 1;
+    *len_para = ret_buf_sz - (__int64) 1;
 
     delete[] a_str;
     delete[] b_str;
@@ -275,7 +275,7 @@ char* nat_test_mul(__int64 * len_para) {
 
 int main()
 {
-    int num_parm = 2;
+    int num_para = 2;
     __int64 len_para = 0;
 
     //char buf_3sat[200000];
@@ -1242,10 +1242,10 @@ int main()
 
     ///*
 
-    //bit_3sat * a = create_bit(&num_parm);
-    //bit_3sat * b = create_bit(&num_parm);
+    //bit_3sat * a = create_bit(&num_para);
+    //bit_3sat * b = create_bit(&num_para);
     //bit_3sat * c = NULL;;
-    //printf("%s\n", and_3sat(&num_parm, &c, a, b, &len_para));
+    //printf("%s\n", and_3sat(&num_para, &c, a, b, &len_para));
     //char c_str[5];
     char c_str[2000];
     /*
@@ -1286,7 +1286,7 @@ int main()
     //*/
 
     char* nat_add_str = nat_test_add(&len_para);
-    printf_s("%s\n", nat_add_str, len_para);
+    printf_s("%s\n", nat_add_str);
 
     ///*
     //char c_str[2000];
@@ -1308,10 +1308,10 @@ int main()
     numa->bits = new bit * [5];
     int tf = FALSE_3SAT;
     numa->bits[0] = create_bit(&tf);
-    numa->bits[1] = create_bit(&num_parm);
-    numa->bits[2] = create_bit(&num_parm);
-    numa->bits[3] = create_bit(&num_parm);
-    numa->bits[4] = create_bit(&num_parm);
+    numa->bits[1] = create_bit(&num_para);
+    numa->bits[2] = create_bit(&num_para);
+    numa->bits[3] = create_bit(&num_para);
+    numa->bits[4] = create_bit(&num_para);
     char* dec_str = dec_to_str(decodable_buf, numa, &str_sz);
     //*/
     /*
@@ -1323,9 +1323,9 @@ int main()
     a->bits = new bit_3sat*[4];
     a->bits[0] = new bit_3sat();
     a->bits[0]->id = FALSE_3SAT;
-    a->bits[1] = create_bit(&num_parm);
-    a->bits[2] = create_bit(&num_parm);
-    a->bits[3] = create_bit(&num_parm);
+    a->bits[1] = create_bit(&num_para);
+    a->bits[2] = create_bit(&num_para);
+    a->bits[3] = create_bit(&num_para);
 
 
     dec_3sat* b = new dec_3sat();
@@ -1335,11 +1335,11 @@ int main()
     b->bits = new bit_3sat * [4];
     b->bits[0] = new bit_3sat();
     b->bits[0]->id = FALSE_3SAT;
-    b->bits[1] = create_bit(&num_parm);
-    b->bits[2] = create_bit(&num_parm);
-    b->bits[3] = create_bit(&num_parm);
+    b->bits[1] = create_bit(&num_para);
+    b->bits[2] = create_bit(&num_para);
+    b->bits[3] = create_bit(&num_para);
 
-    char* sum_str = dec_add(&num_parm, &c, a, b, false, &len_para);
+    char* sum_str = dec_add(&num_para, &c, a, b, false, &len_para);
 
     printf_s("%s", sum_str);
 
