@@ -1610,7 +1610,7 @@ bool* hex2bool(const char* a, __int64 sz) {
 
     bool* inbuffer = new bool[inbuffer_sz];
 
-    for (__int64 i = 0; i < sz; i++) {
+    for (__int64 i = 0; i < strln; i++) {
 
         // decode the hex __int64o bits
 
