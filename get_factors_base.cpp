@@ -25,7 +25,7 @@ char* nat_test_add(__int64 * len_para) {
         ;
 
     __int64 bstrln = 0;
-    for (bstrln = 0; b_str[astrln] != '\0'; bstrln++)
+    for (bstrln = 0; b_str[bstrln] != '\0'; bstrln++)
         ;
 
     // transform hex input into bool buffer
@@ -56,6 +56,12 @@ char* nat_test_add(__int64 * len_para) {
     nat_3sat* b = new nat_3sat();
     b->sz = b_bit_count;
     b->bits = new bit_3sat * [b_bit_count];
+
+    for (__int64 i = 0; i < a_bit_count; i++)
+        a->bits[i]->id = ainbuffer[aleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
+
+    for (__int64 i = 0; i < b_bit_count; i++)
+        b->bits[i]->id = binbuffer[bleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
 
     nat_3sat* c = new nat_3sat();
     c->sz = a_bit_count > b_bit_count ? a_bit_count + 1 : b_bit_count + 1;
@@ -186,6 +192,12 @@ char* nat_test_mul(__int64 * len_para) {
     nat_3sat* b = new nat_3sat();
     b->sz = b_bit_count;
     b->bits = new bit_3sat * [b_bit_count];
+
+    for (__int64 i = 0; i < a_bit_count; i++)
+        a->bits[i]->id = ainbuffer[aleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
+
+    for (__int64 i = 0; i < b_bit_count; i++)
+        b->bits[i]->id = binbuffer[bleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
 
     nat_3sat* c = new nat_3sat();
     c->sz = a_bit_count + b_bit_count;
@@ -1247,7 +1259,7 @@ int main()
     //bit_3sat * c = NULL;;
     //printf("%s\n", and_3sat(&num_para, &c, a, b, &len_para));
     //char c_str[5];
-    char c_str[2000];
+    //char c_str[2000];
     /*
     strcpy_s(c_str, 2000,
         "BE88B9A8CA71030100C1798F81149B6F\
