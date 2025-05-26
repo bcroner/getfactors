@@ -101,7 +101,7 @@ inline __int64 int_from_hex_char(char c);
 
 inline char hex_char_from_int(__int64 a);
 
-bool* hex2bool(const char* a, __int64 sz);
+bool* hex2bool(char* a, __int64 sz);
 
 //void bignum_from_str_dec(bn* c_bn, char* c_str, __int64 len);
 
