@@ -14,8 +14,14 @@ using namespace std;
 
 char* nat_test_add(__int64 * len_para) {
 
-    const char* a_str = "2";
-    const char* b_str = "3";
+    const char* a_str_c = "2";
+    const char* b_str_c = "3";
+
+    char a_str[2000];
+    char b_str[2000];
+
+    strcpy_s(a_str, 2000, a_str_c);
+    strcpy_s(b_str, 2000, b_str_c);
 
     __int64 num_para = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
@@ -57,11 +63,15 @@ char* nat_test_add(__int64 * len_para) {
     b->sz = b_bit_count;
     b->bits = new bit_3sat * [b_bit_count];
 
-    for (__int64 i = 0; i < a_bit_count; i++)
+    for (__int64 i = 0; i < a_bit_count; i++) {
+        a->bits[i] = new bit_3sat();
         a->bits[i]->id = ainbuffer[aleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
+    }
 
-    for (__int64 i = 0; i < b_bit_count; i++)
+    for (__int64 i = 0; i < b_bit_count; i++) {
+        b->bits[i] = new bit_3sat();
         b->bits[i]->id = binbuffer[bleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
+     }
 
     nat_3sat* c = new nat_3sat();
     c->sz = a_bit_count > b_bit_count ? a_bit_count + 1 : b_bit_count + 1;
@@ -145,13 +155,27 @@ char* nat_test_add(__int64 * len_para) {
     delete[] a_str;
     delete[] b_str;
 
+    for (int i = 0; i < a->sz; i++)
+        delete a->bits[i];
+    for (int i = 0; i < b->sz; i++)
+        delete b->bits[i];
+
+    delete[] a;
+    delete[] b;
+
     return ret_buf;
 }
 
 char* nat_test_mul(__int64 * len_para) {
 
-    const char* a_str = "2";
-    const char* b_str = "3";
+    const char* a_str_c = "2";
+    const char* b_str_c = "3";
+
+    char a_str[2000];
+    char b_str[2000];
+
+    strcpy_s(a_str, 2000, a_str_c);
+    strcpy_s(b_str, 2000, b_str_c);
 
     __int64 num_para = 2; // TRUE_3SAT = 1 is reserved for true, while FALSE_3SAT = -1 is false
 
@@ -193,11 +217,15 @@ char* nat_test_mul(__int64 * len_para) {
     b->sz = b_bit_count;
     b->bits = new bit_3sat * [b_bit_count];
 
-    for (__int64 i = 0; i < a_bit_count; i++)
+    for (__int64 i = 0; i < a_bit_count; i++) {
+        a->bits[i] = new bit_3sat();
         a->bits[i]->id = ainbuffer[aleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
+    }
 
-    for (__int64 i = 0; i < b_bit_count; i++)
+    for (__int64 i = 0; i < b_bit_count; i++) {
+        b->bits[i] = new bit_3sat();
         b->bits[i]->id = binbuffer[bleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
+    }
 
     nat_3sat* c = new nat_3sat();
     c->sz = a_bit_count + b_bit_count;
@@ -280,6 +308,14 @@ char* nat_test_mul(__int64 * len_para) {
 
     delete[] a_str;
     delete[] b_str;
+
+    for (int i = 0; i < a->sz; i++)
+        delete a->bits[i];
+    for (int i = 0; i < b->sz; i++)
+        delete b->bits[i];
+
+    delete[] a;
+    delete[] b;
 
     return ret_buf;
 }
