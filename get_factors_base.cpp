@@ -73,9 +73,11 @@ char* nat_test_add(__int64 * len_para) {
         b->bits[i]->id = binbuffer[bleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
      }
 
-    nat_3sat* c = new nat_3sat();
-    c->sz = a_bit_count > b_bit_count ? a_bit_count + 1 : b_bit_count + 1;
-    c->bits = new bit_3sat * [c->sz];
+    //nat_3sat* c = new nat_3sat();
+    //c->sz = a_bit_count > b_bit_count ? a_bit_count + 1 : b_bit_count + 1;
+    //c->bits = new bit_3sat * [c->sz];
+
+    nat_3sat* c;
 
     delete[] ainbuffer;
     delete[] binbuffer;
@@ -227,9 +229,11 @@ char* nat_test_mul(__int64 * len_para) {
         b->bits[i]->id = binbuffer[bleading_zeros + i] ? TRUE_3SAT : FALSE_3SAT;
     }
 
-    nat_3sat* c = new nat_3sat();
-    c->sz = a_bit_count + b_bit_count;
-    c->bits = new bit_3sat * [a_bit_count + b_bit_count];
+    //nat_3sat* c = new nat_3sat();
+    //c->sz = a_bit_count + b_bit_count;
+    //c->bits = new bit_3sat * [a_bit_count + b_bit_count];
+
+    nat_3sat* c;
 
     delete[] ainbuffer;
     delete[] binbuffer;
