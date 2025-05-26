@@ -160,8 +160,8 @@ char* nat_test_add(__int64 * len_para) {
     for (int i = 0; i < b->sz; i++)
         delete b->bits[i];
 
-    delete[] a;
-    delete[] b;
+    delete[] a->bits;
+    delete[] b->bits;
 
     return ret_buf;
 }
@@ -314,8 +314,8 @@ char* nat_test_mul(__int64 * len_para) {
     for (int i = 0; i < b->sz; i++)
         delete b->bits[i];
 
-    delete[] a;
-    delete[] b;
+    delete[] a->bits;
+    delete[] b->bits;
 
     return ret_buf;
 }
