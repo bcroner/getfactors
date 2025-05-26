@@ -95,8 +95,7 @@ char* nat_test_add(__int64 * len_para) {
 
     __int64 k = 0;
     __int64** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
-    bool* sln = new bool[num_para - 1];
-
+    
     delete[] buf_3sat;
 
     __int64 counted = 0;
@@ -115,6 +114,8 @@ char* nat_test_add(__int64 * len_para) {
             counted = c;
 
     }
+
+    bool* sln = new bool[counted];
 
     SATSolverMaster* master = new SATSolverMaster();
     SATSolverMaster_create(master, input, k, counted, 0);
@@ -151,6 +152,8 @@ char* nat_test_add(__int64 * len_para) {
     sprintf_s(ret_buf, ret_buf_sz, "%s\n\n", c_str);
 
     *len_para = ret_buf_sz - 1;
+
+    delete[] sln;
 
     delete[] a_str;
     delete[] b_str;
@@ -249,8 +252,7 @@ char* nat_test_mul(__int64 * len_para) {
 
     __int64 k = 0;
     __int64 ** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
-    bool* sln = new bool[num_para - 1];
-
+    
     delete[] buf_3sat;
 
     __int64 counted = 0;
@@ -269,6 +271,8 @@ char* nat_test_mul(__int64 * len_para) {
             counted = c;
 
     }
+
+    bool* sln = new bool[counted];
 
     SATSolverMaster* master = new SATSolverMaster();
     SATSolverMaster_create(master, input, k, counted, 0);
@@ -305,6 +309,8 @@ char* nat_test_mul(__int64 * len_para) {
     sprintf_s(ret_buf, ret_buf_sz, "%s\n\n", c_str);
 
     *len_para = ret_buf_sz - (__int64) 1;
+
+    delete[] sln;
 
     delete[] a_str;
     delete[] b_str;
