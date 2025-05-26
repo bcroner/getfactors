@@ -116,8 +116,6 @@ char* nat_test_add(__int64 * len_para) {
 
     }
 
-    counted = counted - 1;
-
     SATSolverMaster* master = new SATSolverMaster();
     SATSolverMaster_create(master, input, k, counted, 0);
 
@@ -271,8 +269,6 @@ char* nat_test_mul(__int64 * len_para) {
             counted = c;
 
     }
-
-    counted = counted - 1;
 
     SATSolverMaster* master = new SATSolverMaster();
     SATSolverMaster_create(master, input, k, counted, 0);
