@@ -606,7 +606,7 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
 
     // find the largest number of bits
 
-    __int64 tt_bits = a->sz > b->sz ? a->sz : b->sz ;
+    __int64 tt_bits = a->sz > b->sz ? a->sz : b->sz;
 
     // create modified a and b
 
