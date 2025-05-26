@@ -1599,9 +1599,9 @@ inline __int64 decimal_from_char(char c) {
     }
 }
 
-bool* hex2bool(const char* a, __int64 sz) {
+bool* hex2bool(char* a, __int64 sz) {
 
-    // get length of c_str
+    // get length of a
     __int64 strln = 0;
     for (strln = 0; strln < sz && a[strln] != '\0'; strln++)
         ;
@@ -1620,21 +1620,21 @@ bool* hex2bool(const char* a, __int64 sz) {
         __int64 hexval = int_from_hex_char(a[i]);
 
         if (hexval >= 8) {
-            hexbits[3] = 1;
+            hexbits[0] = 1;
             hexval = hexval - 8;
         }
         if (hexval >= 4) {
-            hexbits[2] = 1;
+            hexbits[1] = 1;
             hexval = hexval - 4;
         }
         if (hexval >= 2) {
-            hexbits[1] = 1;
+            hexbits[2] = 1;
             hexval = hexval - 2;
         }
-        hexbits[0] = hexval;
+        hexbits[3] = hexval;
 
         for (__int64 j = 0; j < 4; j++)
-            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
+            inbuffer[i * 4 + j] = hexbits[j] == 1 ? true : false;
     }
 
     return inbuffer;
@@ -2133,34 +2133,7 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
     // transform hex input __int64o bool buffer
 
     __int64 inbuffer_sz = strln * 4;
-    bool* inbuffer = new bool[inbuffer_sz];
-
-    for (__int64 i = 0; i < strln; i++) {
-
-        // decode the hex __int64o bits
-
-        __int64 hexbits[4];
-        hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
-
-        __int64 hexval = int_from_hex_char(c_str[i]);
-
-        if (hexval >= 8) {
-            hexbits[3] = 1;
-            hexval = hexval - 8;
-        }
-        if (hexval >= 4) {
-            hexbits[2] = 1;
-            hexval = hexval - 4;
-        }
-        if (hexval >= 2) {
-            hexbits[1] = 1;
-            hexval = hexval - 2;
-        }
-        hexbits[0] = hexval;
-
-        for (__int64 j = 0; j < 4; j++)
-            inbuffer[i * 4 + j] = hexbits[3 - j] == 1 ? true : false;
-    }
+    bool* inbuffer = hex2bool(c_str, inbuffer_sz);
 
     // count leading zeros
 
