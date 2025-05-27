@@ -304,10 +304,10 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		jump_occurred = true;
 
 	// using prev_pos: de-exponentialize
-	if (temp_pow_jump > 0)
-		prev_pos = temp_pow_jump;
-	else if (temp_pow_jump < 0 && abs_temp_pow_jump > prev_pos)
-		prev_pos = 0;
+	//if (temp_pow_jump > 0)
+	//	prev_pos = temp_pow_jump;
+	//else if (temp_pow_jump < 0 && abs_temp_pow_jump > prev_pos)
+	//	prev_pos = 0;
 
 	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
@@ -356,10 +356,10 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 			jump_occurred = true;
 
 		// using prev_pos: de-exponentialize
-		if (temp_pow_jump > 0 && abs_temp_pow_jump > abs_prev_pos)
-			prev_pos = temp_pow_jump;
-		else if (temp_pow_jump < 0 && abs_temp_pow_jump > prev_pos)
-			prev_pos = 0;
+		//if (temp_pow_jump > 0 && abs_temp_pow_jump > abs_prev_pos)
+		//	prev_pos = temp_pow_jump;
+		//else if (temp_pow_jump < 0 && abs_temp_pow_jump > prev_pos)
+		//	prev_pos = 0;
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
