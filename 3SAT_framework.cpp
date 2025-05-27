@@ -381,7 +381,7 @@ char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sa
         int y = a->id == TRUE_3SAT ? 1 : 0;
         int z = b->id == TRUE_3SAT ? 1 : 0;
         *sum = new bit_3sat();
-        (*sum)->id = (x + y + z) < 2 ? FALSE_3SAT : TRUE_3SAT;
+        (*sum)->id = (x + y + z) % 2 == 0 ? FALSE_3SAT : TRUE_3SAT;
         *len_para = 0;
         return NULL;
     }
@@ -424,7 +424,7 @@ char* bitaddcout_3sat(__int64 * num_para, bit_3sat** c_out, bit_3sat* c_in, bit_
         int y = a->id == TRUE_3SAT ? 1 : 0;
         int z = b->id == TRUE_3SAT ? 1 : 0;
         *c_out = new bit_3sat();
-        (*c_out)->id = (x + y + z) % 2 == 0 ? FALSE_3SAT : TRUE_3SAT;
+        (*c_out)->id = (x + y + z) < 2 ? FALSE_3SAT : TRUE_3SAT;
         *len_para = 0;
         return NULL;
     }
@@ -616,15 +616,18 @@ char* dec_add(__int64 * num_para, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool d
     // perform the first addition with a zero for carry_in
 
     char* sum_str = bitaddsum_3sat(num_para, &((*c)->bits [(*c)->sz - 1]), c_in, a_mod->bits[a_mod->sz - 1], b_mod->bits[b_mod->sz - 1], &(sum_str_len[tt_bits - 1]));
-    strcpy_s(sum_strs[tt_bits - 1], 256, sum_str);
+    if (sum_str_len[tt_bits - 1] > 0)
+        strcpy_s(sum_strs[tt_bits - 1], 256, sum_str);
 
     char* c_out_str = bitaddcout_3sat(num_para, &c_out, c_in, a_mod->bits[a_mod->sz - 1], b_mod->bits[b_mod->sz - 1], &(cout_str_len[tt_bits - 1]));
-    strcpy_s(cout_strs[tt_bits - 1], 512, c_out_str);
+    if (cout_str_len[tt_bits - 1] > 0)
+        strcpy_s(cout_strs[tt_bits - 1], 512, c_out_str);
+
     delete c_in;
     c_in = c_out;
 
-    delete sum_str;
-    delete c_out_str;
+    delete [] sum_str;
+    delete [] c_out_str;
 
     // perform all the rest of the additions
 
@@ -632,15 +635,18 @@ char* dec_add(__int64 * num_para, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool d
 
         char* sum_str = bitaddsum_3sat(num_para, &((*c)->bits[(*c)->sz - i - 1]), c_in, a_mod->bits[a_mod->sz - i - 1], b_mod->bits[b_mod->sz - i - 1],
             &(sum_str_len[tt_bits - i - 1]));
-        strcpy_s(sum_strs[tt_bits - i - 1], 256, sum_str);
+        if (sum_str_len[tt_bits - i - 1] > 0)
+            strcpy_s(sum_strs[tt_bits - i - 1], 256, sum_str);
 
         char* c_out_str = bitaddcout_3sat(num_para, &c_out, c_in, a_mod->bits[a_mod->sz - i - 1], b_mod->bits[b_mod->sz - i - 1], &(cout_str_len[tt_bits - i - 1]));
-        strcpy_s(cout_strs[tt_bits - i - 1], 512, c_out_str);
+        if (cout_str_len[tt_bits - i - 1] > 0)
+            strcpy_s(cout_strs[tt_bits - i - 1], 512, c_out_str);
+
         delete c_in;
         c_in = c_out;
 
-        delete sum_str;
-        delete c_out_str;
+        delete [] sum_str;
+        delete [] c_out_str;
     }
 
     // set the msb of c as the final carry_out value
@@ -658,17 +664,23 @@ char* dec_add(__int64 * num_para, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool d
         ret_sz += cout_str_len[i];
     }
 
-    char* ret = new char[ret_sz];
+    char* ret = NULL;
+    if ( ret_sz > 0 )
+        ret = new char[ret_sz];
 
     // populate ret string
 
     __int64 pos = 0;
 
     for (__int64 i = 0; i < tt_bits; i++) {
-        strcpy_s(&(ret[pos]), ret_sz - pos, sum_strs[i]);
-        pos += sum_str_len[i];
-        strcpy_s(&(ret[pos]), ret_sz - pos, cout_strs[i]);
-        pos += cout_str_len[i];
+        if (sum_strs[i] != NULL) {
+            strcpy_s(&(ret[pos]), ret_sz - pos, sum_strs[i]);
+            pos += sum_str_len[i];
+        }
+        if (cout_strs[i] != NULL) {
+            strcpy_s(&(ret[pos]), ret_sz - pos, cout_strs[i]);
+            pos += cout_str_len[i];
+        }
     }
 
     *len_para = pos;
@@ -676,8 +688,10 @@ char* dec_add(__int64 * num_para, dec_3sat** c, dec_3sat* a, dec_3sat* b, bool d
     // clean up
 
     for (__int64 i = 0; i < tt_bits; i++) {
-        delete sum_strs[i];
-        delete cout_strs[i];
+        if ( sum_strs [i] != NULL)
+            delete [] sum_strs[i];
+        if ( cout_strs [i] != NULL)
+            delete [] cout_strs[i];
     }
     delete [] sum_strs;
     delete [] cout_strs;
@@ -774,8 +788,10 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
     delete c_in;
     c_in = c_out;
 
-    delete sum_str;
-    delete c_out_str;
+    if ( sum_str != NULL)
+        delete [] sum_str;
+    if ( c_out_str != NULL)
+        delete [] c_out_str;
 
     // perform all the rest of the additions
 
@@ -789,6 +805,7 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
         char* c_out_str = bitaddcout_3sat(num_para, &c_out, c_in, a_mod->bits[a_mod->sz - i - 1], b_mod->bits[b_mod->sz - i - 1], &(cout_str_len[tt_bits - i - 1]));
         if (cout_str_len[tt_bits - 1 - i] > 0)
             strcpy_s(cout_strs[tt_bits - 1 - i], 512, c_out_str);
+
         delete c_in;
         c_in = c_out;
 
@@ -813,7 +830,9 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
         ret_sz += cout_str_len[i];
     }
 
-    char* ret = new char[ret_sz];
+    char* ret = NULL;
+    if ( ret_sz > 0 )
+        ret = new char[ret_sz];
 
     // populate ret string
 
@@ -1747,6 +1766,9 @@ bool* hex2bool(char* a, __int64 sz) {
 }
 
 __int64** input_from_char_buf(char * buf_3sat, __int64 buf_3sat_sz, __int64 * k, bool cnf) {
+
+    if (buf_3sat == NULL)
+        return NULL;
 
     // count the newlines for k where no clause has a TRUE value in it
 
