@@ -89,65 +89,66 @@ char* nat_test_add(__int64 * len_para) {
     __int64 buf_3sat_sz = add_str_len + 1;
 
     char* buf_3sat = NULL;
+    bool* sln = NULL;
 
     if (add_str_len > 0) {
         buf_3sat = new char[buf_3sat_sz];
         strcpy_s(buf_3sat, buf_3sat_sz, add_str);
+
+        delete[] add_str;
+
+        __int64 k = 0;
+        __int64** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
+
+        delete[] buf_3sat;
+
+        __int64 counted = 0;
+
+        for (__int64 i = 0; i < k; i++) {
+
+            printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
+
+            __int64 x = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 y = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 z = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+            if (x > counted)
+                counted = x;
+            if (y > counted)
+                counted = y;
+            if (z > counted)
+                counted = z;
+
+        }
+
+        sln = new bool[counted];
+
+        SATSolverMaster* master = new SATSolverMaster();
+        SATSolverMaster_create(master, input, k, counted, 0);
+
+        char* prime_str = new char[8];
+        sprintf_s(prime_str, 8, "prime");
+
+        int search_sz = 1;
+
+        for (int i = 0; i < master->chops; i++)
+            search_sz *= 2;
+
+        bool is_sat = false;
+
+        for (int i = 0; i < search_sz; i++) {
+
+            SATSolver* s = new SATSolver();
+            SATSolver_create(s, master, input, k, counted, i);
+
+            is_sat = SATSolver_isSat(s, i, sln);
+            if (is_sat)
+                break;
+        }
+
+        if (!is_sat)
+            return prime_str;
     }
-
-    delete[] add_str;
-
-    __int64 k = 0;
-    __int64** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
-    
-    delete[] buf_3sat;
-
-    __int64 counted = 0;
-
-    for (__int64 i = 0; i < k; i++) {
-
-        printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
-
-        __int64 x = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 y = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 z = input[i][0] < 0 ? -input[i][0] : input[i][0];
-
-        if (x > counted)
-            counted = x;
-        if (y > counted)
-            counted = y;
-        if (z > counted)
-            counted = z;
-
-    }
-
-    bool* sln = new bool[counted];
-
-    SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, counted, 0);
-
-    char* prime_str = new char[8];
-    sprintf_s(prime_str, 8, "prime");
-
-    int search_sz = 1;
-
-    for (int i = 0; i < master->chops; i++)
-        search_sz *= 2;
-
-    bool is_sat = false;
-
-    for (int i = 0; i < search_sz; i++) {
-
-        SATSolver* s = new SATSolver();
-        SATSolver_create(s, master, input, k, counted, i);
-
-        is_sat = SATSolver_isSat(s, i, sln);
-        if (is_sat)
-            break;
-    }
-
-    if (!is_sat)
-        return prime_str;
 
     __int64 c_str_sz = 0;
 
@@ -159,7 +160,8 @@ char* nat_test_add(__int64 * len_para) {
 
     *len_para = ret_buf_sz - 1;
 
-    delete[] sln;
+    if ( sln != NULL )
+        delete[] sln;
 
     for (int i = 0; i < a->sz; i++)
         delete a->bits[i];
@@ -252,59 +254,65 @@ char* nat_test_mul(__int64 * len_para) {
     __int64 buf_3sat_sz = mul_str_len + 1;
 
     char* buf_3sat = new char[buf_3sat_sz];
-    strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
 
-    delete[] mul_str;
+    bool* sln = NULL;
 
-    __int64 k = 0;
-    __int64 ** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
-    
-    delete[] buf_3sat;
+    if (buf_3sat_sz > 0) {
 
-    __int64 counted = 0;
+        strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
 
-    for (int i = 0; i < k; i++) {
+        delete[] mul_str;
 
-        __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 k = 0;
+        __int64** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
 
-        if (a > counted)
-            counted = a;
-        if (b > counted)
-            counted = b;
-        if (c > counted)
-            counted = c;
+        delete[] buf_3sat;
 
+        __int64 counted = 0;
+
+        for (int i = 0; i < k; i++) {
+
+            __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+            if (a > counted)
+                counted = a;
+            if (b > counted)
+                counted = b;
+            if (c > counted)
+                counted = c;
+
+        }
+
+        sln = new bool[counted];
+
+        SATSolverMaster* master = new SATSolverMaster();
+        SATSolverMaster_create(master, input, k, counted, 0);
+
+        char* prime_str = new char[8];
+        sprintf_s(prime_str, 8, "prime");
+
+        int search_sz = 1;
+
+        for (int i = 0; i < master->chops; i++)
+            search_sz *= 2;
+
+        bool is_sat = false;
+
+        for (int i = 0; i < search_sz; i++) {
+
+            SATSolver* s = new SATSolver();
+            SATSolver_create(s, master, input, k, counted, i);
+
+            is_sat = SATSolver_isSat(s, i, sln);
+            if (is_sat)
+                break;
+        }
+
+        if (!is_sat)
+            return prime_str;
     }
-
-    bool* sln = new bool[counted];
-
-    SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, counted, 0);
-
-    char* prime_str = new char[8];
-    sprintf_s(prime_str, 8, "prime");
-
-    int search_sz = 1;
-
-    for (int i = 0; i < master->chops; i++)
-        search_sz *= 2;
-
-    bool is_sat = false;
-
-    for (int i = 0; i < search_sz; i++) {
-
-        SATSolver* s = new SATSolver();
-        SATSolver_create(s, master, input, k, counted, i);
-
-        is_sat = SATSolver_isSat(s, i, sln);
-        if (is_sat)
-            break;
-    }
-
-    if (!is_sat)
-        return prime_str;
 
     __int64 c_str_sz = 0;
 
@@ -316,7 +324,8 @@ char* nat_test_mul(__int64 * len_para) {
 
     *len_para = ret_buf_sz - (__int64) 1;
 
-    delete[] sln;
+    if ( sln != NULL)
+        delete[] sln;
 
     for (int i = 0; i < a->sz; i++)
         delete a->bits[i];
