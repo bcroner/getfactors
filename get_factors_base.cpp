@@ -88,8 +88,12 @@ char* nat_test_add(__int64 * len_para) {
 
     __int64 buf_3sat_sz = add_str_len + 1;
 
-    char* buf_3sat = new char[buf_3sat_sz];
-    strcpy_s(buf_3sat, buf_3sat_sz, add_str);
+    char* buf_3sat = NULL;
+
+    if (add_str_len > 0) {
+        buf_3sat = new char[buf_3sat_sz];
+        strcpy_s(buf_3sat, buf_3sat_sz, add_str);
+    }
 
     delete[] add_str;
 
