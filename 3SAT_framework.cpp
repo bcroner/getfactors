@@ -376,6 +376,16 @@ char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
 
 char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
+    if ((c_in->id == TRUE_3SAT || c_in->id == FALSE_3SAT) && (a->id == TRUE_3SAT || a->id == FALSE_3SAT) && (b->id == TRUE_3SAT || b->id == FALSE_3SAT)) {
+        int x = c_in->id == TRUE_3SAT ? 1 : 0;
+        int y = a->id == TRUE_3SAT ? 1 : 0;
+        int z = b->id == TRUE_3SAT ? 1 : 0;
+        *sum = new bit_3sat();
+        (*sum)->id = (x + y + z) < 2 ? FALSE_3SAT : TRUE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
+
     bit_3sat * c;
 
     __int64 x1_len = 0;
@@ -408,6 +418,16 @@ char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sa
 // bitcout = a + b + cin: (a and b) or (b and cin) or (a and cin):
 
 char* bitaddcout_3sat(__int64 * num_para, bit_3sat** c_out, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
+
+    if ((c_in->id == TRUE_3SAT || c_in->id == FALSE_3SAT) && (a->id == TRUE_3SAT || a->id == FALSE_3SAT) && (b->id == TRUE_3SAT || b->id == FALSE_3SAT)) {
+        int x = c_in->id == TRUE_3SAT ? 1 : 0;
+        int y = a->id == TRUE_3SAT ? 1 : 0;
+        int z = b->id == TRUE_3SAT ? 1 : 0;
+        *c_out = new bit_3sat();
+        (*c_out)->id = (x + y + z) % 2 == 0 ? FALSE_3SAT : TRUE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
 
     bit_3sat * a1;
     bit_3sat * a2;
@@ -745,10 +765,12 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
     // perform the first addition with a zero for carry_in
 
     char* sum_str = bitaddsum_3sat(num_para, &((*c)->bits[(*c)->sz - 1]), c_in, a_mod->bits[a_mod->sz - 1], b_mod->bits[b_mod->sz - 1], &(sum_str_len[tt_bits - 1]));
-    strcpy_s(sum_strs[tt_bits - 1], 256, sum_str);
+    if (sum_str_len[tt_bits - 1] > 0 )
+        strcpy_s(sum_strs[tt_bits - 1], 256, sum_str);
 
     char* c_out_str = bitaddcout_3sat(num_para, &c_out, c_in, a_mod->bits[a_mod->sz - 1], b_mod->bits[b_mod->sz - 1], &(cout_str_len[tt_bits - 1]));
-    strcpy_s(cout_strs[tt_bits - 1], 512, c_out_str);
+    if ( cout_str_len[tt_bits - 1] > 0 )
+        strcpy_s(cout_strs[tt_bits - 1], 512, c_out_str);
     delete c_in;
     c_in = c_out;
 
@@ -761,15 +783,19 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
 
         char* sum_str = bitaddsum_3sat(num_para, &((*c)->bits[(*c)->sz - i - 1]), c_in, a_mod->bits[a_mod->sz - i - 1], b_mod->bits[b_mod->sz - i - 1],
             &(sum_str_len[tt_bits - i - 1]));
-        strcpy_s(sum_strs[tt_bits - i - 1], 256, sum_str);
+        if (sum_str_len[tt_bits - 1 - i] > 0)
+            strcpy_s(sum_strs[tt_bits - 1 - i], 256, sum_str);
 
         char* c_out_str = bitaddcout_3sat(num_para, &c_out, c_in, a_mod->bits[a_mod->sz - i - 1], b_mod->bits[b_mod->sz - i - 1], &(cout_str_len[tt_bits - i - 1]));
-        strcpy_s(cout_strs[tt_bits - i - 1], 512, c_out_str);
+        if (cout_str_len[tt_bits - 1 - i] > 0)
+            strcpy_s(cout_strs[tt_bits - 1 - i], 512, c_out_str);
         delete c_in;
         c_in = c_out;
 
-        delete sum_str;
-        delete c_out_str;
+        if ( sum_str != NULL )
+            delete [] sum_str;
+        if ( c_out_str != NULL)
+            delete [] c_out_str;
     }
 
     // set the msb of c as the final carry_out value
@@ -794,10 +820,14 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
     __int64 pos = 0;
 
     for (__int64 i = 0; i < tt_bits; i++) {
-        strcpy_s(&(ret[pos]), ret_sz - pos, sum_strs[i]);
-        pos += sum_str_len[i];
-        strcpy_s(&(ret[pos]), ret_sz - pos, cout_strs[i]);
-        pos += cout_str_len[i];
+        if (sum_str_len[i] > 0) {
+            strcpy_s(&(ret[pos]), ret_sz - pos, sum_strs[i]);
+            pos += sum_str_len[i];
+        }
+        if (cout_str_len[i] > 0) {
+            strcpy_s(&(ret[pos]), ret_sz - pos, cout_strs[i]);
+            pos += cout_str_len[i];
+        }
     }
 
     *len_para = pos;
@@ -805,8 +835,10 @@ char* nat_add(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, bool d
     // clean up
 
     for (__int64 i = 0; i < tt_bits; i++) {
-        delete sum_strs[i];
-        delete cout_strs[i];
+        if ( sum_strs [i] != NULL)
+            delete [] sum_strs[i];
+        if ( cout_strs [i] != NULL)
+            delete [] cout_strs[i];
     }
     delete [] sum_strs;
     delete [] cout_strs;
@@ -1380,7 +1412,7 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
             and_str_itmd_ab[i][j] = 0;
     }
 
-    // create the first __int64ermediate number
+    // create the first intermediate number
 
     nat_3sat* itmd_c = new nat_3sat();
     itmd_c->bits = new bit_3sat * [sz];
@@ -1389,8 +1421,10 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
     for (__int64 j = 0; j < a->sz; j++) {
         char* and_str = and_3sat(num_para, &itmd_c->bits[itmd_c->sz - j - 1], a->bits[a->sz - j - 1], b->bits[b->sz - 1], &(and_str_itmd_ab[0][j]));
         and_strs[0][j] = new char[and_str_itmd_ab[0][j] + 1];
-        strcpy_s(and_strs[0][j], and_str_itmd_ab[0][j] + 1, and_str);
-        delete[] and_str;
+        if (and_str_itmd_ab[0][j] > 0) {
+            strcpy_s(and_strs[0][j], and_str_itmd_ab[0][j] + 1, and_str);
+            delete[] and_str;
+        }
     }
 
     for (__int64 j = 0; j < itmd_c->sz - a->sz; j++) {
@@ -1423,21 +1457,25 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
         for (__int64 j = i; j < limit; j++) {
             char* and_str = and_3sat(num_para, &itmd_a->bits[itmd_a->sz - j - 1], a->bits[a->sz - 1 - (j - i)],
                 b->bits[b->sz - i - 1], &(and_str_itmd_ab[i][j - i]));
-            and_strs[i][j - i] = new char[and_str_itmd_ab[i][j - i] + 1];
-            strcpy_s(and_strs[i][j - i], and_str_itmd_ab[i][j - i] + 1, and_str);
-            delete[] and_str;
+            if (and_str_itmd_ab[i][j - i] > 0) {
+                and_strs[i][j - i] = new char[and_str_itmd_ab[i][j - i] + 1];
+                strcpy_s(and_strs[i][j - i], and_str_itmd_ab[i][j - i] + 1, and_str);
+                delete[] and_str;
+            }
         }
         for (__int64 j = 0; j < itmd_a->sz - limit; j++) {
             itmd_a->bits[j] = new bit_3sat();
             itmd_a->bits[j]->id = FALSE_3SAT;
         }
         char* sum_str = nat_add(num_para, &itmd_c, itmd_a, itmd_b, true, &(sum_str_len[i]));
-        sum_strs[i] = new char[sum_str_len[i] + 1];
-        strcpy_s(sum_strs[i], sum_str_len[i] + 1, sum_str);
+        if (sum_str_len[i] > 0) {
+            sum_strs[i] = new char[sum_str_len[i] + 1];
+            strcpy_s(sum_strs[i], sum_str_len[i] + 1, sum_str);
+            delete sum_str;
+        }
         for (__int64 i = 0; i < itmd_a->sz; i++)
             delete itmd_a->bits[i];
         delete itmd_a;
-        delete sum_str;
     }
 
     // copy itmd_c to c truncated according to bd_sz and ad_sz
