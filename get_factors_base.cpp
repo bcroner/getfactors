@@ -15,7 +15,7 @@ using namespace std;
 char* nat_test_add(__int64 * len_para) {
 
     const char* a_str_c = "2";
-    const char* b_str_c = "3";
+    const char* b_str_c = "2";
 
     char a_str[2000];
     char b_str[2000];
@@ -102,16 +102,18 @@ char* nat_test_add(__int64 * len_para) {
 
     for (__int64 i = 0; i < k; i++) {
 
-        __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
 
-        if (a > counted)
-            counted = a;
-        if (b > counted)
-            counted = b;
-        if (c > counted)
-            counted = c;
+        __int64 x = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 y = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 z = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+        if (x > counted)
+            counted = x;
+        if (y > counted)
+            counted = y;
+        if (z > counted)
+            counted = z;
 
     }
 
@@ -155,9 +157,6 @@ char* nat_test_add(__int64 * len_para) {
 
     delete[] sln;
 
-    delete[] a_str;
-    delete[] b_str;
-
     for (int i = 0; i < a->sz; i++)
         delete a->bits[i];
     for (int i = 0; i < b->sz; i++)
@@ -165,6 +164,9 @@ char* nat_test_add(__int64 * len_para) {
 
     delete[] a->bits;
     delete[] b->bits;
+
+    delete a;
+    delete b;
 
     return ret_buf;
 }
@@ -312,9 +314,6 @@ char* nat_test_mul(__int64 * len_para) {
 
     delete[] sln;
 
-    delete[] a_str;
-    delete[] b_str;
-
     for (int i = 0; i < a->sz; i++)
         delete a->bits[i];
     for (int i = 0; i < b->sz; i++)
@@ -322,6 +321,9 @@ char* nat_test_mul(__int64 * len_para) {
 
     delete[] a->bits;
     delete[] b->bits;
+
+    delete a;
+    delete b;
 
     return ret_buf;
 }
@@ -1250,8 +1252,6 @@ int main()
             counted = c;
 
     }
-
-    counted = counted - 1;
 
     bool* sln = new bool[counted];
 
