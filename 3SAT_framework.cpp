@@ -1959,9 +1959,9 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
 
     for (__int64 i = 0; i < a->sz; i++)
         if (a->bits[i]->id == TRUE_3SAT)
-            bool_buf[amod4 + i] = 1;
+            bool_buf[amod4 + i] = true;
         else if (a->bits[i]->id == FALSE_3SAT)
-            bool_buf[amod4 + i] = 0;
+            bool_buf[amod4 + i] = false;
         else
             bool_buf[amod4 + i] = decodable_buf[a->bits[a->sz - 1 - i]->id - 2];
 
