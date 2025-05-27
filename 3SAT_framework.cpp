@@ -54,6 +54,16 @@ nat_3sat* create_nat(__int64 * num_para, __int64 sz_parm) {
 
 char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
+    if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
+        *c = new bit_3sat();
+        if (a->id == TRUE_3SAT && b->id == TRUE_3SAT)
+            (*c)->id = TRUE_3SAT;
+        else
+            (*c)->id = FALSE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
+
     *c = create_bit(num_para);
     char** lst = new char* [3];
     for (__int64 i = 0; i < 3; i++)
@@ -90,6 +100,16 @@ char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 // c = a nand b: (~a or ~b or ~c) (a or c) (b or c)
 
 char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
+
+    if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
+        *c = new bit_3sat();
+        if (a->id == TRUE_3SAT && b->id == TRUE_3SAT)
+            (*c)->id = FALSE_3SAT;
+        else
+            (*c)->id = TRUE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
 
     *c = create_bit(num_para);
     char** lst = new char* [3];
@@ -128,6 +148,16 @@ char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
 
 char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int64 * len_para) {
 
+    if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
+        *c = new bit_3sat();
+        if (a->id == FALSE_3SAT && b->id == FALSE_3SAT)
+            (*c)->id = FALSE_3SAT;
+        else
+            (*c)->id = TRUE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
+
     *c = create_bit(num_para);
     char** lst = new char* [3];
     for (__int64 i = 0; i < 3; i++)
@@ -164,6 +194,16 @@ char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int6
 // c = a nor b: (a or b or c) (~a or ~c) (~b or ~c)
 
 char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
+
+    if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
+        *c = new bit_3sat();
+        if (a->id == FALSE_3SAT && b->id == FALSE_3SAT)
+            (*c)->id = TRUE_3SAT;
+        else
+            (*c)->id = FALSE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
 
     *c = create_bit(num_para);
     char** lst = new char* [3];
@@ -202,6 +242,13 @@ char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* not_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, __int64 * len_para) {
 
+    if (a->id == FALSE_3SAT || a->id == TRUE_3SAT) {
+        *c = new bit_3sat();
+        (*c)->id = -(*c)->id;
+        *len_para = 0;
+        return NULL;
+    }
+
     *c = create_bit(num_para);
     char** lst = new char* [4];
     for (__int64 i = 0; i < 2; i++)
@@ -238,6 +285,16 @@ char* not_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, __int64 * len_para
 
 char* xor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
+    if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
+        *c = new bit_3sat();
+        if (a->id != b->id)
+            (*c)->id = FALSE_3SAT;
+        else
+            (*c)->id = TRUE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
+
     *c = create_bit(num_para);
     char** lst = new char* [4];
     for (__int64 i = 0; i < 4; i++)
@@ -273,7 +330,18 @@ char* xor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
+    if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
+        *c = new bit_3sat();
+        if (a->id == b->id)
+            (*c)->id = FALSE_3SAT;
+        else
+            (*c)->id = TRUE_3SAT;
+        *len_para = 0;
+        return NULL;
+    }
+
     *c = create_bit(num_para);
+
     char** lst = new char* [4];
     for (__int64 i = 0; i < 4; i++)
         lst[i] = new char[64];
