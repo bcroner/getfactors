@@ -54,6 +54,7 @@ nat_3sat* create_nat(__int64 * num_para, __int64 sz_parm) {
 
 char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == TRUE_3SAT && b->id == TRUE_3SAT)
@@ -63,6 +64,7 @@ char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
         *len_para = 0;
         return NULL;
     }
+    */
 
     *c = create_bit(num_para);
     char** lst = new char* [3];
@@ -101,6 +103,7 @@ char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == TRUE_3SAT && b->id == TRUE_3SAT)
@@ -110,6 +113,7 @@ char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
         *len_para = 0;
         return NULL;
     }
+    */
 
     *c = create_bit(num_para);
     char** lst = new char* [3];
@@ -148,6 +152,7 @@ char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
 
 char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int64 * len_para) {
 
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == FALSE_3SAT && b->id == FALSE_3SAT)
@@ -157,6 +162,7 @@ char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int6
         *len_para = 0;
         return NULL;
     }
+    */
 
     *c = create_bit(num_para);
     char** lst = new char* [3];
@@ -195,6 +201,7 @@ char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int6
 
 char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == FALSE_3SAT && b->id == FALSE_3SAT)
@@ -204,6 +211,7 @@ char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
         *len_para = 0;
         return NULL;
     }
+    */
 
     *c = create_bit(num_para);
     char** lst = new char* [3];
@@ -242,12 +250,14 @@ char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* not_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, __int64 * len_para) {
 
+    /*
     if (a->id == FALSE_3SAT || a->id == TRUE_3SAT) {
         *c = new bit_3sat();
         (*c)->id = -(*c)->id;
         *len_para = 0;
         return NULL;
     }
+    */
 
     *c = create_bit(num_para);
     char** lst = new char* [4];
@@ -285,6 +295,7 @@ char* not_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, __int64 * len_para
 
 char* xor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id != b->id)
@@ -294,6 +305,7 @@ char* xor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
         *len_para = 0;
         return NULL;
     }
+    */
 
     *c = create_bit(num_para);
     char** lst = new char* [4];
@@ -330,6 +342,7 @@ char* xor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == b->id)
@@ -339,6 +352,7 @@ char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
         *len_para = 0;
         return NULL;
     }
+    */
 
     *c = create_bit(num_para);
 
@@ -376,6 +390,7 @@ char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
 
 char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
+    /*
     if ((c_in->id == TRUE_3SAT || c_in->id == FALSE_3SAT) && (a->id == TRUE_3SAT || a->id == FALSE_3SAT) && (b->id == TRUE_3SAT || b->id == FALSE_3SAT)) {
         int x = c_in->id == TRUE_3SAT ? 1 : 0;
         int y = a->id == TRUE_3SAT ? 1 : 0;
@@ -385,6 +400,7 @@ char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sa
         *len_para = 0;
         return NULL;
     }
+    */
 
     bit_3sat * c;
 
@@ -419,6 +435,7 @@ char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sa
 
 char* bitaddcout_3sat(__int64 * num_para, bit_3sat** c_out, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
+    /*
     if ((c_in->id == TRUE_3SAT || c_in->id == FALSE_3SAT) && (a->id == TRUE_3SAT || a->id == FALSE_3SAT) && (b->id == TRUE_3SAT || b->id == FALSE_3SAT)) {
         int x = c_in->id == TRUE_3SAT ? 1 : 0;
         int y = a->id == TRUE_3SAT ? 1 : 0;
@@ -428,6 +445,7 @@ char* bitaddcout_3sat(__int64 * num_para, bit_3sat** c_out, bit_3sat* c_in, bit_
         *len_para = 0;
         return NULL;
     }
+    */
 
     bit_3sat * a1;
     bit_3sat * a2;
