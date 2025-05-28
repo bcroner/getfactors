@@ -1948,14 +1948,14 @@ char* dec_to_str(bool * decodable_buf, dec_3sat * a, __int64 * str_sz) {
 
 char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
 
-    __int64 amod4 = a->sz % 4;
+    __int64 amod4 = 4 - (a->sz % 4);
 
     __int64 bool_buf_sz = a->sz + amod4;
 
-    __int64* bool_buf = new __int64[bool_buf_sz];
+    bool * bool_buf = new bool[bool_buf_sz];
 
     for (__int64 i = 0; i < bool_buf_sz; i++)
-        bool_buf[i] = 0;
+        bool_buf[i] = false;
 
     for (__int64 i = 0; i < a->sz; i++)
         if (a->bits[i]->id == TRUE_3SAT)
@@ -1963,7 +1963,7 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
         else if (a->bits[i]->id == FALSE_3SAT)
             bool_buf[amod4 + i] = false;
         else
-            bool_buf[amod4 + i] = decodable_buf[a->bits[a->sz - 1 - i]->id - 2];
+            bool_buf[amod4 + i] = decodable_buf[a->bits[i]->id - 2];
 
 
     /*
@@ -2016,9 +2016,9 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
         hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
 
         for (__int64 j = 0; j < 4; j++)
-            hexbits[3 - j] = bool_buf[bool_buf_sz - 1 - i * 4 - j];
+            hexbits[j] = bool_buf[i * 4 + j];
 
-        ret_str[ret_str_pos] = hex_char_from_int(hexbits[3] * 8 + hexbits[2] * 4 + hexbits[1] * 2 + hexbits[0]);
+        ret_str[ret_str_pos] = hex_char_from_int(hexbits[0] * 8 + hexbits[1] * 4 + hexbits[2] * 2 + hexbits[3]);
         ret_str_pos++;
 
     }
