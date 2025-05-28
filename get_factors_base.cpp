@@ -14,7 +14,7 @@ using namespace std;
 
 char* nat_test_add(__int64 * len_para) {
 
-    const char* a_str_c = "2";
+    const char* a_str_c = "3";
     const char* b_str_c = "2";
 
     char a_str[2000];
