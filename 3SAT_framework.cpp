@@ -415,17 +415,21 @@ char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sa
 
     __int64 pos = 0;
 
-    strcpy_s(&(ret[pos]), ret_len-pos, x1);
-    pos += x1_len;
-    strcpy_s(&(ret[pos]), ret_len-pos, x2);
-    pos += x2_len;
+    if ( x1_len > 0 ) {
+        strcpy_s(&(ret[pos]), ret_len - pos, x1);
+        pos += x1_len;
+    }
+    if (x2_len > 0) {
+        strcpy_s(&(ret[pos]), ret_len - pos, x2);
+        pos += x2_len;
+    }
     
     *len_para = pos;
 
     delete c;
 
-    delete x1;
-    delete x2;
+    delete [] x1;
+    delete [] x2;
 
     return ret;
 
@@ -468,16 +472,26 @@ char* bitaddcout_3sat(__int64 * num_para, bit_3sat** c_out, bit_3sat* c_in, bit_
 
     __int64 pos = 0;
 
-    strcpy_s(&(ret[pos]), ret_len-pos, a1_str);
-    pos += a1_len;
-    strcpy_s(&(ret[pos]), ret_len-pos, a2_str);
-    pos += a2_len;
-    strcpy_s(&(ret[pos]), ret_len-pos, a3_str);
-    pos += a3_len;
-    strcpy_s(&(ret[pos]), ret_len-pos, o1_str);
-    pos += o1_len;
-    strcpy_s(&(ret[pos]), ret_len-pos, o2_str);
-    pos += o2_len;
+    if (a1_len > 0) {
+        strcpy_s(&(ret[pos]), ret_len - pos, a1_str);
+        pos += a1_len;
+    }
+    if (a2_len > 0) {
+        strcpy_s(&(ret[pos]), ret_len - pos, a2_str);
+        pos += a2_len;
+    }
+    if (a3_len > 0) {
+        strcpy_s(&(ret[pos]), ret_len - pos, a3_str);
+        pos += a3_len;
+    }
+    if (o1_len > 0) {
+        strcpy_s(&(ret[pos]), ret_len - pos, o1_str);
+        pos += o1_len;
+    }
+    if (o2_len > 0) {
+        strcpy_s(&(ret[pos]), ret_len - pos, o2_str);
+        pos += o2_len;
+    }
 
     *len_para = pos;
 
@@ -486,11 +500,11 @@ char* bitaddcout_3sat(__int64 * num_para, bit_3sat** c_out, bit_3sat* c_in, bit_
     delete a3;
     delete o1;
 
-    delete a1_str;
-    delete a2_str;
-    delete a3_str;
-    delete o1_str;
-    delete o2_str;
+    delete [] a1_str;
+    delete [] a2_str;
+    delete [] a3_str;
+    delete [] o1_str;
+    delete [] o2_str;
 
     return ret;
 }
