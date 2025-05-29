@@ -179,7 +179,7 @@ char* nat_test_add(__int64 * len_para) {
 
 char* nat_test_mul(__int64 * len_para) {
 
-    const char* a_str_c = "2";
+    const char* a_str_c = "4";
     const char* b_str_c = "3";
 
     char a_str[2000];
@@ -196,7 +196,7 @@ char* nat_test_mul(__int64 * len_para) {
         ;
 
     int bstrln = 0;
-    for (bstrln = 0; b_str[astrln] != '\0'; bstrln++)
+    for (bstrln = 0; b_str[bstrln] != '\0'; bstrln++)
         ;
 
     // transform hex input into bool buffer
@@ -249,16 +249,15 @@ char* nat_test_mul(__int64 * len_para) {
 
     __int64 mul_str_len = 0;
 
-    char* mul_str = nat_mul(&num_para, &c, a, b, false, &mul_str_len);
+    char* mul_str = nat_mul(&num_para, &c, a, b, a->sz + b->sz, &mul_str_len);
 
     __int64 buf_3sat_sz = mul_str_len + 1;
 
-    char* buf_3sat = new char[buf_3sat_sz];
-
+    char* buf_3sat = NULL;
     bool* sln = NULL;
 
-    if (buf_3sat_sz > 0) {
-
+    if (mul_str_len > 0) {
+        buf_3sat = new char[buf_3sat_sz];
         strcpy_s(buf_3sat, buf_3sat_sz, mul_str);
 
         delete[] mul_str;
@@ -270,18 +269,20 @@ char* nat_test_mul(__int64 * len_para) {
 
         __int64 counted = 0;
 
-        for (int i = 0; i < k; i++) {
+        for (__int64 i = 0; i < k; i++) {
 
-            __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
 
-            if (a > counted)
-                counted = a;
-            if (b > counted)
-                counted = b;
-            if (c > counted)
-                counted = c;
+            __int64 x = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 y = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 z = input[i][0] < 0 ? -input[i][0] : input[i][0];
+
+            if (x > counted)
+                counted = x;
+            if (y > counted)
+                counted = y;
+            if (z > counted)
+                counted = z;
 
         }
 
@@ -318,13 +319,13 @@ char* nat_test_mul(__int64 * len_para) {
 
     char* c_str = nat_to_str(sln, c, &c_str_sz);
 
-    __int64 ret_buf_sz = c_str_sz + (__int64)strnlen_s("\n\n", 4) + (__int64) 1;
+    __int64 ret_buf_sz = c_str_sz + (__int64)strnlen_s("\n\n", 4) + (__int64)1;
     char* ret_buf = new char[ret_buf_sz];
     sprintf_s(ret_buf, ret_buf_sz, "%s\n\n", c_str);
 
-    *len_para = ret_buf_sz - (__int64) 1;
+    *len_para = ret_buf_sz - 1;
 
-    if ( sln != NULL)
+    if (sln != NULL)
         delete[] sln;
 
     for (int i = 0; i < a->sz; i++)
@@ -1352,8 +1353,11 @@ int main()
         cf909a12a7"); // https://gmail.com
     //*/
 
-    char* nat_add_str = nat_test_add(&len_para);
-    printf_s("%s\n", nat_add_str);
+    //char* nat_add_str = nat_test_add(&len_para);
+    //printf_s("%s\n", nat_add_str);
+
+    char* nat_mul_str = nat_test_mul(&len_para);
+    printf_s("%s\n", nat_mul_str);
 
     ///*
     //char c_str[2000];
