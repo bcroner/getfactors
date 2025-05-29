@@ -1495,6 +1495,9 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
     strcpy_s(sum_strs[0], 2, "");
     sum_str_len[0] = (__int64)strnlen_s(sum_strs[0], 2);
 
+    __int64 dummy;
+    printf_s("nat_mul: initial itmd_c: %s\n", nat_to_str(NULL, itmd_c, &dummy));
+
     for (__int64 i = 1; i < b->sz; i++) {
         nat_3sat* itmd_b = itmd_c;
         nat_3sat* itmd_a = new nat_3sat();
@@ -1519,6 +1522,8 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
             itmd_a->bits[j]->id = FALSE_3SAT;
         }
         char* sum_str = nat_add(num_para, &itmd_c, itmd_a, itmd_b, true, &(sum_str_len[i]));
+        __int64 dummy;
+        printf_s("nat_mul %lld: %s + %s = %s\n", i, nat_to_str ( NULL, itmd_a , &dummy ) , nat_to_str ( NULL, itmd_b, & dummy ) , nat_to_str ( NULL, itmd_c , & dummy) );
         if (sum_str_len[i] > 0) {
             sum_strs[i] = new char[sum_str_len[i] + 1];
             strcpy_s(sum_strs[i], sum_str_len[i] + 1, sum_str);
@@ -1529,9 +1534,16 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
         delete itmd_a;
     }
 
+    // count bits in itmd_c
+
+    __int64 zero_bits = 0;
+
+    for (zero_bits = 0; itmd_c->bits[zero_bits]->id == FALSE_3SAT; zero_bits++)
+        ;
+
     // copy itmd_c to c truncated according to bd_sz and ad_sz
 
-    *c = create_nat(num_para, sz);
+    *c = create_nat(num_para, itmd_c->sz - zero_bits);
 
     // if c->bd_sz > itmd_c->bd_sz, pad with FALSE_3SAT
 
@@ -1592,11 +1604,11 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
         for (__int64 j = 0; j < a->sz; j++)
             if (and_str_itmd_ab[i][j] > 0)
                 delete and_strs[i][j];
-        delete and_strs[i];
+        delete [] and_strs[i];
     }
     for (__int64 i = 1; i < b->sz; i++)
         if (sum_str_len[i] > 0)
-            delete sum_strs[i];
+            delete [] sum_strs[i];
     delete [] sum_strs;
     delete [] and_strs;
     for (__int64 i = 0; i < b->sz; i++)
