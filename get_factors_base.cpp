@@ -1353,11 +1353,11 @@ int main()
         cf909a12a7"); // https://gmail.com
     //*/
 
-    //char* nat_add_str = nat_test_add(&len_para);
-    //printf_s("%s\n", nat_add_str);
+    char* nat_add_str = nat_test_add(&len_para);
+    printf_s("%s\n", nat_add_str);
 
-    char* nat_mul_str = nat_test_mul(&len_para);
-    printf_s("%s\n", nat_mul_str);
+    //char* nat_mul_str = nat_test_mul(&len_para);
+    //printf_s("%s\n", nat_mul_str);
 
     ///*
     //char c_str[2000];
