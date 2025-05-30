@@ -240,8 +240,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
-		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
+		//bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
+		if (/*sign_match &&*/ me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 		{
 			max_jump = temp_jump;
 			printf_s("%lld ", max_jump);
@@ -742,9 +742,9 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 			which = 2;
 
 		switch (which) {
-		case 0: master->powers[i] = l0 < 0 ? l0 + 2 : l0 - 2;
-		case 1: master->powers[i] = l1 < 0 ? l1 + 2 : l1 - 2;
-		case 2: master->powers[i] = l2 < 0 ? l2 + 2 : l2 - 2;
+		case 0: master->powers[i] = l0 < 0 ? l0 + 1 : l0 - 1;
+		case 1: master->powers[i] = l1 < 0 ? l1 + 1 : l1 - 1;
+		case 2: master->powers[i] = l2 < 0 ? l2 + 1 : l2 - 1;
 		}
 
 
