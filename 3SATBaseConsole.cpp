@@ -219,11 +219,11 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	
 	// zero out all lower bits of Z
 
-	for (__int64 j = pos - 1; j >= 0; j--)
-		if (me->Z[j]) {
-			me->Z[j] = false;
-			SATSolver_updateTF(me, j, false);
-		}
+	//for (__int64 j = pos - 1; j >= 0; j--)
+	//	if (me->Z[j]) {
+	//		me->Z[j] = false;
+	//		SATSolver_updateTF(me, j, false);
+	//	}
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
@@ -240,11 +240,11 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
-		if (sign_match && me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump) //&& (end || ((abs_temp_jump > prev_pos || temp_jump < 0) && abs_temp_jump != prev_pos)))
+		//bool sign_match = (me->Z[abs_temp_jump - 1] && me->master->powers[i] > 0) || (!me->Z[abs_temp_jump - 1] && me->master->powers[i] < 0);
+		if (/*sign_match &&*/ me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 		{
 			max_jump = temp_jump;
-			printf_s("%lld ", (__int64)max_jump);
+			//printf_s("%lld ", (__int64)max_jump);
 		}
 	}
 
@@ -319,7 +319,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (true) {
+	if (!true) {
 
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
@@ -371,7 +371,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (true) {
+		if (!true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
@@ -594,9 +594,11 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 
 	// populate clause tally with initial begin value
 
+	/*
 	for (__int64 i = 0; i < me->master->k; i++)
 		//if (lst[i][0] < 0 && lst[i][1] < 0 && lst[i][2] < 0)
 			printf_s("%lld: %lld %lld %lld\n", i, lst[i][0], lst[i][1], lst[i][2]);
+			*/
 
 	/*
 	for (__int64 i = 0; i < n_parm; i++) {
@@ -625,16 +627,12 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 				__int64 cls_ix = me->master->pos_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
-				if (cls_ix == 0)
-					printf_s("pos i: %lld j: %lld\n", i, j);
 			}
 		for (__int64 j = 0; j < me->master->neg_map_szs[i]; j++)
 			if (me->master->begin[chop][i]) {
 				__int64 cls_ix = me->master->neg_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
-				if (cls_ix == 0)
-					printf_s("neg i: %lld j: %lld\n", i, j);
 			}
 	}
 
@@ -722,7 +720,35 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 
 	for (__int64 i = 0; i < k_parm; i++) {
 
-		///*
+		__int64 l0 = lst[i][0];
+		__int64 l1 = lst[i][1];
+		__int64 l2 = lst[i][2];
+
+		if (l0 == TRUE_3SAT || l1 == TRUE_3SAT || l2 == TRUE_3SAT)
+			continue;
+		if (l0 == FALSE_3SAT && l1 == FALSE_3SAT && l2 == FALSE_3SAT)
+			continue;
+
+		__int64 absl0 = l0 < 0 ? -l0 : l0;
+		__int64 absl1 = l1 < 0 ? -l1 : l1;
+		__int64 absl2 = l2 < 0 ? -l2 : l2;
+
+		__int64 which = 0;
+		if (absl0 >= absl1 && absl0 >= absl2)
+			which = 0;
+		if (absl1 >= absl0 && absl1 >= absl2)
+			which = 1;
+		if (absl2 >= absl1 && absl2 >= absl0)
+			which = 2;
+
+		switch (which) {
+		case 0: master->powers[i] = l0 < 0 ? l0 + 2 : l0 - 2;
+		case 1: master->powers[i] = l1 < 0 ? l1 + 2 : l1 - 2;
+		case 2: master->powers[i] = l2 < 0 ? l2 + 2 : l2 - 2;
+		}
+
+
+		/*
 		__int64 highest = -1;
 		__int64 lit_cur = 0;
 		for (__int64 j = 0; j < 3; j++) {
@@ -741,6 +767,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		// record the jump power of the clause at i
 
 		master->powers[i] = lit_cur > 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
+		*/
 
 	}
 
