@@ -319,7 +319,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (!true) {
+	if (true) {
 
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
@@ -328,7 +328,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		printf_s("\n");
 	}
 
-	while ( true ) {
+	while ( ! SATSolver_GreaterThan (me->Z, me->master->end[chop], me->master->n)) {
 
 		jump_occurred = false;
 		abs_prev_pos = prev_pos < 0 ? -prev_pos : prev_pos;
@@ -371,7 +371,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (!true) {
+		if (true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
