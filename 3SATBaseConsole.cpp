@@ -320,7 +320,6 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	//if (count % (1 * 1048576) == 0) {
 
 	if (true) {
-
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
 		//printf_s(" jump: %lld", me->pow_jump);
