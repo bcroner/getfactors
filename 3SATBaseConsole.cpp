@@ -718,7 +718,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 				printf_s("%lld ", lst [i][j]);
 			else {
 				__int64 codeword = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
-				printf_s("%lld ", lst[i][j] < 0 ? -master->decoding[codeword] : master->decoding[codeword]);
+				printf_s("%lld ", lst[i][j] < 0 ? -(master->decoding[codeword]+1) : (master->decoding[codeword]+1));
 			}
 		}
 		printf_s("\n");
