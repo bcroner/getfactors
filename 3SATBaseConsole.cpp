@@ -707,7 +707,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		__int64 pos = 0;
 		while (histogram[pos] != count)
 			pos++;
-		master->decoding[i] = pos + 1;
+		master->decoding[i] = pos;
 		histogram[pos] = -1;
 	}
 
