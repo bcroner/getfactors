@@ -327,7 +327,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		printf_s("\n");
 	}
 
-	while ( ! SATSolver_GreaterThan (me->Z, me->master->end[chop], me->master->n)) {
+	while ( ( ! SATSolver_GreaterThan (me->Z, me->master->end[chop], me->master->n)) && ! (prev_is_end && jump_occurred) ) {
 
 		jump_occurred = false;
 		abs_prev_pos = prev_pos < 0 ? -prev_pos : prev_pos;
@@ -345,7 +345,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 			prev_Z[i] = me->Z[i];
 
 		temp_pow_jump = SATSolver_initializePowJump(me);
-		abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
+		abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
 		if (temp_pow_jump == 0) {
 			zero_jump = true;
@@ -621,15 +621,15 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 	*/
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		for (__int64 j = 0; j < me->master->pos_map_szs[i]; j++)
+		for (__int64 j = 0; j < me->master->pos_map_szs[master->decoding[i]]; j++)
 			if (!me->master->begin[chop][i]) {
-				__int64 cls_ix = me->master->pos_map[i][j];
+				__int64 cls_ix = me->master->pos_map[master->decoding[i]][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
-		for (__int64 j = 0; j < me->master->neg_map_szs[i]; j++)
+		for (__int64 j = 0; j < me->master->neg_map_szs[master->decoding[i]]; j++)
 			if (me->master->begin[chop][i]) {
-				__int64 cls_ix = me->master->neg_map[i][j];
+				__int64 cls_ix = me->master->neg_map[master->decoding[i]][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
@@ -707,9 +707,23 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		__int64 pos = 0;
 		while (histogram[pos] != count)
 			pos++;
-		master->decoding[i] = pos;
+		master->decoding[i] = pos + 1;
 		histogram[pos] = -1;
 	}
+
+	for (__int64 i = 0; i < k_parm; i++) {
+		printf_s("%lld: ", i);
+		for (int j = 0; j < 3; j++) {
+			if ( lst [i][j] == FALSE_3SAT || lst [i][j] == TRUE_3SAT)
+				printf_s("%lld ", lst [i][j]);
+			else {
+				__int64 codeword = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
+				printf_s("%lld ", lst[i][j] < 0 ? -master->decoding[codeword] : master->decoding[codeword]);
+			}
+		}
+		printf_s("\n");
+	}
+	printf_s("\n");
 
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
@@ -719,32 +733,22 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 
 	for (__int64 i = 0; i < k_parm; i++) {
 
-		__int64 l0 = lst[i][0];
-		__int64 l1 = lst[i][1];
-		__int64 l2 = lst[i][2];
+		__int64 l0 = lst[i][0] < 0 ? -lst[i][0] - 2 : lst[i][0] - 2 ;
+		__int64 l1 = lst[i][1] < 0 ? -lst[i][1] - 2 : lst[i][1] - 2;
+		__int64 l2 = lst[i][2] < 0 ? -lst[i][2] - 2 : lst[i][2] - 2;
 
-		if (l0 == TRUE_3SAT || l1 == TRUE_3SAT || l2 == TRUE_3SAT)
+		__int64 calcl0 = l0 < 0 ? 0 : master->decoding[l0];
+		__int64 calcl1 = l1 < 0 ? 0 : master->decoding[l1];
+		__int64 calcl2 = l2 < 0 ? 0 : master->decoding[l2];
+
+		if (calcl0 >= calcl1 && calcl0 >= calcl2)
+			master->powers[i] = lst[i][0] < 0 ? -calcl0 - 1 : calcl0 + 1;
+		else if (calcl1 >= calcl0 && calcl1 >= calcl2)
+			master->powers[i] = lst[i][1] < 0 ? -calcl1 - 1 : calcl1 + 1;
+		else if (calcl2 >= calcl1 && calcl2 >= calcl0)
+			master->powers[i] = lst[i][2] < 0 ? -calcl2 - 1 : calcl2 + 1;
+		else
 			continue;
-		if (l0 == FALSE_3SAT && l1 == FALSE_3SAT && l2 == FALSE_3SAT)
-			continue;
-
-		__int64 absl0 = l0 < 0 ? -l0 : l0;
-		__int64 absl1 = l1 < 0 ? -l1 : l1;
-		__int64 absl2 = l2 < 0 ? -l2 : l2;
-
-		__int64 which = 0;
-		if (absl0 >= absl1 && absl0 >= absl2)
-			which = 0;
-		if (absl1 >= absl0 && absl1 >= absl2)
-			which = 1;
-		if (absl2 >= absl1 && absl2 >= absl0)
-			which = 2;
-
-		switch (which) {
-		case 0: master->powers[i] = l0 < 0 ? l0 + 1 : l0 - 1;
-		case 1: master->powers[i] = l1 < 0 ? l1 + 1 : l1 - 1;
-		case 2: master->powers[i] = l2 < 0 ? l2 + 1 : l2 - 1;
-		}
 
 
 		/*
@@ -783,8 +787,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 	// initialize pos_map_szs and neg_map_szs all to 0
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		master->pos_map_szs[master->decoding[i]] = 0;
-		master->neg_map_szs[master->decoding[i]] = 0;
+		master->pos_map_szs[i] = 0;
+		master->neg_map_szs[i] = 0;
 	}
 
 	// determine the pos_map_szs
