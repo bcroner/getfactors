@@ -389,7 +389,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	}
 
 	for (__int64 i = 0; i < me->master->n; i++)
-		arr[me->master->fw_decoding[i]] = me->Z[i];
+		arr[me->master->decoding[i]] = me->Z[i];
 
 	delete[] prev_Z;
 
@@ -601,17 +601,17 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 
 	/*
 	for (__int64 i = 0; i < n_parm; i++) {
-		for (__int64 j = 0; j < me->master->pos_map_szs[me->master->fw_decoding[i]]; j++)
-			if (!me->master->begin[chop][me->master->fw_decoding[i]]) {
-				__int64 cls_ix = me->master->pos_map[me->master->fw_decoding[i]][j];
+		for (__int64 j = 0; j < me->master->pos_map_szs[me->master->decoding[i]]; j++)
+			if (!me->master->begin[chop][me->master->decoding[i]]) {
+				__int64 cls_ix = me->master->pos_map[me->master->decoding[i]][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 				if (cls_ix == 0)
 					printf_s("pos i: %lld j: %lld\n", i, j);
 			}
-		for (__int64 j = 0; j < me->master->neg_map_szs[me->master->fw_decoding[i]]; j++)
-			if (me->master->begin[chop][me->master->fw_decoding[i]]) {
-				__int64 cls_ix = me->master->neg_map[me->master->fw_decoding[i]][j];
+		for (__int64 j = 0; j < me->master->neg_map_szs[me->master->decoding[i]]; j++)
+			if (me->master->begin[chop][me->master->decoding[i]]) {
+				__int64 cls_ix = me->master->neg_map[me->master->decoding[i]][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 				if (cls_ix == 0)
@@ -621,15 +621,15 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 	*/
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		for (__int64 j = 0; j < me->master->pos_map_szs[master->fw_decoding[i]]; j++)
+		for (__int64 j = 0; j < me->master->pos_map_szs[master->decoding[i]]; j++)
 			if (!me->master->begin[chop][i]) {
-				__int64 cls_ix = me->master->pos_map[master->fw_decoding[i]][j];
+				__int64 cls_ix = me->master->pos_map[master->decoding[i]][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
-		for (__int64 j = 0; j < me->master->neg_map_szs[master->fw_decoding[i]]; j++)
+		for (__int64 j = 0; j < me->master->neg_map_szs[master->decoding[i]]; j++)
 			if (me->master->begin[chop][i]) {
-				__int64 cls_ix = me->master->neg_map[master->fw_decoding[i]][j];
+				__int64 cls_ix = me->master->neg_map[master->decoding[i]][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
@@ -698,18 +698,18 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 
 	MyQSort(histogram_srt, 0, n_parm - 1);
 
-	// create a fw_decoding based on the histogram
+	// create a decoding based on the histogram
 
-	master->fw_decoding = new __int64[n_parm];
-	master->rv_decoding = new __int64[n_parm];
+	master->decoding = new __int64[n_parm];
+	master->encoding = new __int64[n_parm];
 
 	for (__int64 i = 0; i < n_parm; i++) {
 		__int64 count = histogram_srt[i];
 		__int64 pos = 0;
 		while (histogram[pos] != count)
 			pos++;
-		master->fw_decoding[i] = pos;
-		master->rv_decoding[pos] = i;
+		master->decoding[i] = pos;
+		master->encoding[pos] = i;
 		histogram[pos] = -1;
 	}
 
@@ -720,7 +720,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 				printf_s("%lld ", lst [i][j]);
 			else {
 				__int64 codeword = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
-				printf_s("%lld ", lst[i][j] < 0 ? -(master->fw_decoding[codeword]+2) : (master->fw_decoding[codeword]+2));
+				printf_s("%lld ", lst[i][j] < 0 ? -(master->decoding[codeword]+2) : (master->decoding[codeword]+2));
 			}
 		}
 		printf_s("\n");
@@ -741,9 +741,9 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		__int64 l1 = lst[i][1] < 0 ? -lst[i][1] - 2 : lst[i][1] - 2;
 		__int64 l2 = lst[i][2] < 0 ? -lst[i][2] - 2 : lst[i][2] - 2;
 
-		__int64 calcl0 = l0 < 0 ? 0 : master->fw_decoding[l0];
-		__int64 calcl1 = l1 < 0 ? 0 : master->fw_decoding[l1];
-		__int64 calcl2 = l2 < 0 ? 0 : master->fw_decoding[l2];
+		__int64 calcl0 = l0 < 0 ? 0 : master->decoding[l0];
+		__int64 calcl1 = l1 < 0 ? 0 : master->decoding[l1];
+		__int64 calcl2 = l2 < 0 ? 0 : master->decoding[l2];
 
 		if (lst[i][0] != TRUE_3SAT && lst[i][0] != FALSE_3SAT && calcl0 >= calcl1 && calcl0 >= calcl2)
 			master->powers[i] = lst[i][0] < 0 ? -(n_parm - 1 - calcl0) : (n_parm - 1 - calcl0);
@@ -766,8 +766,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 			if (lst[i][j] == FALSE_3SAT)
 				continue;
 			__int64 ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->fw_decoding[ix] > highest) {
-				highest = master->fw_decoding[ix];
+			if (master->decoding[ix] > highest) {
+				highest = master->decoding[ix];
 				lit_cur = lst[i][j] > 0 ? -highest: highest;
 			}
 		}
@@ -802,11 +802,11 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		for (__int64 j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == -(i + 2))
-				master->pos_map_szs[master->rv_decoding[i]]++;
+				master->pos_map_szs[master->encoding[i]]++;
 			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == -(i + 2))
-				master->pos_map_szs[master->rv_decoding[i]]++;
+				master->pos_map_szs[master->encoding[i]]++;
 			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == -(i + 2))
-				master->pos_map_szs[master->rv_decoding[i]]++;
+				master->pos_map_szs[master->encoding[i]]++;
 		}
 	}
 
@@ -816,28 +816,28 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		for (__int64 j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
-				master->neg_map_szs[master->rv_decoding[i]]++;
+				master->neg_map_szs[master->encoding[i]]++;
 			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == (i + 2))
-				master->neg_map_szs[master->rv_decoding[i]]++;
+				master->neg_map_szs[master->encoding[i]]++;
 			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == (i + 2))
-				master->neg_map_szs[master->rv_decoding[i]]++;
+				master->neg_map_szs[master->encoding[i]]++;
 		}
 	}
 
 	// instantiate pos_map and neg_map for each variable
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		master->pos_map[master->rv_decoding[i]] = new __int64[master->pos_map_szs[master->rv_decoding[i]]];
-		master->neg_map[master->rv_decoding[i]] = new __int64[master->neg_map_szs[master->rv_decoding[i]]];
+		master->pos_map[master->encoding[i]] = new __int64[master->pos_map_szs[master->encoding[i]]];
+		master->neg_map[master->encoding[i]] = new __int64[master->neg_map_szs[master->encoding[i]]];
 	}
 
 	// initialize pos_map and neg_map all to 0
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		for (__int64 j = 0; j < master->pos_map_szs[master->rv_decoding[i]]; j++)
-			master->pos_map[master->rv_decoding[i]][j] = 0;
-		for (__int64 j = 0; j < master->neg_map_szs[master->rv_decoding[i]]; j++)
-			master->neg_map[master->rv_decoding[i]][j] = 0;
+		for (__int64 j = 0; j < master->pos_map_szs[master->encoding[i]]; j++)
+			master->pos_map[master->encoding[i]][j] = 0;
+		for (__int64 j = 0; j < master->neg_map_szs[master->encoding[i]]; j++)
+			master->neg_map[master->encoding[i]][j] = 0;
 	}
 
 	// populate pos_map, neg_map
@@ -862,11 +862,11 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 					continue;
 
 				if (lst[j][k] < 0) {
-					master->pos_map[master->rv_decoding[i]][pos_pos] = j;
+					master->pos_map[master->encoding[i]][pos_pos] = j;
 					pos_pos++;
 				}
 				else {
-					master->neg_map[master->rv_decoding[i]][pos_neg] = j;
+					master->neg_map[master->encoding[i]][pos_neg] = j;
 					pos_neg++;
 				}
 			}
@@ -892,8 +892,8 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 	delete[] master->begin;
 	delete[] master->end;
 
-	delete[] master->fw_decoding;
-	delete[] master->rv_decoding;
+	delete[] master->decoding;
+	delete[] master->encoding;
 
 	for (__int64 i = 0; i < master->n; i++) {
 		delete [] master->pos_map[i];
