@@ -718,7 +718,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 				printf_s("%lld ", lst [i][j]);
 			else {
 				__int64 codeword = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
-				printf_s("%lld ", lst[i][j] < 0 ? -(master->decoding[codeword]+1) : (master->decoding[codeword]+1));
+				printf_s("%lld ", lst[i][j] < 0 ? -(master->decoding[codeword]+2) : (master->decoding[codeword]+2));
 			}
 		}
 		printf_s("\n");
@@ -733,7 +733,9 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 
 	for (__int64 i = 0; i < k_parm; i++) {
 
-		__int64 l0 = lst[i][0] < 0 ? -lst[i][0] - 2 : lst[i][0] - 2 ;
+		/*
+
+		__int64 l0 = lst[i][0] < 0 ? -lst[i][0] - 2 : lst[i][0] - 2;
 		__int64 l1 = lst[i][1] < 0 ? -lst[i][1] - 2 : lst[i][1] - 2;
 		__int64 l2 = lst[i][2] < 0 ? -lst[i][2] - 2 : lst[i][2] - 2;
 
@@ -741,17 +743,18 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		__int64 calcl1 = l1 < 0 ? 0 : master->decoding[l1];
 		__int64 calcl2 = l2 < 0 ? 0 : master->decoding[l2];
 
-		if (calcl0 >= calcl1 && calcl0 >= calcl2)
-			master->powers[i] = lst[i][0] < 0 ? -calcl0 - 1 : calcl0 + 1;
-		else if (calcl1 >= calcl0 && calcl1 >= calcl2)
-			master->powers[i] = lst[i][1] < 0 ? -calcl1 - 1 : calcl1 + 1;
-		else if (calcl2 >= calcl1 && calcl2 >= calcl0)
-			master->powers[i] = lst[i][2] < 0 ? -calcl2 - 1 : calcl2 + 1;
+		if (lst[i][0] != TRUE_3SAT && lst[i][0] != FALSE_3SAT && calcl0 >= calcl1 && calcl0 >= calcl2)
+			master->powers[i] = lst[i][0] < 0 ? -(n_parm - 1 - calcl0) : (n_parm - 1 - calcl0);
+		else if (lst[i][1] != TRUE_3SAT && lst[i][1] != FALSE_3SAT && calcl1 >= calcl0 && calcl1 >= calcl2)
+			master->powers[i] = lst[i][1] < 0 ? -(n_parm - 1 - calcl1) : (n_parm - 1 - calcl1);
+		else if (lst[i][2] != TRUE_3SAT && lst[i][2] != FALSE_3SAT && calcl2 >= calcl1 && calcl2 >= calcl0)
+			master->powers[i] = lst[i][2] < 0 ? -(n_parm - 1 - calcl2) : (n_parm - 1 - calcl2);
 		else
-			continue;
+			master->powers[i] = 0;
+			*/
 
 
-		/*
+		///*
 		__int64 highest = -1;
 		__int64 lit_cur = 0;
 		for (__int64 j = 0; j < 3; j++) {
@@ -770,7 +773,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		// record the jump power of the clause at i
 
 		master->powers[i] = lit_cur > 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
-		*/
+		//*/
 
 	}
 
