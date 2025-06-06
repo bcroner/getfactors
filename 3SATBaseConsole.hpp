@@ -16,7 +16,8 @@
 
 typedef struct {
 
-	__int64* decoding;		// decoding of variables
+	__int64* fw_decoding;	// forward decoding of variables: from Z to original input ("lst" in create)
+	__int64* rv_decoding;	// reverse decoding of variables: from original input ("lst" in create) to Z
 	__int64** pos_map;		// map of non-negated literals to clauses for tallying
 	__int64** neg_map;		// map of negated literals to clauses for tallying
 	__int64* pos_map_szs;	// list of sizes of each literal mapped in pos map
