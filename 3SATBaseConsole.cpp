@@ -802,11 +802,11 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		for (__int64 j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == -(i + 2))
-				master->pos_map_szs[master->fw_decoding[i]]++;
+				master->pos_map_szs[master->rv_decoding[i]]++;
 			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == -(i + 2))
-				master->pos_map_szs[master->fw_decoding[i]]++;
+				master->pos_map_szs[master->rv_decoding[i]]++;
 			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == -(i + 2))
-				master->pos_map_szs[master->fw_decoding[i]]++;
+				master->pos_map_szs[master->rv_decoding[i]]++;
 		}
 	}
 
@@ -816,28 +816,28 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		for (__int64 j = 0; j < k_parm; j++) {
 			// skip if true TRUE_3SAT or false FALSE_3SAT
 			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
-				master->neg_map_szs[master->fw_decoding[i]]++;
+				master->neg_map_szs[master->rv_decoding[i]]++;
 			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == (i + 2))
-				master->neg_map_szs[master->fw_decoding[i]]++;
+				master->neg_map_szs[master->rv_decoding[i]]++;
 			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == (i + 2))
-				master->neg_map_szs[master->fw_decoding[i]]++;
+				master->neg_map_szs[master->rv_decoding[i]]++;
 		}
 	}
 
 	// instantiate pos_map and neg_map for each variable
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		master->pos_map[master->fw_decoding[i]] = new __int64[master->pos_map_szs[master->fw_decoding[i]]];
-		master->neg_map[master->fw_decoding[i]] = new __int64[master->neg_map_szs[master->fw_decoding[i]]];
+		master->pos_map[master->rv_decoding[i]] = new __int64[master->pos_map_szs[master->rv_decoding[i]]];
+		master->neg_map[master->rv_decoding[i]] = new __int64[master->neg_map_szs[master->rv_decoding[i]]];
 	}
 
 	// initialize pos_map and neg_map all to 0
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		for (__int64 j = 0; j < master->pos_map_szs[master->fw_decoding[i]]; j++)
-			master->pos_map[master->fw_decoding[i]][j] = 0;
-		for (__int64 j = 0; j < master->neg_map_szs[master->fw_decoding[i]]; j++)
-			master->neg_map[master->fw_decoding[i]][j] = 0;
+		for (__int64 j = 0; j < master->pos_map_szs[master->rv_decoding[i]]; j++)
+			master->pos_map[master->rv_decoding[i]][j] = 0;
+		for (__int64 j = 0; j < master->neg_map_szs[master->rv_decoding[i]]; j++)
+			master->neg_map[master->rv_decoding[i]][j] = 0;
 	}
 
 	// populate pos_map, neg_map
