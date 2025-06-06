@@ -16,8 +16,8 @@
 
 typedef struct {
 
-	__int64* fw_decoding;	// forward decoding of variables: from Z to original input ("lst" in create)
-	__int64* rv_decoding;	// reverse decoding of variables: from original input ("lst" in create) to Z
+	__int64* decoding;		// forward decoding of variables: from Z to original input ("lst" in create)
+	__int64* encoding;		// reverse decoding of variables: from original input ("lst" in create) to Z
 	__int64** pos_map;		// map of non-negated literals to clauses for tallying
 	__int64** neg_map;		// map of negated literals to clauses for tallying
 	__int64* pos_map_szs;	// list of sizes of each literal mapped in pos map
@@ -26,8 +26,8 @@ typedef struct {
 	__int64 k;				// original number of clauses
 	__int64 n;				// number of variables
 	__int64 chops;			// number of equal-sized partitions chopping up search space: 2^chops 
-	bool** begin;		// first element begin of search space
-	bool** end;			// last element end of search space
+	bool** begin;			// first element begin of search space
+	bool** end;				// last element end of search space
 
 } SATSolverMaster;
 
