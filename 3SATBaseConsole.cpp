@@ -621,15 +621,15 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 	*/
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		for (__int64 j = 0; j < me->master->pos_map_szs[master->decoding[i]]; j++)
+		for (__int64 j = 0; j < me->master->pos_map_szs[i]; j++)
 			if (!me->master->begin[chop][i]) {
-				__int64 cls_ix = me->master->pos_map[master->decoding[i]][j];
+				__int64 cls_ix = me->master->pos_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
-		for (__int64 j = 0; j < me->master->neg_map_szs[master->decoding[i]]; j++)
+		for (__int64 j = 0; j < me->master->neg_map_szs[i]; j++)
 			if (me->master->begin[chop][i]) {
-				__int64 cls_ix = me->master->neg_map[master->decoding[i]][j];
+				__int64 cls_ix = me->master->neg_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
