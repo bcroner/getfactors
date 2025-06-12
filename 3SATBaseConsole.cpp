@@ -626,12 +626,18 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 				__int64 cls_ix = me->master->pos_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
+
+				if (cls_ix == 0)
+					printf_s("pos_map: i=%lld j=%lld\n", i, j);
 			}
 		for (__int64 j = 0; j < me->master->neg_map_szs[i]; j++)
 			if (me->master->begin[chop][i]) {
 				__int64 cls_ix = me->master->neg_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
+
+				if (cls_ix == 0)
+					printf_s("neg_map: i=%lld j=%lld\n", i, j);
 			}
 	}
 
@@ -708,8 +714,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		__int64 pos = 0;
 		while (histogram[pos] != count)
 			pos++;
-		master->decoding[i] = pos;
-		master->encoding[pos] = i;
+		master->decoding[n_parm - 1 - i] = pos;
+		master->encoding[pos] = n_parm - 1 - i;
 		histogram[pos] = -1;
 	}
 
@@ -766,8 +772,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 			if (lst[i][j] == FALSE_3SAT)
 				continue;
 			__int64 ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->decoding[ix] > highest) {
-				highest = master->decoding[ix];
+			if (master->encoding[ix] > highest) {
+				highest = master->encoding[ix];
 				lit_cur = lst[i][j] > 0 ? -highest: highest;
 			}
 		}
@@ -860,6 +866,9 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 
 				if (pos != i)
 					continue;
+
+				if (j == 0)
+					printf_s("clause 0. i = %lld", i);
 
 				if (lst[j][k] < 0) {
 					master->pos_map[master->encoding[i]][pos_pos] = j;
