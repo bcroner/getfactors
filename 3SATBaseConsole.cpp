@@ -479,7 +479,7 @@ bool* SATSolver___int642bool(__int64 a, __int64 n_parm) {
 		ret[i] = false;
 
 
-	// for each bit position, determine true/false value, using a signed 64 bit signed __int64eger
+	// for each bit position, determine true/false value, using a signed 64 bit signed integer
 
 	for (__int64 i = 64 - 2; i >= 0; i--) {
 
@@ -716,7 +716,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 			pos++;
 		master->decoding[n_parm - 1 - i] = pos;
 		master->encoding[pos] = n_parm - 1 - i;
-		histogram[pos] = -1;
+		histogram[pos] = -count;
 	}
 
 	for (__int64 i = 0; i < k_parm; i++) {
@@ -726,7 +726,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 				printf_s("%lld ", lst [i][j]);
 			else {
 				__int64 codeword = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
-				printf_s("%lld ", lst[i][j] < 0 ? -(master->encoding[codeword]+2) : (master->encoding[codeword]+2));
+				printf_s("%lld ", lst[i][j] < 0 ? -(master->encoding[codeword]) : (master->encoding[codeword]));
 			}
 		}
 		printf_s("\n");
@@ -763,7 +763,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 
 
 		///*
-		__int64 highest = -1;
+		__int64 lowest = n_parm;
 		__int64 lit_cur = 0;
 		for (__int64 j = 0; j < 3; j++) {
 			// check for true TRUE_3SAT or false FALSE_3SAT
@@ -772,15 +772,15 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 			if (lst[i][j] == FALSE_3SAT)
 				continue;
 			__int64 ix = (lst[i][j] < 0 ? -lst[i][j] : lst[i][j]) - 2;
-			if (master->encoding[ix] > highest) {
-				highest = master->encoding[ix];
-				lit_cur = lst[i][j] > 0 ? -highest: highest;
+			if (master->encoding[ix] < lowest) {
+				lowest = master->encoding[ix];
+				lit_cur = lst[i][j] > 0 ? -lowest: lowest;
 			}
 		}
 
 		// record the jump power of the clause at i
 
-		master->powers[i] = lit_cur > 0 ? - (n_parm - 1 - highest) - 1 : (n_parm - 1 - highest) + 1;
+		master->powers[i] = lit_cur > 0 ? - (lowest) - 1 : (lowest) + 1;
 		//*/
 
 	}
@@ -867,8 +867,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 				if (pos != i)
 					continue;
 
-				if (j == 0)
-					printf_s("clause 0. i = %lld", i);
+				//if (j == 21)
+				//	printf_s("clause 0. i = %lld", i);
 
 				if (lst[j][k] < 0) {
 					master->pos_map[master->encoding[i]][pos_pos] = j;
