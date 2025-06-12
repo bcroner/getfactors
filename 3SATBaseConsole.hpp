@@ -55,7 +55,7 @@ bool * SATSolver_bool_pow(bool* base, __int64 pow, __int64 n);
 bool * SATSolver_bool_add(bool *a, bool *b, __int64 n);
 bool* SATSolver_bool_prepare_end(bool* a, bool* b, __int64 n);
 bool * SATSolver_bool_mul(bool *a, bool *b, __int64 n);
-bool* SATSolver___int642bool(__int64 a, __int64 n_parm);
+bool* SATSolver_int2bool(__int64 a, __int64 n_parm);
 bool* SATSolver_create_boundary(bool begin, __int64 chop, __int64 offs, __int64 n);
 void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_parm, __int64 n_parm, __int64 chops_parm);
 void SATSolver_create(SATSolver* me, SATSolverMaster * master, __int64** lst, __int64 k_parm, __int64 n_parm, __int64 chop);
