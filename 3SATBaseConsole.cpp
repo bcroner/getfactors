@@ -469,7 +469,7 @@ bool* SATSolver_bool_prepare_end(bool* a, bool* b, __int64 n) {
 }
 
 
-bool* SATSolver___int642bool(__int64 a, __int64 n_parm) {
+bool* SATSolver_int2bool(__int64 a, __int64 n_parm) {
 
 	// create the return boolean array and initialize
 
@@ -627,7 +627,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 
-				if (cls_ix == 21)
+				if (cls_ix == 0)
 					printf_s("pos_map: i=%lld j=%lld\n", i, j);
 			}
 		for (__int64 j = 0; j < me->master->neg_map_szs[i]; j++)
@@ -636,7 +636,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 
-				if (cls_ix == 21)
+				if (cls_ix == 0)
 					printf_s("neg_map: i=%lld j=%lld\n", i, j);
 			}
 	}
@@ -867,8 +867,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 				if (pos != i)
 					continue;
 
-				//if (j == 21)
-				//	printf_s("clause 0. i = %lld", i);
+				if (j == 0)
+					printf_s("clause 0. i = %lld", i);
 
 				if (lst[j][k] < 0) {
 					master->pos_map[master->encoding[i]][pos_pos] = j;
