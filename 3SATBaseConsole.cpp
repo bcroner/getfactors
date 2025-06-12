@@ -627,7 +627,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 
-				if (cls_ix == 0)
+				if (cls_ix == 21)
 					printf_s("pos_map: i=%lld j=%lld\n", i, j);
 			}
 		for (__int64 j = 0; j < me->master->neg_map_szs[i]; j++)
@@ -636,7 +636,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
 
-				if (cls_ix == 0)
+				if (cls_ix == 21)
 					printf_s("neg_map: i=%lld j=%lld\n", i, j);
 			}
 	}
