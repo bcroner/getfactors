@@ -1496,7 +1496,7 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
     sum_str_len[0] = (__int64)strnlen_s(sum_strs[0], 2);
 
     __int64 dummy;
-    printf_s("nat_mul: initial itmd_c: %s\n", nat_to_str(NULL, itmd_c, &dummy));
+    //printf_s("nat_mul: initial itmd_c: %s\n", nat_to_str(NULL, itmd_c, &dummy));
 
     for (__int64 i = 1; i < b->sz; i++) {
         nat_3sat* itmd_b = itmd_c;
@@ -1523,7 +1523,7 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
         }
         char* sum_str = nat_add(num_para, &itmd_c, itmd_a, itmd_b, true, &(sum_str_len[i]));
         __int64 dummy;
-        printf_s("nat_mul %lld: %s + %s = %s\n", i, nat_to_str ( NULL, itmd_a , &dummy ) , nat_to_str ( NULL, itmd_b, & dummy ) , nat_to_str ( NULL, itmd_c , & dummy) );
+        //printf_s("nat_mul %lld: %s + %s = %s\n", i, nat_to_str ( NULL, itmd_a , &dummy ) , nat_to_str ( NULL, itmd_b, & dummy ) , nat_to_str ( NULL, itmd_c , & dummy) );
         if (sum_str_len[i] > 0) {
             sum_strs[i] = new char[sum_str_len[i] + 1];
             strcpy_s(sum_strs[i], sum_str_len[i] + 1, sum_str);
@@ -1992,7 +1992,11 @@ char* dec_to_str(bool * decodable_buf, dec_3sat * a, __int64 * str_sz) {
 
 char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
 
-    __int64 amod4 = a->sz % 4 == 0 ? 0 : 4 - (a->sz % 4);
+    __int64 first_nonzero = 0;
+    for (first_nonzero = 0; a->bits[first_nonzero]->id == FALSE_3SAT; first_nonzero++)
+        ;
+
+    __int64 amod4 = (a->sz - first_nonzero) % 4 == 0 ? 0 : 4 - ((a->sz - first_nonzero) % 4);
 
     __int64 bool_buf_sz = a->sz + amod4;
 
@@ -2001,7 +2005,7 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
     for (__int64 i = 0; i < bool_buf_sz; i++)
         bool_buf[i] = false;
 
-    for (__int64 i = 0; i < a->sz; i++)
+    for (__int64 i = first_nonzero; i < a->sz; i++)
         if (a->bits[i]->id == TRUE_3SAT)
             bool_buf[amod4 + i] = true;
         else if (a->bits[i]->id == FALSE_3SAT)
@@ -2010,42 +2014,13 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
             bool_buf[amod4 + i] = decodable_buf[a->bits[i]->id - 2];
 
 
-    /*
+    // remove initial zeros
+    __int64 offs = 0;
+    for (__int64 i = 0; i < bool_buf_sz / 4; i++)
+        if (bool_buf[i * 4 + 0] == false && bool_buf[i * 4 + 1] == false && bool_buf[i * 4 + 2] == false && bool_buf[i * 4 + 3] == false)
+            offs += 4;
 
-    // find first nonzero bit and calculate lpad out to a multiple of 4
-    __int64 first_nonzero_offs = 0;
-    while (first_nonzero_offs < a->sz && a->bits[first_nonzero_offs]->id == FALSE_3SAT &&
-        !decodable_buf[a->bits[first_nonzero_offs]->id - 2])
-        first_nonzero_offs++;
-
-    __int64 lpad = 4 - (first_nonzero_offs < a->sz ? (a->sz - first_nonzero_offs) % 4 : a->sz % 4);
-
-    // calculate size of the buffer
-
-    __int64 bool_buf_sz = a->sz - first_nonzero_offs + lpad;
-
-    // instantiate boolean buffer
-
-    __int64* bool_buf = new __int64[bool_buf_sz];
-
-    // lpad with zeros for multiple of 4
-    for (__int64 i = 0; i < lpad; i++)
-        bool_buf[i] = 0;
-
-    // copy over boolean bits
-
-    for (__int64 i = 0; i < a->sz - first_nonzero_offs; i++) {
-        if (a->bits[first_nonzero_offs + i]->id == TRUE_3SAT)
-            bool_buf[lpad + i] = 1;
-        else if (a->bits[first_nonzero_offs + i]->id == FALSE_3SAT)
-            bool_buf[lpad + i] = 0;
-        else
-            bool_buf[lpad + i] = decodable_buf[a->bits[first_nonzero_offs + i]->id - 2];
-    }
-
-    */
-
-    __int64 num_hex = bool_buf_sz / 4;
+    __int64 num_hex = (bool_buf_sz - offs) / 4;
 
     *str_sz = num_hex + 1;
     char* ret_str = new char[*str_sz];
@@ -2060,7 +2035,7 @@ char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
         hexbits[0] = hexbits[1] = hexbits[2] = hexbits[3] = 0;
 
         for (__int64 j = 0; j < 4; j++)
-            hexbits[j] = bool_buf[i * 4 + j];
+            hexbits[j] = bool_buf[offs + i * 4 + j];
 
         ret_str[ret_str_pos] = hex_char_from_int(hexbits[0] * 8 + hexbits[1] * 4 + hexbits[2] * 2 + hexbits[3]);
         ret_str_pos++;
