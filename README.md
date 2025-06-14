@@ -7,3 +7,5 @@ I made use of Satlib: Holger H. Hoos and Thomas Stützle: SATLIB: An Online Reso
 I discovered through this exercise that there could be sequences of arbitrary length (eg, 100 bits) where the best you can do is the lowest bit of those arbitrary-numbered bits.
 
 Today I finally considered that P != NP. 6-14-2025.
+
+I am temporarily suspending work on this project until a clear insight occurs to me.
