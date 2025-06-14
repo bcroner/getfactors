@@ -716,7 +716,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 			pos++;
 		master->decoding[n_parm - 1 - i] = pos;
 		master->encoding[pos] = n_parm - 1 - i;
-		histogram[pos] = -count;
+		histogram[pos] = -1;
 	}
 
 	for (__int64 i = 0; i < k_parm; i++) {
@@ -833,8 +833,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 	// instantiate pos_map and neg_map for each variable
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		master->pos_map[master->encoding[i]] = new __int64[master->pos_map_szs[master->encoding[i]]];
-		master->neg_map[master->encoding[i]] = new __int64[master->neg_map_szs[master->encoding[i]]];
+		master->pos_map[i] = new __int64[master->pos_map_szs[i]];
+		master->neg_map[i] = new __int64[master->neg_map_szs[i]];
 	}
 
 	// initialize pos_map and neg_map all to 0
