@@ -1,11 +1,9 @@
 # getfactors
 
-Here's a constructive proof that P = NP and the Integer Factorization Problem is NP-Complete.
-
-RZN AI 3SAT De-Exponentializer and RZN AI 3SAT Solver Enhancement
-
-US patents pending: #63/715,594 and #63/752,030
-
-This is the reference implementation for the efficient 3SAT logic solver described in the two above patents.
+Here's an attempted constructive proof that P = NP and the Integer Factorization Problem is NP-Complete.
 
 I made use of Satlib: Holger H. Hoos and Thomas Stützle: SATLIB: An Online Resource for Research on SAT. In: I.P.Gent, H.v.Maaren, T.Walsh, editors, SAT 2000, pp.283-292, IOS Press, 2000. SATLIB is available online at www.satlib.org.
+
+I discovered through this exercise that there could be sequences of arbitrary length (eg, 100 bits) where the best you can do is the lowest bit of those arbitrary-numbered bits.
+
+Today I finally considered that P != NP. 6-14-2025.
