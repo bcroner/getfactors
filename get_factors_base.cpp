@@ -179,8 +179,8 @@ char* nat_test_add(__int64 * len_para) {
 
 char* nat_test_mul(__int64 * len_para) {
 
-    const char* a_str_c = "4";
-    const char* b_str_c = "4";
+    const char* a_str_c = "5";
+    const char* b_str_c = "3";
 
     char a_str[2000];
     char b_str[2000];
@@ -471,10 +471,10 @@ int main()
     //char* nat_add_str = nat_test_add(&len_para);
     //printf_s("%s\n", nat_add_str);
 
-    char* nat_mul_str = nat_test_mul(&len_para);
-    printf_s("%s\n", nat_mul_str);
+    //char* nat_mul_str = nat_test_mul(&len_para);
+    //printf_s("%s\n", nat_mul_str);
 
-    /*
+    ///*
     char c_str[2000];
     strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
