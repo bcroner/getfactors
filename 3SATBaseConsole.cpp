@@ -389,7 +389,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	}
 
 	for (__int64 i = 0; i < me->master->n; i++)
-		arr[me->master->decoding[i]] = me->Z[i];
+		arr[me->master->decoding[i]] = ! me->Z[i];
 
 	delete[] prev_Z;
 
