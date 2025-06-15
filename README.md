@@ -10,4 +10,4 @@ Today I finally considered that P != NP. 6-14-2025.
 
 I am temporarily suspending work on this project until a clear insight occurs to me.
 
-IF this algorithm is the best you can do for 3SAT, then P != NP.
+If this algorithm is the best you can do for 3SAT, then P != NP.
