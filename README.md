@@ -8,3 +8,10 @@ I discovered through this exercise that there could be bit sequences of arbitrar
 Today I finally considered that P != NP. 6-14-2025. I am temporarily suspending work on this project until a clear insight occurs to me. If this algorithm is the best you can do for 3SAT, then P != NP.
 
 However, not only do I introduce a new class of world-best 3SAT logic solvers that uses my exploit, I prove the Integer Factorization Problem is NP-Complete by a constructive reduction to 3SAT.
+
+The function that sets up the integer factorization operation is nat_get_factors (...). It uses Tseytin Transformations to represent the factoring operation as a 3SAT instance, which it then solves and interprets the results.
+
+The exploit used by the logic solver is to notice that a 3CNF tuple has up to 3 optionally-inverted boolean variables, and you can order them so that each variable has a position in an n-bit whole number we'll call Z.
+This assigns an order to the bits so that each is a unique power of two. Select the lowest-order variable in a 3CNF tuple that evaluates to false according to the truth value assignments in the current value of Z.
+This provides the power of 2 that you jump forward through the search space represented by the permutations of Z. Now, instead of checking every single permutation of n bits in the number Z in the worst case,
+we skip over arbitrary swaths of the search space with each jump of some arbitrary power of 2. We call this 3SAT by Coverage of False Clauses, where we check if the entire search space is covered by clauses evaluating to false.
