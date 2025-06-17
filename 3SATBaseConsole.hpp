@@ -37,7 +37,7 @@ typedef struct {
 
 	__int64 * cls_tly;			// running tallies of the number of literals matched in clauses
 
-	__int64* implies_arr;		// what is implied by the encounter of a jump
+	__int64* implies_arr;		// implies array- what is implied by the encounter of jumps of recorded values
 
 	bool* Z;					// current position in permutation space
 	__int64 pow_jump;			// current value of jump, to be updated each cycle
