@@ -205,17 +205,31 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	me->Z[pos] = !sign;
 	SATSolver_updateTF(me, pos, !sign);
 
-	if (sign)
-		for (__int64 i = pos + 1; i < me->master->n; i++)
-			if (me->Z[i]) {
-				me->Z[i] = false;
-				SATSolver_updateTF(me, i, false);
+	for (int i = pos; i >= 0; i--) {
+		__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
+		if (abs_imp < pos)
+			break;
+		me->implies_arr[i] = sign ? -pos : pos; /* do something here */
+	}
+
+
+	__int64 result = 0;
+
+	if (sign) {
+		for (result = pos + 1; result < me->master->n; result++)
+			if (me->Z[result]) {
+				me->Z[result] = false;
+				SATSolver_updateTF(me, result, false);
 			}
 			else {
-				me->Z[i] = true;
-				SATSolver_updateTF(me, i, true);
+				me->Z[result] = true;
+				SATSolver_updateTF(me, result, true);
 				break;
 			}
+
+		for ( int i = pos ; i <= result ; i++)
+		me->implies_arr[i] = me->Z[result] ? result : -result;
+	}
 	
 	// zero out all lower bits of Z
 
@@ -550,6 +564,11 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 
 	me->master = master;
 	me->Z = new bool [n_parm];
+	me->implies_arr = new __int64[n_parm];
+
+	for (__int64 i = 0; i < n_parm; i++) {
+		me->implies_arr[i] = i;
+	}
 
 	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
 
@@ -923,6 +942,7 @@ void SATSolver_destroy(SATSolver * me) {
 
 	delete[] me->cls_tly;
 	delete[] me->Z;
+	delete[] me->implies_arr;
 }
 
 std::mutex m;
