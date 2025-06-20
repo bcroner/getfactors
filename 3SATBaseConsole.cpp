@@ -215,7 +215,7 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	__int64 result = 0;
 
-	if (sign) {
+	if (sign && me->implies_arr[pos] == -pos) {
 		for (result = pos + 1; result < me->master->n; result++)
 			if (me->Z[result]) {
 				me->Z[result] = false;
@@ -228,7 +228,34 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 			}
 
 		for ( int i = pos ; i <= result ; i++)
-		me->implies_arr[i] = me->Z[result] ? result : -result;
+			me->implies_arr[i] = me->Z[result] ? result : -result;
+	}
+	else if (sign && me->implies_arr[pos] != -pos) {
+
+		__int64 jump = me->implies_arr[pos] < 0 ? -me->implies_arr[pos] : -(me->implies_arr[pos] + 1);
+		__int64 abs_jump = jump < 0 ? -jump : jump;
+		for (result = pos; result < abs_jump; result++)
+			if (me->Z[result]) {
+				me->Z[result] = false;
+				SATSolver_updateTF(me, result, false);
+			}
+
+		for (result = abs_jump; result < me->master->n; result++)
+			if (me->Z[result]) {
+				me->Z[result] = false;
+				SATSolver_updateTF(me, result, false);
+			}
+			else {
+				me->Z[result] = true;
+				SATSolver_updateTF(me, result, true);
+				break;
+			}
+
+		__int64 final_pos = result == me->master->n ? result - 1 : result;
+		__int64 final_jmp = !me->Z[final_pos] ? -final_pos : final_pos;
+
+		for (int i = pos; i <= final_pos; i++)
+			me->implies_arr[i] = final_jmp;
 	}
 	
 	// zero out all lower bits of Z
