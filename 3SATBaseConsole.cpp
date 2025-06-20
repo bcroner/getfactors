@@ -194,9 +194,11 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 * 
 */
 
-void SATSolver_add(SATSolver * me , __int64 pos_parm) {
+bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	// add 2^pos_parm to Z
+
+	bool reached_n = false;
 
 	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
@@ -227,8 +229,14 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 				break;
 			}
 
-		for ( int i = pos ; i <= result ; i++)
-			me->implies_arr[i] = me->Z[result] ? result : -result;
+		if (result == me->master->n)
+			reached_n = true;
+
+		__int64 final_pos = result == me->master->n ? result - 1 : result;
+		__int64 final_jmp = !me->Z[final_pos] ? -final_pos : final_pos;
+
+		for (int i = pos; i <= final_pos; i++)
+			me->implies_arr[i] = final_jmp;
 	}
 	else if (sign && me->implies_arr[pos] != -pos) {
 
@@ -251,6 +259,9 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 				break;
 			}
 
+		if (result == me->master->n)
+			reached_n = true;
+
 		__int64 final_pos = result == me->master->n ? result - 1 : result;
 		__int64 final_jmp = !me->Z[final_pos] ? -final_pos : final_pos;
 
@@ -267,6 +278,8 @@ void SATSolver_add(SATSolver * me , __int64 pos_parm) {
 			SATSolver_updateTF(me, j, false);
 		}
 	//*/
+
+	return reached_n;
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
@@ -354,7 +367,12 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-	SATSolver_add(me, me->pow_jump);
+	if (!SATSolver_add(me, me->pow_jump)) {
+		jump_occurred = true;
+		prev_is_end = true;
+		delete[] prev_Z;
+		return false;
+	}
 
 	//Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
@@ -405,7 +423,11 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 
-		SATSolver_add(me, me->pow_jump);
+		if (!SATSolver_add(me, me->pow_jump)) {
+			jump_occurred = true;
+			prev_is_end = true;
+			break;
+		}
 
 		//Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
 
