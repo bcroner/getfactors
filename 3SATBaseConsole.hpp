@@ -47,7 +47,7 @@ typedef struct {
 //__int64 MyQSort_partition(__int64 arr_parm[], __int64 low_parm, __int64 high_parm);
 void MyQSort(__int64 arr[], __int64 low_parm, __int64 high_parm);
 void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
-void SATSolver_add(SATSolver* me, __int64 pos_parm);
+bool SATSolver_add(SATSolver* me, __int64 pos_parm);
 __int64 SATSolver_initializePowJump(SATSolver* me);
 bool SATSolver_GreaterThan(bool* a, bool* b, __int64 n);
 bool SATSolver_isSat(SATSolver* me, __int64 chop, bool *arr);
