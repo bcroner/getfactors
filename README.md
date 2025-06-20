@@ -12,3 +12,8 @@ The exploit used by the logic solver is to notice that a 3CNF tuple has up to 3 
 This assigns an order to the bits so that each is a unique power of two. Select the lowest-order variable in a 3CNF tuple that evaluates to false according to the truth value assignments in the current value of Z.
 This provides the power of 2 that you jump forward through the search space represented by the permutations of Z. Now, instead of checking every single permutation of n bits in the number Z in the worst case,
 we skip over arbitrary swaths of the search space with each jump of some arbitrary power of 2. We call this 3SAT by Coverage of False Clauses, where we check if the entire search space is covered by clauses evaluating to false.
+
+This source code is not 100% debugged, as the nat_get_factors function returns erroneous results. But the core is debugged, consisting of the SAT solver and the addition and multiplication functions nat_add and nat_mul.
+The core is mature enough to reveal a performance issue when run, something I observed earlier but wasn't sure existed because it could have been due to other unresolved bugs. I've implemented a potential fix for this and I'll be
+testing it and filing for a provisional patent on it. I'll be publishing future bug fixes later on, but for right now, further bug fixes will remain private so I can sell the Get Factors app on the Windows Store for digital download
+while waiting for my regular utility patents to come through (one for this project and one for an AGI project).
