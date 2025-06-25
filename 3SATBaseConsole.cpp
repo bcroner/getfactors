@@ -207,24 +207,82 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	me->Z[pos] = !sign;
 	SATSolver_updateTF(me, pos, !sign);
 
-	for (int i = pos; i >= 0; i--) {
-		__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
-		if (abs_imp < pos)
+	__int64 stored = me->implies_arr[pos];
+	__int64 abs_stored = stored < 0 ? -stored : stored;
+
+	for (__int64 i = pos + 1; i < abs_stored - 1; i++)
+		if (me->Z[i]) {
+			me->Z[i] = false;
+			SATSolver_updateTF(me, i, false);
+		}
+
+	__int64 new_jump = 0;
+	if (stored < 0) {
+		new_jump = -stored;
+		for (int i = pos; i < new_jump && i < me->master->n; i++)
+			me->implies_arr[i] = new_jump;
+	}
+	else {
+		new_jump = -(stored + 1);
+		if (me->implies_arr[stored + 1] != new_jump)
+			for (int i = pos; i < stored + 1 && i < me->master->n; i++)
+				me->implies_arr[i] = new_jump;
+		reached_n = -new_jump >= me->master->n;
+	}
+
+	__int64 abs_new_jump = new_jump < 0 ? -new_jump : new_jump;
+	for ( __int64 i = abs_new_jump; i < me->master->n; i++)
+		if (me->Z[i]) {
+			me->Z[i] = false;
+			SATSolver_updateTF(me, i , false);
+		}
+		else {
+			me->Z[i] = true;
+			SATSolver_updateTF(me, i, true);
 			break;
-		me->implies_arr[i] = sign ? -pos : pos; /* do something here */
+		}
+
+	/*
+
+	bool reached_n = false;
+
+	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
+
+	bool sign = me->Z[pos];
+
+	me->Z[pos] = !sign;
+	SATSolver_updateTF(me, pos, !sign);
+
+	__int64 stored = me->implies_arr[pos];
+	__int64 abs_stored = stored < 0 ? -stored : stored;
+
+	for ( int i = pos + 1; i < abs_stored - 1; i++)
+		if (me->Z[i]) {
+			me->Z[i] = false;
+			SATSolver_updateTF(me, i, false);
+		}
+
+	me->Z[abs_stored - 1] = stored < 0 ? true : false;
+	me->Z[abs_stored] = stored < 0 ? me->Z[abs_stored] : 
+	me->implies_arr[abs_stored - 1] = stored < 0 ? -stored : -(stored + 1);
+
+	for (int i = pos - 1; i >= 0; i--) {
+		__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
+		if (abs_imp - 1 < pos)
+			break;
+		me->implies_arr[i] = sign ? pos : -(pos+1);
 	}
 
 
 	__int64 result = 0;
-	__int64 jump = me->implies_arr[pos] < 0 ? -me->implies_arr[pos] : -(me->implies_arr[pos] + 1);
-	__int64 abs_jump = jump < 0 ? -jump : jump;
-	for (result = pos; result < abs_jump; result++)
+	__int64 jump = me->implies_arr[pos] < 0 ? -(me->implies_arr[pos]+1) : -(me->implies_arr[pos]);
+	for (result = pos; result < jump; result++)
 		if (me->Z[result]) {
 			me->Z[result] = false;
 			SATSolver_updateTF(me, result, false);
 		}
 
-	for (result = abs_jump; result < me->master->n; result++)
+	for (result = jump; result < me->master->n; result++)
 		if (me->Z[result]) {
 			me->Z[result] = false;
 			SATSolver_updateTF(me, result, false);
@@ -243,6 +301,8 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	for (int i = pos; i <= final_pos; i++)
 		me->implies_arr[i] = final_jmp;
+
+	//*/
 	
 	// zero out all lower bits of Z
 
@@ -591,7 +651,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 	me->implies_arr = new __int64[n_parm];
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		me->implies_arr[i] = i;
+		me->implies_arr[i] = -(i+1);
 	}
 
 	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
