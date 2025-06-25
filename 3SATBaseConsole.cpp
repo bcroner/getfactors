@@ -404,9 +404,9 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	if (!SATSolver_add(me, me->pow_jump)) {
 		jump_occurred = true;
-		prev_is_end = true;
-		delete[] prev_Z;
-		return false;
+		//prev_is_end = true;
+		//delete[] prev_Z;
+		//return false;
 	}
 
 	//Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
@@ -460,8 +460,8 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		if (!SATSolver_add(me, me->pow_jump)) {
 			jump_occurred = true;
-			prev_is_end = true;
-			break;
+			//prev_is_end = true;
+			//break;
 		}
 
 		//Z_got_bigger = SATSolver_GreaterThan(me->Z, prev_Z, me->master->n);
