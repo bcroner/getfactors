@@ -198,8 +198,6 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	// add 2^pos_parm to Z
 
-	bool reached_n = false;
-
 	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
 	bool sign = me->Z[pos];
@@ -356,7 +354,7 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 		}
 	//*/
 
-	return reached_n;
+	return abs_next_jump == me->master->n;;
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
