@@ -217,7 +217,7 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	
 	__int64 abs_next_jump = 0;
 
-	for ( abs_next_jump = abs_next ; abs_next_jump < me->master->n; abs_next_jump++)
+	for ( abs_next_jump = abs_next - 1 ; abs_next_jump < me->master->n; abs_next_jump++)
 		if (me->Z[abs_next_jump]) {
 			me->Z[abs_next_jump] = false;
 			SATSolver_updateTF(me, abs_next_jump, false);
@@ -354,7 +354,7 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 		}
 	//*/
 
-	return abs_next_jump == me->master->n;;
+	return abs_next_jump == me->master->n;
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
