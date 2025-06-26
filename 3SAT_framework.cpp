@@ -1495,7 +1495,7 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
     strcpy_s(sum_strs[0], 2, "");
     sum_str_len[0] = (__int64)strnlen_s(sum_strs[0], 2);
 
-    __int64 dummy;
+    //__int64 dummy;
     //printf_s("nat_mul: initial itmd_c: %s\n", nat_to_str(NULL, itmd_c, &dummy));
 
     for (__int64 i = 1; i < b->sz; i++) {
