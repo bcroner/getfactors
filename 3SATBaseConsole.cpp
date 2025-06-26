@@ -232,19 +232,19 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 				break;
 			}
 	else
-		abs_next_jump = pos;
+		abs_next_jump = abs_next;
 
-	__int64 next_jump = me->Z[abs_next_jump] ? abs_next_jump : - abs_next_jump;
+	__int64 next_jump = me->Z[abs_next_jump] ? - abs_next_jump : abs_next_jump;
 
-	for (__int64 i = pos + 1; i < me->master->n && i <= abs_next_jump; i++)
+	for (__int64 i = pos; i < me->master->n && i < abs_next_jump; i++)
 		me->implies_arr[i] = next_jump;
 
 	if (sign)
-		for (__int64 i = pos; i >= 0 && me->implies_arr[i] >= pos; i++)
+		for (__int64 i = pos - 1; i >= 0 && me->implies_arr[i] >= pos; i++)
 			me->implies_arr[i] = next_jump;
 	else
-		for (__int64 i = pos; i >= 0 && me->implies_arr[i] >= pos; i++)
-			me->implies_arr[i] = pos;
+		for (__int64 i = pos - 1; i >= 0 && me->implies_arr[i] >= pos; i++)
+			me->implies_arr[i] = pos + 1;
 
 	/*
 
