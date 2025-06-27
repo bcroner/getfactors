@@ -207,7 +207,7 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	__int64 stored     = me->implies_arr[pos];
 	__int64 abs_stored = stored < 0 ? -stored : stored;
-	__int64 next       = stored < 0 ? -stored : -(stored + 1);
+	__int64 next       = stored < 0 ? -stored : me->implies_arr [stored + 1];
 	__int64 abs_next   = next   < 0 ? -next   : next;
 
 	__int64 capture = 0;
@@ -245,108 +245,6 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	else
 		for (__int64 i = pos - 1; i >= 0 && me->implies_arr[i] >= pos; i++)
 			me->implies_arr[i] = pos + 1;
-
-	/*
-
-
-	//me->Z[pos] = !sign;
-	//SATSolver_updateTF(me, pos, !sign);
-
-	__int64 stored = me->implies_arr[pos];
-	__int64 abs_stored = stored < 0 ? -stored : stored;
-
-	for (__int64 i = pos + 1; i < me->master->n && i < abs_stored - 1; i++)
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me, i, false);
-		}
-
-	__int64 new_jump = 0;
-	if (stored < 0) {
-		new_jump = -stored;
-		for (int i = pos; i < new_jump && i < me->master->n; i++)
-			me->implies_arr[i] = new_jump;
-	}
-	else {
-		new_jump = -(stored + 1);
-		if (me->implies_arr[stored + 1] != new_jump)
-			for (int i = pos; i < stored + 1 && i < me->master->n; i++)
-				me->implies_arr[i] = new_jump;
-		reached_n = -new_jump >= me->master->n;
-	}
-
-	__int64 abs_new_jump = new_jump < 0 ? -new_jump : new_jump;
-	for ( __int64 i = abs_new_jump - 1; i < me->master->n; i++)
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me, i , false);
-		}
-		else {
-			me->Z[i] = true;
-			SATSolver_updateTF(me, i, true);
-			break;
-		}
-	*/
-
-	/*
-
-	bool reached_n = false;
-
-	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
-
-	bool sign = me->Z[pos];
-
-	me->Z[pos] = !sign;
-	SATSolver_updateTF(me, pos, !sign);
-
-	__int64 stored = me->implies_arr[pos];
-	__int64 abs_stored = stored < 0 ? -stored : stored;
-
-	for ( int i = pos + 1; i < abs_stored - 1; i++)
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me, i, false);
-		}
-
-	me->Z[abs_stored - 1] = stored < 0 ? true : false;
-	me->Z[abs_stored] = stored < 0 ? me->Z[abs_stored] : 
-	me->implies_arr[abs_stored - 1] = stored < 0 ? -stored : -(stored + 1);
-
-	for (int i = pos - 1; i >= 0; i--) {
-		__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
-		if (abs_imp - 1 < pos)
-			break;
-		me->implies_arr[i] = sign ? pos : -(pos+1);
-	}
-
-
-	__int64 result = 0;
-	__int64 jump = me->implies_arr[pos] < 0 ? -(me->implies_arr[pos]+1) : -(me->implies_arr[pos]);
-	for (result = pos; result < jump; result++)
-		if (me->Z[result]) {
-			me->Z[result] = false;
-			SATSolver_updateTF(me, result, false);
-		}
-
-	for (result = jump; result < me->master->n; result++)
-		if (me->Z[result]) {
-			me->Z[result] = false;
-			SATSolver_updateTF(me, result, false);
-		}
-		else {
-			me->Z[result] = true;
-			SATSolver_updateTF(me, result, true);
-			break;
-		}
-
-	if (result == me->master->n)
-		reached_n = true;
-
-	__int64 final_pos = result == me->master->n ? result - 1 : result;
-	__int64 final_jmp = !me->Z[final_pos] ? -final_pos : final_pos;
-
-	for (int i = pos; i <= final_pos; i++)
-		me->implies_arr[i] = final_jmp;
 
 	//*/
 	
