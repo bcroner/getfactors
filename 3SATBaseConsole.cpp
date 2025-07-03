@@ -238,11 +238,11 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 			me->implies_arr[i] = future_next;
 
 
-		//for (__int64 i = pos; i >= 0; i--) {
-		//	__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
-		//	if ( abs_imp < pos + 1)
-		//		me->implies_arr[i] = future_next;
-		//}
+		for (__int64 i = pos; i >= 0; i--) {
+			__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
+			if ( abs_imp > abs_future_next)
+				me->implies_arr[i] = future_next;
+		}
 	}
 	else {
 		for (__int64 i = pos; i >= 0; i--) {
