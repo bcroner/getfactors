@@ -202,7 +202,7 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	__int64 stored = me->implies_arr[pos];
 	__int64 abs_stored = stored < 0 ? -stored : stored;
-	__int64 next = stored < 0 ? -stored : me->implies_arr[stored + 1];
+	__int64 next = stored < 0 ? -stored : me->implies_arr[stored];
 	__int64 abs_next = next < 0 ? -next : next;
 
 	bool sign = me->Z[pos];
@@ -213,32 +213,37 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 		__int64 capture = 0;
 
-		for (capture = pos + 1; capture < me->master->n && capture < abs_next; capture++)
+		for (capture = pos + 1; capture < abs_next - 1; capture++)
 			if (me->Z[capture]) {
 				me->Z[capture] = false;
 				SATSolver_updateTF(me, capture, false);
 			}
 
-		__int64 future_next = 0;
+		__int64 abs_future_next = 0;
 
-		for (__int64 future_next = abs_next; future_next < me->master->n; future_next++) {
-			if (me->Z[future_next]) {
-				me->Z[future_next] = false;
-				SATSolver_updateTF(me, future_next, false);
-				future_next = -(next+1);
-				me->implies_arr[future_next] = future_next;
+		for (__int64 abs_future_next = abs_next - 1; abs_future_next < me->master->n; abs_future_next++) {
+			if (me->Z[abs_future_next]) {
+				me->Z[abs_future_next] = false;
+				SATSolver_updateTF(me, abs_future_next, false);
 				break;
 			}
 			else {
-				me->Z[future_next] = true;
-				SATSolver_updateTF(me, future_next, true);
-				future_next = -next;
-				me->implies_arr[future_next] = future_next;
+				me->Z[abs_future_next] = true;
+				SATSolver_updateTF(me, abs_future_next, true);
 			}
 		}
 
-		for (__int64 i = pos; i >= 0 && me->implies_arr[i] >= pos; i--)
+		__int64 future_next = me->Z[abs_future_next] ? -(abs_future_next + 1) : abs_future_next;
+
+		for (__int64 i = abs_next - 1; i < abs_future_next; i++)
 			me->implies_arr[i] = future_next;
+
+
+		for (__int64 i = pos; i >= 0; i--) {
+			__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
+			if ( abs_imp < pos + 1)
+				me->implies_arr[i] = future_next;
+		}
 	}
 	else {
 		for (__int64 i = pos; i >= 0; i--) {
