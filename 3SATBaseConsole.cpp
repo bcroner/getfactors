@@ -211,6 +211,8 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	if (sign) {
 
+		///* Do I need to do this?
+
 		__int64 capture = 0;
 
 		for (capture = pos + 1; capture < abs_next - 1; capture++)
@@ -218,6 +220,8 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 				me->Z[capture] = false;
 				SATSolver_updateTF(me, capture, false);
 			}
+
+		//*/
 
 		__int64 abs_future_next = 0;
 
@@ -285,7 +289,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		if (/*sign_match &&*/ me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 		{
 			max_jump = temp_jump;
-			printf_s("%lld: %lld ", i, max_jump);
+			//printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
@@ -365,7 +369,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (true) {
+	if (!true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
 		//printf_s(" jump: %lld", me->pow_jump);
@@ -420,7 +424,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (true) {
+		if (!true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
