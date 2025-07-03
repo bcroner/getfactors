@@ -200,7 +200,60 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
+	__int64 stored = me->implies_arr[pos];
+	__int64 abs_stored = stored < 0 ? -stored : stored;
+	__int64 next = stored < 0 ? -stored : me->implies_arr[stored + 1];
+	__int64 abs_next = next < 0 ? -next : next;
+
 	bool sign = me->Z[pos];
+	me->Z[pos] = !sign;
+	SATSolver_updateTF(me, pos, !sign);
+
+	if (sign) {
+
+		__int64 capture = 0;
+
+		for (capture = pos + 1; capture < me->master->n && capture < abs_next; capture++)
+			if (me->Z[capture]) {
+				me->Z[capture] = false;
+				SATSolver_updateTF(me, capture, false);
+			}
+
+		__int64 future_next = 0;
+
+		for (__int64 future_next = abs_next; future_next < me->master->n; future_next++) {
+			if (me->Z[future_next]) {
+				me->Z[future_next] = false;
+				SATSolver_updateTF(me, future_next, false);
+				future_next = -(next+1);
+				me->implies_arr[future_next] = future_next;
+				break;
+			}
+			else {
+				me->Z[future_next] = true;
+				SATSolver_updateTF(me, future_next, true);
+				future_next = -next;
+				me->implies_arr[future_next] = future_next;
+			}
+		}
+
+		for (__int64 i = pos; i >= 0 && me->implies_arr[i] >= pos; i--)
+			me->implies_arr[i] = future_next;
+	}
+	else {
+		for (__int64 i = pos; i >= 0; i--) {
+			__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
+			if (abs_imp >= pos + 1)
+				me->implies_arr[i] = pos + 1;
+			else
+				break;
+		}
+	}
+
+	// if next < 0, set me->Z[abs_next] to false
+	// if next > 0, set me->Z[abs_next] to true and carry if necessary
+
+	/*
 
 	me->Z[pos] = !sign;
 	SATSolver_updateTF(me, pos, !sign);
@@ -258,7 +311,7 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 		}
 	//*/
 
-	return abs_next_jump < me->master->n;
+	return abs_next < me->master->n;
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
@@ -279,7 +332,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		if (/*sign_match &&*/ me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 		{
 			max_jump = temp_jump;
-			printf_s("%lld ", max_jump);
+			printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
