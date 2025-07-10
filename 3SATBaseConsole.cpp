@@ -206,8 +206,6 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 	__int64 abs_next = next < 0 ? -next : next;
 
 	bool sign = me->Z[pos];
-	me->Z[pos] = !sign;
-	SATSolver_updateTF(me, pos, !sign);
 
 	if (sign) {
 
@@ -225,7 +223,7 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 		__int64 abs_future_next = 0;
 
-		for (abs_future_next = abs_next; abs_future_next < me->master->n; abs_future_next++)
+		for (abs_future_next = abs_next - 1; abs_future_next < me->master->n; abs_future_next++)
 			if (me->Z[abs_future_next]) {
 				me->Z[abs_future_next] = false;
 				SATSolver_updateTF(me, abs_future_next, false);
@@ -249,6 +247,10 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 		}
 	}
 	else {
+
+		me->Z[pos] = !sign;
+		SATSolver_updateTF(me, pos, !sign);
+
 		for (__int64 i = pos; i >= 0; i--) {
 			__int64 abs_imp = me->implies_arr[i] < 0 ? -me->implies_arr[i] : me->implies_arr[i];
 			if (abs_imp >= pos + 1)
@@ -289,7 +291,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		if (/*sign_match &&*/ me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 		{
 			max_jump = temp_jump;
-			//printf_s("%lld: %lld ", i, max_jump);
+			printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
@@ -328,7 +330,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	// main loop- until end condition
 
 	__int64 count = 0;
-	__int64 prev_pos = 0;	// de-exponentializer variable
+	__int64 prev_pos = 0;
 	__int64 abs_prev_pos = 0;
 	bool zero_jump = false;
 	bool* prev_Z;
@@ -369,7 +371,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (!true) {
+	if (true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
 		//printf_s(" jump: %lld", me->pow_jump);
@@ -424,7 +426,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (!true) {
+		if (true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
