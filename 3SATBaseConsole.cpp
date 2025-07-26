@@ -201,6 +201,11 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 	__int64 pos_parm = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
 
+	__int64 temp_limit = me->master->limits[cls_ix];
+	__int64 abs_temp_limit = temp_limit < 0 ? -temp_limit : temp_limit;
+	__int64 limit_parm = temp_pow_jump < 0 ? -temp_limit - 1 : temp_limit - 1;
+	__int64 limit = limit_parm < 0 ? -limit_parm : limit_parm;
+
 	bool sign = me->Z[pos];
 	for ( int i = pos ; i < me->master->n ; i++)
 		if (me->Z[i]) {
@@ -384,7 +389,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
 		//printf_s(" jump: %lld", me->pow_jump);
-		printf_s(" jump: %I64d", temp_pow_jump);
+		printf_s(" jump: %I64d", me->master->powers[cls_ix]);
 		printf_s("\n");
 	}
 
@@ -437,7 +442,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
 			//printf_s(" jump: %lld", me->pow_jump);
-			printf_s(" jump: %I64d count_matches: %I64d", temp_pow_jump, count_matches);
+			printf_s(" jump: %I64d count_matches: %I64d", me->master->powers[cls_ix], count_matches);
 			printf_s("\n");
 		}
 
@@ -793,9 +798,9 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		if (count_tf == 0) {
 
 			__int64 c[3];
-			c[0] = l[0] < 0 ? 0 : master->decoding[l[0]];
-			c[1] = l[1] < 0 ? 0 : master->decoding[l[1]];
-			c[2] = l[2] < 0 ? 0 : master->decoding[l[2]];
+			c[0] = l[0] < 0 ? 0 : master->encoding[l[0]] + 1;
+			c[1] = l[1] < 0 ? 0 : master->encoding[l[1]] + 1;
+			c[2] = l[2] < 0 ? 0 : master->encoding[l[2]] + 1;
 
 			__int64 md = 0;
 			__int64 lo = 0;
@@ -828,8 +833,8 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 				}
 
 			__int64 c[2];
-			c[0] = l[0] < 0 ? 0 : master->decoding[l[0]];
-			c[1] = l[1] < 0 ? 0 : master->decoding[l[1]];
+			c[0] = l[0] < 0 ? 0 : master->encoding[l[0]] + 1;
+			c[1] = l[1] < 0 ? 0 : master->encoding[l[1]] + 1;
 
 			__int64 md = 0;
 			__int64 lo = 0;
@@ -864,14 +869,13 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 					break;
 				}
 
-			__int64 c = l[0] < 0 ? 0 : master->decoding[l[0]];
+			__int64 c = l[0] < 0 ? 0 : master->encoding[l[0]] + 1;
 
 			__int64 md = lst[i][id] < 0 ? -c : c;
 			__int64 lo = lst[i][id] < 0 ? -c : c;
 
-			master->limits[i] = md;
 			master->powers[i] = lo;
-
+			master->limits[i] = md;
 		}
 
 		/*
@@ -897,7 +901,7 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		master->powers[i] = lit_cur > 0 ? - (lowest) - 1 : (lowest) + 1;
 
 	}
-	*/
+	//*/
 
 	// create the map looking __int64o running tally based on literals pos_map
 
