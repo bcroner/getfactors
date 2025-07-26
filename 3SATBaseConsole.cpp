@@ -194,9 +194,13 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 * 
 */
 
-bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
+bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
+	__int64 temp_pow_jump = me->master->powers[cls_ix];
+	__int64 abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
+	__int64 pos_parm = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
 	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
+
 	bool sign = me->Z[pos];
 	for ( int i = pos ; i < me->master->n ; i++)
 		if (me->Z[i]) {
@@ -292,6 +296,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 	// initialize return value
 
 	__int64 max_jump = 0;
+	__int64 cls_ix = 0;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
@@ -303,13 +308,14 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		if (/*sign_match &&*/ me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump)
 		{
 			max_jump = temp_jump;
+			cls_ix = i;
 			printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
 	//printf_s("\n");
 
-	return max_jump;
+	return cls_ix;
 
 }
 
@@ -352,9 +358,10 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	for (__int64 i = 0; i < me->master->n; i++)
 		prev_Z[i] = me->Z[i];
 
-	__int64 temp_pow_jump = SATSolver_initializePowJump(me);
-	__int64 abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
+	__int64 cls_ix = SATSolver_initializePowJump(me);
 
+	__int64 temp_pow_jump = SATSolver_initializePowJump(me);
+	
 	if (temp_pow_jump == 0) {
 		delete[] prev_Z;
 		return false;
@@ -362,15 +369,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	else
 		jump_occurred = true;
 
-	// using prev_pos: de-exponentialize
-	//if (temp_pow_jump > 0)
-	//	prev_pos = temp_pow_jump;
-	//else if (temp_pow_jump < 0 && abs_temp_pow_jump > prev_pos)
-	//	prev_pos = 0;
-
-	me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
-
-	if (!SATSolver_add(me, me->pow_jump)) {
+	if (!SATSolver_add(me, cls_ix)) {
 		jump_occurred = true;
 		prev_is_end = true;
 		delete[] prev_Z;
