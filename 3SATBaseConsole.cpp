@@ -296,7 +296,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 	// initialize return value
 
 	__int64 max_jump = 0;
-	__int64 cls_ix = 0;
+	__int64 cls_ix = -1;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
@@ -359,10 +359,8 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		prev_Z[i] = me->Z[i];
 
 	__int64 cls_ix = SATSolver_initializePowJump(me);
-
-	__int64 temp_pow_jump = SATSolver_initializePowJump(me);
 	
-	if (temp_pow_jump == 0) {
+	if (cls_ix == -1) {
 		delete[] prev_Z;
 		return false;
 	}
@@ -407,10 +405,9 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			prev_Z[i] = me->Z[i];
 
-		temp_pow_jump = SATSolver_initializePowJump(me);
-		abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
+		cls_ix = SATSolver_initializePowJump(me);
 
-		if (temp_pow_jump == 0) {
+		if (cls_ix == -1) {
 			zero_jump = true;
 			break;
 		}
@@ -423,9 +420,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		//else if (temp_pow_jump < 0 && abs_temp_pow_jump > prev_pos)
 		//	prev_pos = 0;
 
-		me->pow_jump = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
-
-		if (!SATSolver_add(me, me->pow_jump)) {
+		if (!SATSolver_add(me, cls_ix)) {
 			jump_occurred = true;
 			prev_is_end = true;
 			break;
@@ -615,10 +610,12 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 
 	me->master = master;
 	me->Z = new bool [n_parm];
-	me->implies_arr = new __int64[n_parm];
+	me->pos_implies_arr = new __int64[n_parm];
+	me->neg_implies_arr = new __int64[n_parm];
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		me->implies_arr[i] = -(i+1);
+		me->pos_implies_arr[i] = -(i+2);
+		me->neg_implies_arr[i] = i+1;
 	}
 
 	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
@@ -663,53 +660,18 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 		else
 			me->cls_tly[i] = lst_f[i];
 
-	// populate clause tally with initial begin value
-
-	/*
-	for (__int64 i = 0; i < me->master->k; i++)
-		//if (lst[i][0] < 0 && lst[i][1] < 0 && lst[i][2] < 0)
-			printf_s("%lld: %lld %lld %lld\n", i, lst[i][0], lst[i][1], lst[i][2]);
-			*/
-
-	/*
-	for (__int64 i = 0; i < n_parm; i++) {
-		for (__int64 j = 0; j < me->master->pos_map_szs[me->master->decoding[i]]; j++)
-			if (!me->master->begin[chop][me->master->decoding[i]]) {
-				__int64 cls_ix = me->master->pos_map[me->master->decoding[i]][j];
-				__int64 old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-				if (cls_ix == 0)
-					printf_s("pos i: %lld j: %lld\n", i, j);
-			}
-		for (__int64 j = 0; j < me->master->neg_map_szs[me->master->decoding[i]]; j++)
-			if (me->master->begin[chop][me->master->decoding[i]]) {
-				__int64 cls_ix = me->master->neg_map[me->master->decoding[i]][j];
-				__int64 old_val = me->cls_tly[cls_ix];
-				me->cls_tly[cls_ix] = old_val + 1;
-				if (cls_ix == 0)
-					printf_s("neg i: %lld j: %lld\n", i, j);
-			}
-	}
-	*/
-
 	for (__int64 i = 0; i < n_parm; i++) {
 		for (__int64 j = 0; j < me->master->pos_map_szs[i]; j++)
 			if (!me->master->begin[chop][i]) {
 				__int64 cls_ix = me->master->pos_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
-
-				if (cls_ix == 0)
-					printf_s("pos_map: i=%lld j=%lld\n", i, j);
 			}
 		for (__int64 j = 0; j < me->master->neg_map_szs[i]; j++)
 			if (me->master->begin[chop][i]) {
 				__int64 cls_ix = me->master->neg_map[i][j];
 				__int64 old_val = me->cls_tly[cls_ix];
 				me->cls_tly[cls_ix] = old_val + 1;
-
-				if (cls_ix == 0)
-					printf_s("neg_map: i=%lld j=%lld\n", i, j);
 			}
 	}
 
@@ -808,33 +770,113 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
 	master->powers = new __int64[k_parm];
-	for (__int64 i = 0; i < k_parm; i++)
+	master->limits = new __int64[k_parm];
+	for (__int64 i = 0; i < k_parm; i++) {
 		master->powers[i] = 0;
+		master->limits[i] = 0;
+	}
 
 	for (__int64 i = 0; i < k_parm; i++) {
 
+		__int64 count_tf = 0;
+		for (int j = 0; j < 3; j++)
+			count_tf += lst[i][j] == TRUE_3SAT || lst[i][0] == FALSE_3SAT ? 1 : 0;
+
+		__int64 ix = 0;
+		__int64 l[3];
+		for (int j = 0 ; j < 3; j++)
+			if (lst[i][j] != TRUE_3SAT && lst[i][0] != FALSE_3SAT) {
+				l[ix] = lst[i][j];
+				ix++;
+			}
+
+		if (count_tf == 0) {
+
+			__int64 c[3];
+			c[0] = l[0] < 0 ? 0 : master->decoding[l[0]];
+			c[1] = l[1] < 0 ? 0 : master->decoding[l[1]];
+			c[2] = l[2] < 0 ? 0 : master->decoding[l[2]];
+
+			__int64 md = 0;
+			__int64 lo = 0;
+
+			if ((c[0] >= c[1] && c[0] <= c[2]) || (c[0] >= c[2] && c[0] <= c[1]))
+				md = lst[i][0] < 0 ? -c[0] : c[0];
+			else if ((c[1] >= c[0] && c[1] <= c[2]) || (c[1] >= c[2] && c[1] <= c[0]))
+				md = lst[i][1] < 0 ? -c[1] : c[1];
+			else
+				md = lst[i][2] < 0 ? -c[2] : c[2];
+
+			if (c[0] <= c[1] && c[0] <= c[2])
+				lo = lst[i][0] < 0 ? -c[0] : c[0];
+			else if (c[1] <= c[0] && c[1] <= c[2])
+				lo = lst[i][1] < 0 ? -c[1] : c[1];
+			else
+				lo = lst[i][2] < 0 ? -c[2] : c[2];
+
+			master->powers[i] = lo;
+			master->limits[i] = md;
+
+		}
+		else if (count_tf == 1) {
+
+			__int64 id = 0;
+			for (__int64 j = 0; j < 3; j++)
+				if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT) {
+					id = j;
+					break;
+				}
+
+			__int64 c[2];
+			c[0] = l[0] < 0 ? 0 : master->decoding[l[0]];
+			c[1] = l[1] < 0 ? 0 : master->decoding[l[1]];
+
+			__int64 md = 0;
+			__int64 lo = 0;
+
+			if (c[0] > c[1] && id == 0)
+				md = lst[i][1] < 0 ? -c[1] : c[1];
+			else if (c[0] > c[1] && id != 0)
+				md = lst[i][0] < 0 ? -c[0] : c[0];
+			else if (c[1] >= c[0] && id == 1)
+				md = lst[i][2] < 0 ? -c[2] : c[2];
+			else
+				md = lst[i][1] < 0 ? -c[1] : c[1];
+
+			if (c[0] < c[1] && id == 0)
+				lo = lst[i][1] < 0 ? -c[1] : c[1];
+			else if (c[0] < c[1] && id != 0)
+				lo = lst[i][0] < 0 ? -c[0] : c[0];
+			else if (c[1] <= c[0] && id == 1)
+				lo = lst[i][2] < 0 ? -c[2] : c[2];
+			else
+				lo = lst[i][1] < 0 ? -c[1] : c[1];
+
+			master->powers[i] = lo;
+			master->limits[i] = md;
+		}
+		else { // count_tf = 2
+
+			__int64 id = 0;
+			for (__int64 j = 0; j < 3; j++)
+				if (lst[i][j] != FALSE_3SAT && lst[i][j] != TRUE_3SAT) {
+					id = j;
+					break;
+				}
+
+			__int64 c = l[0] < 0 ? 0 : master->decoding[l[0]];
+
+			__int64 md = lst[i][id] < 0 ? -c : c;
+			__int64 lo = lst[i][id] < 0 ? -c : c;
+
+			master->limits[i] = md;
+			master->powers[i] = lo;
+
+		}
+
 		/*
+	for (__int64 i = 0; i < k_parm; i++) {
 
-		__int64 l0 = lst[i][0] < 0 ? -lst[i][0] - 2 : lst[i][0] - 2;
-		__int64 l1 = lst[i][1] < 0 ? -lst[i][1] - 2 : lst[i][1] - 2;
-		__int64 l2 = lst[i][2] < 0 ? -lst[i][2] - 2 : lst[i][2] - 2;
-
-		__int64 calcl0 = l0 < 0 ? 0 : master->decoding[l0];
-		__int64 calcl1 = l1 < 0 ? 0 : master->decoding[l1];
-		__int64 calcl2 = l2 < 0 ? 0 : master->decoding[l2];
-
-		if (lst[i][0] != TRUE_3SAT && lst[i][0] != FALSE_3SAT && calcl0 >= calcl1 && calcl0 >= calcl2)
-			master->powers[i] = lst[i][0] < 0 ? -(n_parm - 1 - calcl0) : (n_parm - 1 - calcl0);
-		else if (lst[i][1] != TRUE_3SAT && lst[i][1] != FALSE_3SAT && calcl1 >= calcl0 && calcl1 >= calcl2)
-			master->powers[i] = lst[i][1] < 0 ? -(n_parm - 1 - calcl1) : (n_parm - 1 - calcl1);
-		else if (lst[i][2] != TRUE_3SAT && lst[i][2] != FALSE_3SAT && calcl2 >= calcl1 && calcl2 >= calcl0)
-			master->powers[i] = lst[i][2] < 0 ? -(n_parm - 1 - calcl2) : (n_parm - 1 - calcl2);
-		else
-			master->powers[i] = 0;
-			*/
-
-
-		///*
 		__int64 lowest = n_parm;
 		__int64 lit_cur = 0;
 		for (__int64 j = 0; j < 3; j++) {
@@ -853,9 +895,9 @@ void SATSolverMaster_create(SATSolverMaster * master, __int64** lst, __int64 k_p
 		// record the jump power of the clause at i
 
 		master->powers[i] = lit_cur > 0 ? - (lowest) - 1 : (lowest) + 1;
-		//*/
 
 	}
+	*/
 
 	// create the map looking __int64o running tally based on literals pos_map
 
