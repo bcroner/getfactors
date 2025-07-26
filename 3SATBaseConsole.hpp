@@ -23,6 +23,7 @@ typedef struct {
 	__int64* pos_map_szs;	// list of sizes of each literal mapped in pos map
 	__int64* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	__int64* powers;		// powers to jump forward by
+	__int64* limits;		// second power limiting second operation (which is adding to Z)
 	__int64 k;				// original number of clauses
 	__int64 n;				// number of variables
 	__int64 chops;			// number of equal-sized partitions chopping up search space: 2^chops 
@@ -41,7 +42,6 @@ typedef struct {
 	__int64* neg_implies_arr;	// negatives implies array- what is implied by the encounter of jumps of recorded values
 
 	bool* Z;					// current position in permutation space
-	__int64 pow_jump;			// current value of jump, to be updated each cycle
 } SATSolver;
 
 
