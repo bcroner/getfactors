@@ -196,6 +196,23 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 
 bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
+	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
+	bool sign = me->Z[pos];
+	for ( int i = pos ; i < me->master->n ; i++)
+		if (me->Z[i]) {
+			me->Z[i] = false;
+			SATSolver_updateTF(me, i, false);
+		}
+		else {
+			me->Z[i] = true;
+			SATSolver_updateTF(me, i, true);
+			break;
+		}
+
+	return true;
+
+	/*
+
 	// add 2^pos_parm to Z
 
 	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
@@ -209,8 +226,6 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	if (sign) {
 
-		///* Do I need to do this?
-
 		__int64 capture = 0;
 
 		for (capture = pos + 1; capture < abs_next - 1; capture++)
@@ -218,8 +233,6 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 				me->Z[capture] = false;
 				SATSolver_updateTF(me, capture, false);
 			}
-
-		//*/
 
 		__int64 abs_future_next = 0;
 
@@ -262,15 +275,14 @@ bool SATSolver_add(SATSolver * me , __int64 pos_parm) {
 
 	// zero out all lower bits of Z
 
-	///*
 	for (__int64 j = pos - 1; j >= 0; j--)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me, j, false);
 		}
-	//*/
-
+	
 	return abs_next < me->master->n;
+	*/
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
