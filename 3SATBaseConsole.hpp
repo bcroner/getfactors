@@ -37,7 +37,8 @@ typedef struct {
 
 	__int64 * cls_tly;			// running tallies of the number of literals matched in clauses
 
-	__int64* implies_arr;		// implies array- what is implied by the encounter of jumps of recorded values
+	__int64* pos_implies_arr;	// positives implies array- what is implied by the encounter of jumps of recorded values
+	__int64* neg_implies_arr;	// negatives implies array- what is implied by the encounter of jumps of recorded values
 
 	bool* Z;					// current position in permutation space
 	__int64 pow_jump;			// current value of jump, to be updated each cycle
@@ -47,7 +48,7 @@ typedef struct {
 //__int64 MyQSort_partition(__int64 arr_parm[], __int64 low_parm, __int64 high_parm);
 void MyQSort(__int64 arr[], __int64 low_parm, __int64 high_parm);
 void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
-bool SATSolver_add(SATSolver* me, __int64 pos_parm);
+bool SATSolver_add(SATSolver* me, __int64 cls_ix);
 __int64 SATSolver_initializePowJump(SATSolver* me);
 bool SATSolver_GreaterThan(bool* a, bool* b, __int64 n);
 bool SATSolver_isSat(SATSolver* me, __int64 chop, bool *arr);
