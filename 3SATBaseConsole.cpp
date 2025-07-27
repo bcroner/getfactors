@@ -205,6 +205,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 	__int64 abs_temp_limit = temp_limit < 0 ? -temp_limit : temp_limit;
 
 	__int64 abs_next = 0;
+	__int64 bottom = 0;
 
 	if (temp_pow_jump < 0)
 		me->neg_implies_arr[pos] = temp_limit;
@@ -216,6 +217,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 	if (!sign) {
 		me->Z[pos] = true;
 		SATSolver_updateTF(me, pos, true);
+		bottom = pos;
 	}
 	else {
 
@@ -255,12 +257,13 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 			}
 		}
 
+		bottom = abs_limit;
 
 	}
 	
 	// zero out all lower bits of Z
 
-	for (__int64 j = pos - 1; j >= 0; j--)
+	for (__int64 j = bottom - 1; j >= 0; j--)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me, j, false);
