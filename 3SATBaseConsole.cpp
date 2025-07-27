@@ -203,23 +203,60 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
 	__int64 temp_limit = me->master->limits[cls_ix];
 	__int64 abs_temp_limit = temp_limit < 0 ? -temp_limit : temp_limit;
-	__int64 limit_parm = temp_pow_jump < 0 ? -temp_limit - 1 : temp_limit - 1;
-	__int64 limit = limit_parm < 0 ? -limit_parm : limit_parm;
+
+	__int64 abs_next = 0;
+
+	if (temp_pow_jump < 0)
+		me->neg_implies_arr[pos] = temp_limit;
+	else
+		me->pos_implies_arr[pos] = temp_limit;
 
 	bool sign = me->Z[pos];
-	for ( int i = pos ; i < me->master->n ; i++)
-		if (me->Z[i]) {
-			me->Z[i] = false;
-			SATSolver_updateTF(me, i, false);
+
+	if (!sign) {
+		me->Z[pos] = true;
+		SATSolver_updateTF(me, pos, true);
+	}
+	else {
+
+		__int64 neg_limit = me->neg_implies_arr[pos];
+		__int64 abs_neg_limit = neg_limit < 0 ? -neg_limit : neg_limit;
+		__int64 pos_limit = me->pos_implies_arr[pos];
+		__int64 abs_pos_limit = pos_limit < 0 ? -pos_limit : pos_limit;
+		__int64 limit;
+		__int64 abs_limit;
+
+		if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && ( neg_limit < 0 || pos_limit < 0))) {
+			limit = neg_limit;
+			abs_limit = abs_neg_limit;
+		}
+		else if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && (neg_limit > 0 && pos_limit > 0))) {
+			limit = neg_limit;
+			abs_limit = abs_neg_limit;
+		}
+		if (abs_neg_limit > abs_pos_limit || (abs_neg_limit == abs_pos_limit && (neg_limit < 0 || pos_limit < 0))) {
+			limit = pos_limit;
+			abs_limit = abs_pos_limit;
 		}
 		else {
-			me->Z[i] = true;
-			SATSolver_updateTF(me, i, true);
-			break;
+			limit = pos_limit;
+			abs_limit = abs_pos_limit;
 		}
 
-	return true;
+		for (abs_next = abs_limit; abs_next < me->master->n; abs_next++) {
+			if (me->Z[abs_next]) {
+				me->Z[abs_next] = false;
+				SATSolver_updateTF(me, abs_next, false);
+			}
+			else {
+				me->Z[abs_next] = true;
+				SATSolver_updateTF(me, abs_next, true);
+				break;
+			}
+		}
 
+
+	}
 	
 	// zero out all lower bits of Z
 
