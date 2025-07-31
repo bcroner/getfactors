@@ -882,69 +882,69 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 					master->pos_map_szs[master->encoding[i]]++;
 			}
 		}
+	}
 
-		// determine the neg_map_szs
+	// determine the neg_map_szs
 
-		for (__int64 i = 0; i < n_parm; i++) {
-			for (__int64 j = 0; j < k_parm; j++) {
-				// skip if true TRUE_3SAT or false FALSE_3SAT
-				if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
-					master->neg_map_szs[master->encoding[i]]++;
-				if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == (i + 2))
-					master->neg_map_szs[master->encoding[i]]++;
-				if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == (i + 2))
-					master->neg_map_szs[master->encoding[i]]++;
-			}
+	for (__int64 i = 0; i < n_parm; i++) {
+		for (__int64 j = 0; j < k_parm; j++) {
+			// skip if true TRUE_3SAT or false FALSE_3SAT
+			if (lst[j][0] != FALSE_3SAT && lst[j][0] != TRUE_3SAT && lst[j][0] == (i + 2))
+				master->neg_map_szs[master->encoding[i]]++;
+			if (lst[j][1] != FALSE_3SAT && lst[j][1] != TRUE_3SAT && lst[j][1] == (i + 2))
+				master->neg_map_szs[master->encoding[i]]++;
+			if (lst[j][2] != FALSE_3SAT && lst[j][2] != TRUE_3SAT && lst[j][2] == (i + 2))
+				master->neg_map_szs[master->encoding[i]]++;
 		}
+	}
 
-		// instantiate pos_map and neg_map for each variable
+	// instantiate pos_map and neg_map for each variable
 
-		for (__int64 i = 0; i < n_parm; i++) {
-			master->pos_map[i] = new __int64[master->pos_map_szs[i]];
-			master->neg_map[i] = new __int64[master->neg_map_szs[i]];
-		}
+	for (__int64 i = 0; i < n_parm; i++) {
+		master->pos_map[i] = new __int64[master->pos_map_szs[i]];
+		master->neg_map[i] = new __int64[master->neg_map_szs[i]];
+	}
 
-		// initialize pos_map and neg_map all to 0
+	// initialize pos_map and neg_map all to 0
 
-		for (__int64 i = 0; i < n_parm; i++) {
-			for (__int64 j = 0; j < master->pos_map_szs[master->encoding[i]]; j++)
-				master->pos_map[master->encoding[i]][j] = 0;
-			for (__int64 j = 0; j < master->neg_map_szs[master->encoding[i]]; j++)
-				master->neg_map[master->encoding[i]][j] = 0;
-		}
+	for (__int64 i = 0; i < n_parm; i++) {
+		for (__int64 j = 0; j < master->pos_map_szs[master->encoding[i]]; j++)
+			master->pos_map[master->encoding[i]][j] = 0;
+		for (__int64 j = 0; j < master->neg_map_szs[master->encoding[i]]; j++)
+			master->neg_map[master->encoding[i]][j] = 0;
+	}
 
-		// populate pos_map, neg_map
-		for (__int64 i = 0; i < n_parm; i++) {
+	// populate pos_map, neg_map
+	for (__int64 i = 0; i < n_parm; i++) {
 
-			__int64 pos_pos = 0;
-			__int64 pos_neg = 0;
+		__int64 pos_pos = 0;
+		__int64 pos_neg = 0;
 
-			for (__int64 j = 0; j < k_parm; j++) {
+		for (__int64 j = 0; j < k_parm; j++) {
 
-				for (__int64 k = 0; k < 3; k++) {
+			for (__int64 k = 0; k < 3; k++) {
 
-					if (lst[j][k] == TRUE_3SAT)
-						break;
+				if (lst[j][k] == TRUE_3SAT)
+					break;
 
-					if (lst[j][k] == FALSE_3SAT)
-						continue;
+				if (lst[j][k] == FALSE_3SAT)
+					continue;
 
-					__int64 pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
+				__int64 pos = (lst[j][k] < 0 ? -lst[j][k] : lst[j][k]) - 2;
 
-					if (pos != i)
-						continue;
+				if (pos != i)
+					continue;
 
-					if (lst[j][k] < 0) {
-						master->pos_map[master->encoding[i]][pos_pos] = j;
-						pos_pos++;
-					}
-					else {
-						master->neg_map[master->encoding[i]][pos_neg] = j;
-						pos_neg++;
-					}
+				if (lst[j][k] < 0) {
+					master->pos_map[master->encoding[i]][pos_pos] = j;
+					pos_pos++;
 				}
-
+				else {
+					master->neg_map[master->encoding[i]][pos_neg] = j;
+					pos_neg++;
+				}
 			}
+
 		}
 	}
 }
