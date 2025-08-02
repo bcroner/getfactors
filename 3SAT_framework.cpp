@@ -1993,7 +1993,7 @@ char* dec_to_str(bool * decodable_buf, dec_3sat * a, __int64 * str_sz) {
 char* nat_to_str(bool* decodable_buf, nat_3sat* a, __int64* str_sz) {
 
     __int64 first_nonzero = 0;
-    for (first_nonzero = 0; a->bits[first_nonzero]->id == FALSE_3SAT; first_nonzero++)
+    for (first_nonzero = 0; first_nonzero < a->sz && a->bits[first_nonzero]->id == FALSE_3SAT; first_nonzero++)
         ;
 
     __int64 amod4 = (a->sz - first_nonzero) % 4 == 0 ? 0 : 4 - ((a->sz - first_nonzero) % 4);
