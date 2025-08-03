@@ -54,7 +54,7 @@ nat_3sat* create_nat(__int64 * num_para, __int64 sz_parm) {
 
 char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
-    ///*
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == TRUE_3SAT && b->id == TRUE_3SAT)
@@ -103,7 +103,7 @@ char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
-    ///*
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == TRUE_3SAT && b->id == TRUE_3SAT)
@@ -152,7 +152,7 @@ char* nand_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
 
 char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int64 * len_para) {
 
-    ///*
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == FALSE_3SAT && b->id == FALSE_3SAT)
@@ -201,7 +201,7 @@ char* or_3sat(__int64 * num_para, bit_3sat** c, bit_3sat *a, bit_3sat* b, __int6
 
 char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
-    ///*
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == FALSE_3SAT && b->id == FALSE_3SAT)
@@ -250,7 +250,7 @@ char* nor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* not_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, __int64 * len_para) {
 
-    ///*
+    /*
     if (a->id == FALSE_3SAT || a->id == TRUE_3SAT) {
         *c = new bit_3sat();
         (*c)->id = -(*c)->id;
@@ -295,7 +295,7 @@ char* not_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, __int64 * len_para
 
 char* xor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 * len_para) {
 
-    ///*
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id != b->id)
@@ -342,7 +342,7 @@ char* xor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
 
 char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
-    ///*
+    /*
     if ((a->id == FALSE_3SAT || a->id == TRUE_3SAT) && (b->id == FALSE_3SAT || b->id == TRUE_3SAT)) {
         *c = new bit_3sat();
         if (a->id == b->id)
@@ -390,7 +390,7 @@ char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
 
 char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
-    ///*
+    /*
     if ((c_in->id == TRUE_3SAT || c_in->id == FALSE_3SAT) && (a->id == TRUE_3SAT || a->id == FALSE_3SAT) && (b->id == TRUE_3SAT || b->id == FALSE_3SAT)) {
         int x = c_in->id == TRUE_3SAT ? 1 : 0;
         int y = a->id == TRUE_3SAT ? 1 : 0;
@@ -439,7 +439,7 @@ char* bitaddsum_3sat(__int64 * num_para, bit_3sat** sum, bit_3sat* c_in, bit_3sa
 
 char* bitaddcout_3sat(__int64 * num_para, bit_3sat** c_out, bit_3sat* c_in, bit_3sat* a, bit_3sat* b, __int64 *len_para) {
 
-    ///*
+    /*
     if ((c_in->id == TRUE_3SAT || c_in->id == FALSE_3SAT) && (a->id == TRUE_3SAT || a->id == FALSE_3SAT) && (b->id == TRUE_3SAT || b->id == FALSE_3SAT)) {
         int x = c_in->id == TRUE_3SAT ? 1 : 0;
         int y = a->id == TRUE_3SAT ? 1 : 0;
@@ -1522,8 +1522,8 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
             itmd_a->bits[j]->id = FALSE_3SAT;
         }
         char* sum_str = nat_add(num_para, &itmd_c, itmd_a, itmd_b, true, &(sum_str_len[i]));
-        __int64 dummy;
-        printf_s("nat_mul %lld: %s + %s = %s\n", i, nat_to_str ( NULL, itmd_a , &dummy ) , nat_to_str ( NULL, itmd_b, & dummy ) , nat_to_str ( NULL, itmd_c , & dummy) );
+        //__int64 dummy;
+        //printf_s("nat_mul %lld: %s + %s = %s\n", i, nat_to_str ( NULL, itmd_a , &dummy ) , nat_to_str ( NULL, itmd_b, & dummy ) , nat_to_str ( NULL, itmd_c , & dummy) );
         if (sum_str_len[i] > 0) {
             sum_strs[i] = new char[sum_str_len[i] + 1];
             strcpy_s(sum_strs[i], sum_str_len[i] + 1, sum_str);
