@@ -799,6 +799,7 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		}
 		else if (count_tf == 1) {
 
+			__int64 ix = 0;
 			__int64 id = 0;
 			for (__int64 j = 0; j < 3; j++)
 				if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT) {
