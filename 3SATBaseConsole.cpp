@@ -296,7 +296,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 			max_jump = temp_jump;
 			max_limit = temp_limit;
 			cls_ix = i;
-			printf_s("%lld: %lld ", i, max_jump);
+			//printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
@@ -367,7 +367,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (true) {
+	if (!true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
 		printf_s(" jump: %I64d", me->master->powers[cls_ix]);
@@ -412,7 +412,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (true) {
+		if (!true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
@@ -422,7 +422,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	}
 
-	printf_s("count: %lld\n", (__int64)count);
+	//printf_s("count: %lld\n", (__int64)count);
 
 	if ((SATSolver_GreaterThan(me->Z, me->master->end[chop], me->master->n)) || (prev_is_end && jump_occurred)) {
 		delete[] prev_Z;
@@ -732,6 +732,7 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		histogram[pos] = -1;
 	}
 
+	/*
 	for (__int64 i = 0; i < k_parm; i++) {
 		printf_s("%lld: ", i);
 		for (int j = 0; j < 3; j++) {
@@ -745,6 +746,7 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		printf_s("\n");
 	}
 	printf_s("\n");
+	//*/
 
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
