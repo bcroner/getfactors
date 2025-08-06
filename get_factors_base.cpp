@@ -271,7 +271,7 @@ char* nat_test_mul(__int64 * len_para) {
 
         for (__int64 i = 0; i < k; i++) {
 
-            printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
+            //printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
 
             __int64 x = input[i][0] < 0 ? -input[i][0] : input[i][0];
             __int64 y = input[i][0] < 0 ? -input[i][0] : input[i][0];
