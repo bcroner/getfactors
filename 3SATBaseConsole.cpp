@@ -771,10 +771,14 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 
 		if (count_tf == 0) {
 
+			__int64 absl0 = l[0] < 0 ? -l[0] : l[0];
+			__int64 absl1 = l[1] < 0 ? -l[1] : l[1];
+			__int64 absl2 = l[2] < 0 ? -l[2] : l[2];
+
 			__int64 c[3];
-			c[0] = l[0] < 0 ? -master->encoding[l[0] - 2] + 1 : master->encoding[l[0] - 2] + 1;
-			c[1] = l[1] < 0 ? -master->encoding[l[1] - 2] + 1 : master->encoding[l[1] - 2] + 1;
-			c[2] = l[2] < 0 ? -master->encoding[l[2] - 2] + 1 : master->encoding[l[2] - 2] + 1;
+			c[0] = master->encoding[absl0 - 2] + 1;
+			c[1] = master->encoding[absl1 - 2] + 1;
+			c[2] = master->encoding[absl2 - 2] + 1;
 
 			__int64 md = 0;
 			__int64 lo = 0;
@@ -799,38 +803,45 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		}
 		else if (count_tf == 1) {
 
-			__int64 ix = 0;
-			__int64 id = 0;
-			for (__int64 j = 0; j < 3; j++)
-				if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT) {
-					id = j;
-					break;
-				}
+			// set loctf to location in tuple of true or false literal
+			__int64 loctf = 0;
+			for (loctf = 0; loctf < 3 && lst[i][loctf] != TRUE_3SAT && lst[i][loctf] != FALSE_3SAT; loctf++)
+				;
+
+			__int64 absl0 = l[0] < 0 ? -l[0] : l[0];
+			__int64 absl1 = l[1] < 0 ? -l[1] : l[1];
 
 			__int64 c[2];
-			c[0] = l[0] < 0 ? -master->encoding[l[0] - 2] + 1 : master->encoding[l[0] - 2] + 1;
-			c[1] = l[1] < 0 ? -master->encoding[l[1] - 2] + 1 : master->encoding[l[1] - 2] + 1;
+			c[0] = master->encoding[absl0 - 2] + 1;
+			c[1] = master->encoding[absl1 - 2] + 1;
 
 			__int64 md = 0;
 			__int64 lo = 0;
 
-			if (c[0] > c[1] && id == 0)
-				md = lst[i][1] < 0 ? -c[1] : c[1];
-			else if (c[0] > c[1] && id != 0)
+			if (c[0] > c[1] && loctf == 2) {
+				lo = lst[i][1] < 0 ? -c[1] : c[1];
 				md = lst[i][0] < 0 ? -c[0] : c[0];
-			else if (c[1] >= c[0] && id == 1)
-				md = lst[i][2] < 0 ? -c[2] : c[2];
-			else
-				md = lst[i][1] < 0 ? -c[1] : c[1];
-
-			if (c[0] < c[1] && id == 0)
-				lo = lst[i][1] < 0 ? -c[1] : c[1];
-			else if (c[0] < c[1] && id != 0)
+			}
+			else if (c[0] > c[1] && loctf == 1) {
+				lo = lst[i][2] < 0 ? -c[1] : c[1];
+				md = lst[i][0] < 0 ? -c[0] : c[0];
+			}
+			else if (c[0] > c[1] && loctf == 0) {
+				lo = lst[i][2] < 0 ? -c[1] : c[1];
+				md = lst[i][1] < 0 ? -c[0] : c[0];
+			}
+			else if (c[1] >= c[0] && loctf == 2 ) {
 				lo = lst[i][0] < 0 ? -c[0] : c[0];
-			else if (c[1] <= c[0] && id == 1)
-				lo = lst[i][2] < 0 ? -c[2] : c[2];
-			else
-				lo = lst[i][1] < 0 ? -c[1] : c[1];
+				md = lst[i][1] < 0 ? -c[1] : c[1];
+			}
+			else if (c[1] >= c[0] && loctf == 1) {
+				lo = lst[i][0] < 0 ? -c[0] : c[0];
+				md = lst[i][2] < 0 ? -c[1] : c[1];
+			}
+			else { // loctf = 0
+				lo = lst[i][1] < 0 ? -c[0] : c[0];
+				md = lst[i][2] < 0 ? -c[1] : c[1];
+			}
 
 			master->powers[i] = lo;
 			master->limits[i] = md;
@@ -844,7 +855,9 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 					break;
 				}
 
-			__int64 c = l[0] < 0 ? -master->encoding[l[0] - 2] + 1 : master->encoding[l[0] - 2] + 1;
+			__int64 absl0 = l[0] < 0 ? -l[0] : l[0];
+
+			__int64 c = master->encoding[absl0 - 2] + 1;
 
 			__int64 md = lst[i][id] < 0 ? -c : c;
 			__int64 lo = lst[i][id] < 0 ? -c : c;
