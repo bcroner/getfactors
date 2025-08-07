@@ -422,7 +422,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	}
 
-	//printf_s("count: %lld\n", (__int64)count);
+	printf_s("count: %lld\n", (__int64)count);
 
 	if ((SATSolver_GreaterThan(me->Z, me->master->end[chop], me->master->n)) || (prev_is_end && jump_occurred)) {
 		delete[] prev_Z;
