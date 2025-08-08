@@ -196,17 +196,18 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 
 bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
+	///*
+
 	__int64 pow = me->master->powers[cls_ix];
-	__int64 abs_pow = pow < 0 ? -pow : pow;
-	bool sign = me->Z[abs_pow - 1];
+	__int64 abs_pow = pow < 0 ? -pow - 1: pow - 1;
+	bool sign = me->Z[abs_pow];
 	__int64 top = 0;
 
 	if (!sign)
-		me->Z[abs_pow - 1] = true;
+		me->Z[abs_pow] = true;
 	else {
 
-
-		for (top = abs_pow - 1; top < me->master->n; top++) {
+		for (top = abs_pow; top < me->master->n; top++) {
 			if (me->Z[top]) {
 				me->Z[top] = false;
 				SATSolver_updateTF(me, top, false);
@@ -222,13 +223,15 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
 	// zero out all lower bits of Z
 
-	for (__int64 j = abs_pow - 2; j >= 0; j--)
+	for (__int64 j = abs_pow - 1; j >= 0; j--)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me, j, false);
 		}
 
 	return top < me->master->n;
+
+	//*/
 
 	/*
 
@@ -294,6 +297,9 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 		}
 
 		bottom = abs_limit;
+
+		//me->pos_implies_arr[pos] = -(pos + 2);
+		//me->neg_implies_arr[pos] = pos + 1;
 
 	}
 	
