@@ -196,7 +196,7 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 
 bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
-	///*
+	/*
 
 	__int64 pow = me->master->powers[cls_ix];
 	__int64 abs_pow = pow < 0 ? -pow - 1: pow - 1;
@@ -233,7 +233,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
 	//*/
 
-	/*
+	///*
 
 	__int64 temp_pow_jump = me->master->powers[cls_ix];
 	__int64 abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
@@ -261,23 +261,31 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 	else {
 
 		__int64 neg_limit = me->neg_implies_arr[pos];
-		__int64 abs_neg_limit = neg_limit < 0 ? -neg_limit : neg_limit;
+		__int64 abs_neg_limit = neg_limit < 0 ? -neg_limit - 1 : neg_limit - 1;
 		__int64 pos_limit = me->pos_implies_arr[pos];
-		__int64 abs_pos_limit = pos_limit < 0 ? -pos_limit : pos_limit;
+		__int64 abs_pos_limit = pos_limit < 0 ? -pos_limit - 1 : pos_limit - 1;
 		__int64 limit;
 		__int64 abs_limit;
 
-		if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && ( neg_limit < 0 || pos_limit < 0))) {
+		if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && neg_limit < 0)) {
 			limit = neg_limit;
 			abs_limit = abs_neg_limit;
+		}
+		else if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && pos_limit < 0)) {
+			limit = pos_limit;
+			abs_limit = abs_pos_limit;
 		}
 		else if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && (neg_limit > 0 && pos_limit > 0))) {
 			limit = neg_limit;
 			abs_limit = abs_neg_limit;
 		}
-		if (abs_neg_limit > abs_pos_limit || (abs_neg_limit == abs_pos_limit && (neg_limit < 0 || pos_limit < 0))) {
+		else if (abs_neg_limit > abs_pos_limit || (abs_neg_limit == abs_pos_limit && (pos_limit < 0))) {
 			limit = pos_limit;
 			abs_limit = abs_pos_limit;
+		}
+		else if (abs_neg_limit > abs_pos_limit || (abs_neg_limit == abs_pos_limit && (neg_limit < 0))) {
+			limit = neg_limit;
+			abs_limit = abs_neg_limit;
 		}
 		else {
 			limit = pos_limit;
