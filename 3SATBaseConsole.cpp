@@ -343,7 +343,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		if (me->cls_tly[i] == 3 && ((abs_temp_jump > abs_max_jump) || (abs_temp_jump == abs_max_jump && abs_temp_limit > abs_max_limit)))
+		bool temp_limit_is_larger = (abs_temp_limit > abs_max_limit) || (abs_temp_limit == abs_max_limit && temp_limit > 0);
+		if ((me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump) || (me->cls_tly[i] == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger))
 		{
 			max_jump = temp_jump;
 			max_limit = temp_limit;
