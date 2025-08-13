@@ -196,7 +196,7 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 
 void SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
-	///*
+	/*
 
 	__int64 pow = me->master->powers[cls_ix];
 	__int64 abs_pow = pow < 0 ? -pow - 1: pow - 1;
@@ -233,7 +233,7 @@ void SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
 	//*/
 
-	/*
+	///*
 
 	__int64 temp_pow_jump = me->master->powers[cls_ix];
 	__int64 abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
@@ -319,7 +319,7 @@ void SATSolver_add(SATSolver * me , __int64 cls_ix) {
 			SATSolver_updateTF(me, j, false);
 		}
 	
-	return abs_next < me->master->n;
+	return;
 
 	//*/
 }
