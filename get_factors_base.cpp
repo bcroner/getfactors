@@ -183,8 +183,8 @@ char* nat_test_add(__int64 * len_para) {
 
 char* nat_test_mul(__int64 * len_para) {
 
-    const char* a_str_c = "4";
-    const char* b_str_c = "4";
+    const char* a_str_c = "8";
+    const char* b_str_c = "8";
 
     char a_str[2000];
     char b_str[2000];
@@ -472,16 +472,16 @@ int main()
         cf909a12a7"); // https://gmail.com
     //*/
 
-    char* nat_add_str = nat_test_add(&len_para);
-    printf_s("%s\n", nat_add_str);
+    //char* nat_add_str = nat_test_add(&len_para);
+    //printf_s("%s\n", nat_add_str);
 
-    //char* nat_mul_str = nat_test_mul(&len_para);
-    //printf_s("%s\n", nat_mul_str);
+    char* nat_mul_str = nat_test_mul(&len_para);
+    printf_s("%s\n", nat_mul_str);
 
     /*
     char c_str[2000];
-    strcpy_s(c_str, 2000, "4");
-    //strcpy_s(c_str, 2000, "6");
+    //strcpy_s(c_str, 2000, "4");
+    strcpy_s(c_str, 2000, "6");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
     //char * factors = dec_get_factors(c_str, 2000, & len_para);
