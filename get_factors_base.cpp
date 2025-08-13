@@ -14,7 +14,7 @@ using namespace std;
 
 char* nat_test_add(__int64 * len_para) {
 
-    const char* a_str_c = "9";
+    const char* a_str_c = "2";
     const char* b_str_c = "3";
 
     char a_str[2000];
@@ -85,6 +85,10 @@ char* nat_test_add(__int64 * len_para) {
     __int64 add_str_len = 0;
 
     char* add_str = nat_add(&num_para, &c, a, b, false, &add_str_len);
+
+    //__int64 dummy = 0;
+    //char* cst = nat_to_str(NULL, c, &dummy);
+    //return cst;
 
     __int64 buf_3sat_sz = add_str_len + 1;
 
