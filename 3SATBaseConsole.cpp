@@ -452,7 +452,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	printf_s("count: %lld\n", (__int64)count);
 
-	if (crossed_boundary || jump_occurred)
+	if (crossed_boundary)
 		return false;
 
 	for (__int64 i = 0; i < me->master->n; i++)
