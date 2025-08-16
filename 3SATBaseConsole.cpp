@@ -259,6 +259,8 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 		me->Z[pos] = true;
 		SATSolver_updateTF(me, pos, true);
 		bottom = pos;
+		if (pos >= me->master->n - me->master->chops)
+			crossed_boundary = true;
 	}
 	else {
 
@@ -298,13 +300,13 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 			if (me->Z[abs_next]) {
 				me->Z[abs_next] = false;
 				SATSolver_updateTF(me, abs_next, false);
-				if (abs_next >= me->master->chops)
+				if (abs_next >= me->master->n - me->master->chops)
 					crossed_boundary = true;
 			}
 			else {
 				me->Z[abs_next] = true;
 				SATSolver_updateTF(me, abs_next, true);
-				if (abs_next >= me->master->chops)
+				if (abs_next >= me->master->n - me->master->chops)
 					crossed_boundary = true;
 				break;
 			}
