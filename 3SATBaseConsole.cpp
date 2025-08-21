@@ -260,11 +260,6 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 	__int64 abs_next = 0;
 	__int64 bottom = 0;
 
-	if (temp_pow_jump < 0)
-		me->neg_implies_arr[pos] = temp_limit;
-	else
-		me->pos_implies_arr[pos] = temp_limit;
-
 	bool sign = me->Z[pos];
 
 	if (!sign) {
@@ -631,12 +626,14 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 
 	me->master = master;
 	me->Z = new bool [n_parm];
-	me->pos_implies_arr = new __int64[n_parm];
-	me->neg_implies_arr = new __int64[n_parm];
+	me->pos_implies_arr = new ClauseListItem * [n_parm];
+	me->neg_implies_arr = new ClauseListItem * [n_parm];
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		me->pos_implies_arr[i] = -(i+2);
-		me->neg_implies_arr[i] = i+1;
+		me->pos_implies_arr[i]->cls_ix = -1;
+		me->pos_implies_arr[i]->next = NULL;
+		me->neg_implies_arr[i]->cls_ix = -1;
+		me->neg_implies_arr[i]->next = NULL;
 	}
 
 	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
@@ -1044,6 +1041,24 @@ void SATSolver_destroy(SATSolver * me) {
 
 	delete[] me->cls_tly;
 	delete[] me->Z;
+
+	for (int i = 0; i < me->master->n; i++) {
+
+		ClauseListItem* temp = me->neg_implies_arr[i];
+		while (temp != NULL) {
+			ClauseListItem* dump = temp;
+			temp = temp->next;
+			delete dump;
+		}
+
+		ClauseListItem* temp = me->pos_implies_arr[i];
+		while (temp != NULL) {
+			ClauseListItem* dump = temp;
+			temp = temp->next;
+			delete dump;
+		}
+	}
+
 	delete[] me->neg_implies_arr;
 	delete[] me->pos_implies_arr;
 }
