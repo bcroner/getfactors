@@ -188,6 +188,18 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 	}
 }
 
+bool SATSolver_less_than(__int64 a, __int64 b) {
+
+	__int64 abs_a = a < 0 ? -a : a;
+	__int64 abs_b = b < 0 ? -b : b;
+
+	if ((abs_a < abs_b) || (abs_a == abs_b && a < b))
+		return true;
+	else
+		return false;
+
+}
+
 /*
 * 
 * add- add a number 2^pos_parm to Z
@@ -261,6 +273,10 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 		bottom = pos;
 		if (pos >= me->master->n - me->master->chops)
 			crossed_boundary = true;
+
+		for (int i = pos; i < me->master->n; i++)
+			if (i <= abs_temp_limit && SATSolver_less_than(temp_limit, me->neg_implies_arr[i]))
+				me->neg_implies_arr[i] = temp_limit;
 	}
 	else {
 
