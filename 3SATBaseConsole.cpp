@@ -270,7 +270,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 			crossed_boundary = true;
 
 		for (int i = pos; i < me->master->n; i++)
-			if (i <= abs_temp_limit && SATSolver_less_than(temp_limit, me->neg_implies_arr[i]))
+			if (me->Z [i] && abs_temp_limit <= i && SATSolver_less_than (temp_limit, me->neg_implies_arr [i]))
 				me->neg_implies_arr[i] = temp_limit;
 	}
 	else {
@@ -322,6 +322,10 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 				break;
 			}
 		}
+
+		me->neg_implies_arr[pos] = pos;
+		me->pos_implies_arr[pos] = -(pos + 1);
+
 
 		bottom = abs_limit;
 
@@ -626,14 +630,12 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 
 	me->master = master;
 	me->Z = new bool [n_parm];
-	me->pos_implies_arr = new ClauseListItem * [n_parm];
-	me->neg_implies_arr = new ClauseListItem * [n_parm];
+	me->pos_implies_arr = new __int64 [n_parm];
+	me->neg_implies_arr = new __int64 [n_parm];
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		me->pos_implies_arr[i]->cls_ix = -1;
-		me->pos_implies_arr[i]->next = NULL;
-		me->neg_implies_arr[i]->cls_ix = -1;
-		me->neg_implies_arr[i]->next = NULL;
+		me->pos_implies_arr[i] = -(i+1);
+		me->neg_implies_arr[i] = i;
 	}
 
 	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
@@ -1041,24 +1043,6 @@ void SATSolver_destroy(SATSolver * me) {
 
 	delete[] me->cls_tly;
 	delete[] me->Z;
-
-	for (int i = 0; i < me->master->n; i++) {
-
-		ClauseListItem* temp = me->neg_implies_arr[i];
-		while (temp != NULL) {
-			ClauseListItem* dump = temp;
-			temp = temp->next;
-			delete dump;
-		}
-
-		ClauseListItem* temp = me->pos_implies_arr[i];
-		while (temp != NULL) {
-			ClauseListItem* dump = temp;
-			temp = temp->next;
-			delete dump;
-		}
-	}
-
 	delete[] me->neg_implies_arr;
 	delete[] me->pos_implies_arr;
 }
