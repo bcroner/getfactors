@@ -14,13 +14,6 @@
 #define FALSE_3SAT -1
 #define TRUE_3SAT 1
 
-typedef struct ClauseListItem_Tag {
-
-	__int64 cls_ix;
-	ClauseListItem_Tag* next;
-
-} ClauseListItem;
-
 typedef struct SATSolverMaster_TAG {
 
 	__int64* decoding;		// forward decoding of variables: from Z to original input ("lst" in create)
@@ -45,8 +38,8 @@ typedef struct SATSolver_TAG {
 
 	__int64 * cls_tly;			// running tallies of the number of literals matched in clauses
 
-	ClauseListItem ** pos_implies_arr;	// positives implies array- what is implied by the encounter of jumps of recorded values
-	ClauseListItem ** neg_implies_arr;	// negatives implies array- what is implied by the encounter of jumps of recorded values
+	__int64 * pos_implies_arr;	// positives implies array- what is implied by the encounter of jumps of recorded values
+	__int64 * neg_implies_arr;	// negatives implies array- what is implied by the encounter of jumps of recorded values
 
 	bool* Z;					// current position in permutation space
 } SATSolver;
