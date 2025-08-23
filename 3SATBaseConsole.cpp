@@ -400,8 +400,6 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	bool jump_occurred = false;
 	bool crossed_boundary = false;
-	//bool Z_got_bigger = false;
-
 		
 	printf_s("chop: %lld\n", chop);
 
@@ -431,8 +429,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	if (true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
-		printf_s(" jump: %I64d", me->master->powers[cls_ix]);
-		printf_s("\n");
+		printf_s(" clause: %I64d jump: %I64d\n", cls_ix, me->master->powers[cls_ix]);
 	}
 
 	while ( ! crossed_boundary && jump_occurred) {
@@ -461,8 +458,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
-			printf_s(" jump: %I64d count_matches: %I64d", me->master->powers[cls_ix], count_matches);
-			printf_s("\n");
+			printf_s(" clause: %I64d jump: %I64d\n", cls_ix, me->master->powers[cls_ix]);
 		}
 
 	}
