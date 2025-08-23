@@ -269,8 +269,8 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 		if (pos >= me->master->n - me->master->chops)
 			crossed_boundary = true;
 
-		for (int i = pos; i < me->master->n; i++)
-			if (me->Z [i] && abs_temp_limit <= i && SATSolver_less_than (temp_limit, me->neg_implies_arr [i]))
+		for (int i = pos; i <= abs_temp_limit; i++)
+			if (me->Z [i] && SATSolver_less_than (temp_limit, me->neg_implies_arr [i]))
 				me->neg_implies_arr[i] = temp_limit;
 	}
 	else {
