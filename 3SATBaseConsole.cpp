@@ -208,15 +208,17 @@ bool SATSolver_less_than(__int64 a, __int64 b) {
 
 bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 
-	/*
+	///*
 
 	__int64 pow = me->master->powers[cls_ix];
 	__int64 abs_pow = pow < 0 ? -pow - 1: pow - 1;
 	bool sign = me->Z[abs_pow];
 	__int64 top = 0;
 
-	if (!sign)
+	if (!sign) {
 		me->Z[abs_pow] = true;
+		SATSolver_updateTF(me, abs_pow, true);
+	}
 	else {
 
 		for (top = abs_pow; top < me->master->n; top++) {
@@ -241,11 +243,11 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 			SATSolver_updateTF(me, j, false);
 		}
 
-	return;
+	return top >= me->master->n - me->master->chops;
 
 	//*/
 
-	///*
+	/*
 
 	bool crossed_boundary = false;
 
@@ -269,11 +271,15 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 		if (pos >= me->master->n - me->master->chops)
 			crossed_boundary = true;
 
-		for (int i = pos; i < abs_temp_limit; i++)
-			if (me->Z [i] && SATSolver_less_than (temp_limit, me->neg_implies_arr [i]))
-				me->neg_implies_arr[i] = temp_limit;
+		me->neg_implies_arr[pos] = me->master->limits[cls_ix];
+
+		//for (int i = pos; i < abs_temp_limit; i++)
+		//	if (me->Z [i] && SATSolver_less_than (temp_limit, me->neg_implies_arr [i]))
+		//		me->neg_implies_arr[i] = temp_limit;
 	}
 	else {
+
+		me->pos_implies_arr[pos] = me->master->limits[cls_ix];
 
 		__int64 neg_limit = me->neg_implies_arr[pos];
 		__int64 abs_neg_limit = neg_limit < 0 ? -neg_limit - 1 : neg_limit - 1;
@@ -323,8 +329,8 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 			}
 		}
 
-		me->neg_implies_arr[pos] = pos;
-		me->pos_implies_arr[pos] = -(pos + 1);
+		//me->neg_implies_arr[pos] = pos;
+		//me->pos_implies_arr[pos] = -(pos + 1);
 
 
 		bottom = abs_limit;
@@ -630,7 +636,7 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 	me->neg_implies_arr = new __int64 [n_parm];
 
 	for (__int64 i = 0; i < n_parm; i++) {
-		me->pos_implies_arr[i] = -(i+1);
+		me->pos_implies_arr[i] = -(i + 1);
 		me->neg_implies_arr[i] = i;
 	}
 
