@@ -1546,18 +1546,20 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
 
     *c = create_nat(num_para, itmd_c->sz - zero_bits);
 
-    // if c->bd_sz > itmd_c->bd_sz, pad with FALSE_3SAT
+    *c = new nat_3sat();
+    (*c)->sz = sz;
+    (*c)->bits = new bit_3sat* [sz];
+
+    for (__int64 i = 0; i < sz; i++) {
+        (*c)->bits[i] = new bit_3sat();
+        (*c)->bits[i]->id = FALSE_3SAT;
+    }
 
     __int64 c_start = 0;
     __int64 itmd_c_start = 0;
 
-    if ((*c)->sz > itmd_c->sz) {
-        for (__int64 i = 0; i < (*c)->sz - itmd_c->sz; i++) {
-            (*c)->bits[i] = new bit_3sat();
-            (*c)->bits[i]->id = FALSE_3SAT;
-        }
+    if ((*c)->sz > itmd_c->sz)
         c_start = (*c)->sz - itmd_c->sz;
-    }
     else
         itmd_c_start = itmd_c->sz - (*c)->sz;
 
