@@ -112,16 +112,16 @@ char* nat_test_add(__int64 * len_para) {
 
             //printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
 
-            __int64 x = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 y = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 z = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x1 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x2 = input[i][0] < 0 ? -input[i][0] : input[i][0];
 
-            if (x > counted)
-                counted = x;
-            if (y > counted)
-                counted = y;
-            if (z > counted)
-                counted = z;
+            if (x0 > counted)
+                counted = x0;
+            if (x1 > counted)
+                counted = x1;
+            if (x2 > counted)
+                counted = x2;
 
         }
 
@@ -277,16 +277,16 @@ char* nat_test_mul(__int64 * len_para) {
 
             //printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
 
-            __int64 x = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 y = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 z = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x1 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x2 = input[i][0] < 0 ? -input[i][0] : input[i][0];
 
-            if (x > counted)
-                counted = x;
-            if (y > counted)
-                counted = y;
-            if (z > counted)
-                counted = z;
+            if (x0 > counted)
+                counted = x0;
+            if (x1 > counted)
+                counted = x1;
+            if (x2 > counted)
+                counted = x2;
 
         }
 
@@ -480,8 +480,9 @@ int main()
 
     ///*
     char c_str[2000];
-    //strcpy_s(c_str, 2000, "4");
-    strcpy_s(c_str, 2000, "6");
+    strcpy_s(c_str, 2000, "4");
+    //strcpy_s(c_str, 2000, "6");
+    //strcpy_s(c_str, 2000, "8");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
     //char * factors = dec_get_factors(c_str, 2000, & len_para);
