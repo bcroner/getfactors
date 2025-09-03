@@ -183,8 +183,8 @@ char* nat_test_add(__int64 * len_para) {
 
 char* nat_test_mul(__int64 * len_para) {
 
-    const char* a_str_c = "2";
-    const char* b_str_c = "2";
+    const char* a_str_c = "4";
+    const char* b_str_c = "4";
 
     char a_str[2000];
     char b_str[2000];
