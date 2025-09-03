@@ -49,7 +49,7 @@ typedef struct SATSolver_TAG {
 void MyQSort(__int64 arr[], __int64 low_parm, __int64 high_parm);
 void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
 bool SATSolver_less_than(__int64 a, __int64 b);
-bool SATSolver_add(SATSolver* me, __int64 cls_ix);
+bool SATSolver_add(SATSolver* me, __int64 cls_ix, __int64 prev);
 __int64 SATSolver_initializePowJump(SATSolver* me);
 bool SATSolver_GreaterThan(bool* a, bool* b, __int64 n);
 bool SATSolver_isSat(SATSolver* me, __int64 chop, bool *arr);
