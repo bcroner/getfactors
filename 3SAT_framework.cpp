@@ -1199,7 +1199,7 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     */
     // create return buffer
 
-    __int64 buf_sz = (num_sz) * (128 + 128) + 128;
+    __int64 buf_sz = (num_sz) * (128 + 128) + 192;
     char* ret = new char[buf_sz];
     __int64 pos = 0;
 
@@ -1239,21 +1239,22 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
 
     // verify that d xnors with eq (set to either true or false)
 
-    __int64 final_xnor_str_len = 0;
+    __int64 final_and_str_len = 0;
 
     bit_3sat* eq_bit = new bit_3sat();
     eq_bit->id = eq ? TRUE_3SAT : FALSE_3SAT;
 
     bit_3sat* f = NULL;
-    char* final_xnor_str = xnor_3sat(num_para, &f, d, eq_bit, &final_xnor_str_len);
-    strcpy_s(&(ret[pos]), buf_sz - pos, final_xnor_str);
-    pos += final_xnor_str_len;
+    char* final_and_str = and_3sat(num_para, &f, d, eq_bit, &final_and_str_len);
+    strcpy_s(&(ret[pos]), buf_sz - pos, final_and_str);
+    pos += final_and_str_len;
 
     *len_para = pos;
 
-    delete final_xnor_str;
+    delete final_and_str;
     delete [] xnor_str_len;
     delete [] and_str_len;
+    delete f;
 
     return ret;
 
