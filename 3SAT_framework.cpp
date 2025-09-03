@@ -1158,6 +1158,12 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     //nat_3sat* b_mod;
 
     __int64 num_sz = a->sz > b->sz ? a->sz : b->sz;
+
+    /*
+    * The above line of code introduces a potential buffer overrun bug.
+    */
+
+
 /*    __int64 a_start = num_sz < a->sz ? a->sz - num_sz : a->sz;
     __int64 b_start = num_sz < b->sz ? b->sz - num_sz : b->sz;
 
@@ -1222,10 +1228,8 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     for (__int64 i = 0; i < c->sz; i++)
         and_str_len[i] = 0;
 
-    __int64 id = c->bits[0]->id;
-
     bit_3sat* d = new bit_3sat();
-    d->id = id;
+    d->id = c->bits[0]->id;
 
     for (__int64 i = 1; i < c->sz; i++) {
         bit_3sat* temp = NULL;
