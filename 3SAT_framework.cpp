@@ -1215,9 +1215,12 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     for (__int64 i = 0; i < num_sz; i++)
         xnor_str_len[i] = 0;
 
-    nat_3sat* c = create_nat(num_para, num_sz);
+    nat_3sat* c = new nat_3sat();
+    c->sz = num_sz ;
+    c->bits = new bit_3sat * [num_sz];
+
     for (__int64 i = 0; i < num_sz; i++) {
-        char* xnor_str = xnor_3sat(num_para, &c->bits[i], a->bits[i], b->bits[i], &(xnor_str_len[i]));
+        char* xnor_str = xnor_3sat(num_para, &c->bits[i], a->bits[i], b->bits[i], & (xnor_str_len[i]));
         strcpy_s(&(ret[pos]), buf_sz - pos, xnor_str);
         pos += xnor_str_len[i];
     }
@@ -2330,16 +2333,16 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
 
     for (__int64 i = 0; i < k; i++) {
 
-        __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 x1 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 x2 = input[i][0] < 0 ? -input[i][0] : input[i][0];
 
-        if (a > counted)
-            counted = a;
-        if (b > counted)
-            counted = b;
-        if (c > counted)
-            counted = c;
+        if (x0 > counted)
+            counted = x0;
+        if (x1 > counted)
+            counted = x1;
+        if (x2 > counted)
+            counted = x2;
 
     }
 
