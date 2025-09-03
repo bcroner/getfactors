@@ -2373,10 +2373,9 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
         return prime_str;
 
     __int64 a_str_sz = 0;
-
-    char* a_str = nat_to_str(sln, a, &a_str_sz);
     __int64 b_str_sz = 0;
 
+    char* a_str = nat_to_str(sln, a, &a_str_sz);
     char* b_str = nat_to_str(sln, b, &b_str_sz);
 
     __int64 ret_buf_sz = a_str_sz + (__int64)strnlen_s("\n\n", 4) + b_str_sz + 1;
