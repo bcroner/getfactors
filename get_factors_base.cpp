@@ -475,10 +475,10 @@ int main()
     //char* nat_add_str = nat_test_add(&len_para);
     //printf_s("%s\n", nat_add_str);
 
-    char* nat_mul_str = nat_test_mul(&len_para);
-    printf_s("%s\n", nat_mul_str);
+    //char* nat_mul_str = nat_test_mul(&len_para);
+    //printf_s("%s\n", nat_mul_str);
 
-    /*
+    ///*
     char c_str[2000];
     //strcpy_s(c_str, 2000, "4");
     strcpy_s(c_str, 2000, "6");
