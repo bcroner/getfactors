@@ -221,12 +221,12 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	}
 	else {
 
-		//if (-me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[prev], me->master->limits[pow]))
+		//if (me->master->powers[prev] < 0 && -me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[prev], me->master->limits[pow]))
 		//	abs_pow = me->master->limits[prev];
 		//else
 		//	abs_pow = me->master->limits[pow];
 
-		//abs_pow = abs_pow < 0 ? -abs_pow : abs_pow;
+		//abs_pow = abs_pow < 0 ? -abs_pow - 1 : abs_pow - 1;
 
 		for (top = abs_pow; top < me->master->n; top++) {
 			if (me->Z[top]) {
