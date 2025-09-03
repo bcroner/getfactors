@@ -1154,55 +1154,28 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     
     // create modified a and b for comparison purposes
 
-    //nat_3sat* a_mod;
-    //nat_3sat* b_mod;
-
     __int64 num_sz = a->sz > b->sz ? a->sz : b->sz;
 
-    /*
-    * The above line of code introduces a potential buffer overrun bug.
-    */
-
-
-/*    __int64 a_start = num_sz < a->sz ? a->sz - num_sz : a->sz;
-    __int64 b_start = num_sz < b->sz ? b->sz - num_sz : b->sz;
-
-    __int64 a_sign_ext = num_sz - a->sz;
-    __int64 b_sign_ext = num_sz - b->sz;
-
-    // instantiate a_mod and b_mod
-    a_mod = new nat_3sat();
+    nat_3sat* a_mod = new nat_3sat ();
+    nat_3sat* b_mod = new nat_3sat ();
     a_mod->sz = num_sz;
-    a_mod->bits = new bit_3sat * [num_sz];
-
-    b_mod = new nat_3sat();
     b_mod->sz = num_sz;
+    a_mod->bits = new bit_3sat * [num_sz];
     b_mod->bits = new bit_3sat * [num_sz];
 
-    // extend a with FALSE_3SAT
-    for (__int64 i = 0; i < a_start; i++) {
+    for (__int64 i = 0; i < num_sz; i++) {
         a_mod->bits[i] = new bit_3sat();
-        a_mod->bits[i]->id = FALSE_3SAT;
-    }
-
-    // extend a with FALSE_3SAT
-    for (__int64 i = 0; i < b_start; i++) {
         b_mod->bits[i] = new bit_3sat();
+        a_mod->bits[i]->id = FALSE_3SAT;
         b_mod->bits[i]->id = FALSE_3SAT;
     }
 
-    // copy over data for a
-    for (__int64 i = a_start; i < a->sz - a_sign_ext; i++) {
-        a_mod->bits[i] = new bit_3sat();
-        a_mod->bits[i]->id = a->bits[i]->id;
-    }
+    for (int i = 0; i < a->sz; i++)
+        a_mod->bits[a_mod->sz - 1 - i]->id = a->bits[a->sz - 1 - i]->id;
 
-    // copy over data for b
-    for (__int64 i = b_start; i < b->sz - b_sign_ext; i++) {
-        b_mod->bits[i] = new bit_3sat();
-        b_mod->bits[i]->id = b->bits[i]->id;
-    }
-    */
+    for (int i = 0; i < b->sz; i++)
+        b_mod->bits[b_mod->sz - 1 - i]->id = b->bits[b->sz - 1 - i]->id;
+
     // create return buffer
 
     __int64 buf_sz = (num_sz) * (128 + 128) + 128;
@@ -1220,7 +1193,7 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     c->bits = new bit_3sat * [num_sz];
 
     for (__int64 i = 0; i < num_sz; i++) {
-        char* xnor_str = xnor_3sat(num_para, &c->bits[i], a->bits[i], b->bits[i], & (xnor_str_len[i]));
+        char* xnor_str = xnor_3sat(num_para, &(c->bits[i]), a_mod->bits[i], b_mod->bits[i], & (xnor_str_len[i]));
         strcpy_s(&(ret[pos]), buf_sz - pos, xnor_str);
         pos += xnor_str_len[i];
     }
@@ -1261,6 +1234,7 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     delete final_xnor_str;
     delete [] xnor_str_len;
     delete [] and_str_len;
+    delete eq_bit;
     delete f;
 
     return ret;
