@@ -113,8 +113,8 @@ char* nat_test_add(__int64 * len_para) {
             //printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
 
             __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 x1 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 x2 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x1 = input[i][1] < 0 ? -input[i][1] : input[i][1];
+            __int64 x2 = input[i][2] < 0 ? -input[i][2] : input[i][2];
 
             if (x0 > counted)
                 counted = x0;
@@ -278,8 +278,8 @@ char* nat_test_mul(__int64 * len_para) {
             //printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
 
             __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 x1 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-            __int64 x2 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+            __int64 x1 = input[i][1] < 0 ? -input[i][1] : input[i][1];
+            __int64 x2 = input[i][2] < 0 ? -input[i][2] : input[i][2];
 
             if (x0 > counted)
                 counted = x0;
