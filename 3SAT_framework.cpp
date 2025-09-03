@@ -380,6 +380,9 @@ char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
 
     *len_para = len;
 
+    for (int i = 0; i < 4; i++)
+        delete[] lst[i];
+
     delete [] lst;
 
     return ret;
