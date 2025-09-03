@@ -1184,34 +1184,31 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
 
     // xnor them all together
 
-    __int64* xnor_str_len = new __int64[num_sz];
-    for (__int64 i = 0; i < num_sz; i++)
-        xnor_str_len[i] = 0;
+    __int64 xnor_str_len = 0;
 
     nat_3sat* c = new nat_3sat();
     c->sz = num_sz ;
     c->bits = new bit_3sat * [num_sz];
 
     for (__int64 i = 0; i < num_sz; i++) {
-        char* xnor_str = xnor_3sat(num_para, &(c->bits[i]), a_mod->bits[i], b_mod->bits[i], & (xnor_str_len[i]));
+        char* xnor_str = xnor_3sat(num_para, &(c->bits[i]), a_mod->bits[i], b_mod->bits[i], &xnor_str_len);
         strcpy_s(&(ret[pos]), buf_sz - pos, xnor_str);
-        pos += xnor_str_len[i];
+        pos += xnor_str_len;
+        delete[] xnor_str;
     }
 
     // and all those xnors together
 
-    __int64* and_str_len = new __int64[c->sz];
-    for (__int64 i = 0; i < c->sz; i++)
-        and_str_len[i] = 0;
+    __int64 and_str_len = 0;
 
     bit_3sat* d = new bit_3sat();
     d->id = c->bits[0]->id;
 
     for (__int64 i = 1; i < c->sz; i++) {
         bit_3sat* temp = NULL;
-        char* and_str = and_3sat(num_para, &temp, d, c->bits[i], &(and_str_len[i]));
+        char* and_str = and_3sat(num_para, &temp, d, c->bits[i], &and_str_len);
         strcpy_s(&(ret[pos]), buf_sz - pos, and_str);
-        pos += and_str_len[i];
+        pos += and_str_len;
         bit_3sat* dump = d;
         d = temp;
         delete dump;
@@ -1232,8 +1229,6 @@ char* nat_equals(__int64 * num_para, nat_3sat* a, nat_3sat* b, bool eq, __int64*
     *len_para = pos;
 
     delete final_xnor_str;
-    delete [] xnor_str_len;
-    delete [] and_str_len;
     delete eq_bit;
     delete f;
 
