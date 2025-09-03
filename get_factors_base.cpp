@@ -443,8 +443,9 @@ int main()
     ///*
     char c_str[2000];
     //strcpy_s(c_str, 2000, "4");
+    strcpy_s(c_str, 2000, "5");
     //strcpy_s(c_str, 2000, "6");
-    strcpy_s(c_str, 2000, "7");
+    //strcpy_s(c_str, 2000, "7");
     //strcpy_s(c_str, 2000, "8");
     //strcpy_s(c_str, 2000, "F");
     //strcpy_s(c_str, 2000, "8F");
