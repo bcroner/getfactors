@@ -1467,8 +1467,8 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
     // create the first intermediate number
 
     nat_3sat* itmd_c = new nat_3sat();
-    itmd_c->bits = new bit_3sat * [sz];
-    itmd_c->sz = sz;
+    itmd_c->bits = new bit_3sat * [a->sz + b->sz];
+    itmd_c->sz = a->sz + b->sz;
 
     for (__int64 j = 0; j < a->sz; j++) {
         char* and_str = and_3sat(num_para, &itmd_c->bits[itmd_c->sz - j - 1], a->bits[a->sz - j - 1], b->bits[b->sz - 1], &(and_str_itmd_ab[0][j]));
@@ -1535,16 +1535,7 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
         delete itmd_a;
     }
 
-    // count bits in itmd_c
-
-    __int64 zero_bits = 0;
-
-    for (zero_bits = 0; zero_bits < itmd_c->sz && itmd_c->bits[zero_bits]->id == FALSE_3SAT; zero_bits++)
-        ;
-
     // copy itmd_c to c truncated according to bd_sz and ad_sz
-
-    *c = create_nat(num_para, itmd_c->sz - zero_bits);
 
     *c = new nat_3sat();
     (*c)->sz = sz;
@@ -1555,13 +1546,8 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
         (*c)->bits[i]->id = FALSE_3SAT;
     }
 
-    __int64 c_start = 0;
-    __int64 itmd_c_start = 0;
-
-    if ((*c)->sz > itmd_c->sz)
-        c_start = (*c)->sz - itmd_c->sz;
-    else
-        itmd_c_start = itmd_c->sz - (*c)->sz;
+    __int64 c_start = (*c)->sz > itmd_c->sz ? (*c)->sz - itmd_c->sz : 0;
+    __int64 itmd_c_start = (*c)->sz > itmd_c->sz ? 0 : itmd_c->sz - (*c)->sz;
 
     // calculate number of bits to copy over
 
@@ -1569,10 +1555,8 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
 
     // copy over that many bits
 
-    for (__int64 i = 0; i < copy_over; i++) {
-        (*c)->bits[c_start + i] = new bit_3sat();
+    for (__int64 i = 0; i < copy_over; i++)
         (*c)->bits[c_start + i]->id = itmd_c->bits[itmd_c_start + i]->id;
-    }
 
     // create the return buffer and populate with 3CNF
 
