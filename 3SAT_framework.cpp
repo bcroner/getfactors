@@ -2156,25 +2156,8 @@ char* dec_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
 
     delete[] buf_3sat;
 
-    __int64 counted = 0;
-
-    for (__int64 i = 0; i < k; i++) {
-
-        __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 x1 = input[i][1] < 0 ? -input[i][1] : input[i][1];
-        __int64 x2 = input[i][2] < 0 ? -input[i][2] : input[i][2];
-
-        if (x0 > counted)
-            counted = x0;
-        if (x1 > counted)
-            counted = x1;
-        if (x2 > counted)
-            counted = x2;
-
-    }
-
     SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, counted , 0);
+    SATSolverMaster_create(master, input, k, num_para - 1, 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
@@ -2189,7 +2172,7 @@ char* dec_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
     for (__int64 i = 0; i < search_sz; i++) {
 
         SATSolver* s = new SATSolver();
-        SATSolver_create(s, master, input, k, counted, i);
+        SATSolver_create(s, master, input, k, num_para - 1, i);
 
         is_sat = SATSolver_isSat(s, i, sln);
         if (is_sat)
@@ -2298,25 +2281,8 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
 
     delete[] buf_3sat;
 
-    __int64 counted = 0;
-
-    for (__int64 i = 0; i < k; i++) {
-
-        __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 x1 = input[i][1] < 0 ? -input[i][1] : input[i][1];
-        __int64 x2 = input[i][2] < 0 ? -input[i][2] : input[i][2];
-
-        if (x0 > counted)
-            counted = x0;
-        if (x1 > counted)
-            counted = x1;
-        if (x2 > counted)
-            counted = x2;
-
-    }
-
     SATSolverMaster* master = new SATSolverMaster();
-    SATSolverMaster_create(master, input, k, counted, 0);
+    SATSolverMaster_create(master, input, k, num_para - 1, 0);
 
     char* prime_str = new char[8];
     sprintf_s(prime_str, 8, "prime");
@@ -2331,7 +2297,7 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
     for (__int64 i = 0; i < search_sz; i++) {
 
         SATSolver* s = new SATSolver();
-        SATSolver_create(s, master, input, k, counted, i);
+        SATSolver_create(s, master, input, k, num_para - 1, i);
 
         is_sat = SATSolver_isSat(s, i, sln);
         if (is_sat)
