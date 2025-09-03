@@ -1502,8 +1502,8 @@ char* nat_mul(__int64 * num_para, nat_3sat** c, nat_3sat* a, nat_3sat* b, __int6
     for (__int64 i = 1; i < b->sz; i++) {
         nat_3sat* itmd_b = itmd_c;
         nat_3sat* itmd_a = new nat_3sat();
-        itmd_a->bits = new bit_3sat * [sz];
-        itmd_a->sz = sz;
+        itmd_a->bits = new bit_3sat * [a->sz + b->sz];
+        itmd_a->sz = a->sz + b->sz;
         for (__int64 j = 0; j < i; j++) {
             itmd_a->bits[itmd_a->sz - j - 1] = new bit_3sat();
             itmd_a->bits[itmd_a->sz - j - 1]->id = FALSE_3SAT;
