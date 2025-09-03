@@ -206,7 +206,7 @@ bool SATSolver_less_than(__int64 a, __int64 b) {
 * 
 */
 
-bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
+bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 
 	///*
 
@@ -220,6 +220,13 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix) {
 		SATSolver_updateTF(me, abs_pow, true);
 	}
 	else {
+
+		//if (-me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[prev], me->master->limits[pow]))
+		//	abs_pow = me->master->limits[prev];
+		//else
+		//	abs_pow = me->master->limits[pow];
+
+		//abs_pow = abs_pow < 0 ? -abs_pow : abs_pow;
 
 		for (top = abs_pow; top < me->master->n; top++) {
 			if (me->Z[top]) {
@@ -378,11 +385,11 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 			max_jump = temp_jump;
 			max_limit = temp_limit;
 			cls_ix = i;
-			printf_s("%lld: %lld ", i, max_jump);
+			//printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
-	printf_s("\n");
+	//printf_s("\n");
 
 	return cls_ix;
 
@@ -406,18 +413,20 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	bool jump_occurred = false;
 	bool crossed_boundary = false;
+	__int64 prev = 0;
 		
 	printf_s("chop: %lld\n", chop);
 
 	for (__int64 i = 0; i < me->master->n; i++)
 		me->Z[i] = me->master->begin[chop][i];
 
+	for (__int64 i = 0; i < me->master->n; i++)
+		printf_s("%lld", (__int64)me->Z[i]);
+	printf_s("\n");
+
 	// main loop- until end condition
 
 	__int64 count = 0;
-	__int64 prev_pos = 0;
-	__int64 abs_prev_pos = 0;
-	bool zero_jump = false;
 
 	__int64 cls_ix = SATSolver_initializePowJump(me);
 	
@@ -426,13 +435,15 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	else
 		jump_occurred = true;
 
-	crossed_boundary = SATSolver_add(me, cls_ix);
+	crossed_boundary = SATSolver_add(me, cls_ix, prev);
+
+	prev = cls_ix;
 
 	count++;
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (true) {
+	if (!true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
 		printf_s(" clause: %I64d jump: %I64d\n", cls_ix, me->master->powers[cls_ix]);
@@ -441,26 +452,25 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	while ( ! crossed_boundary && jump_occurred) {
 
 		jump_occurred = false;
-		abs_prev_pos = prev_pos < 0 ? -prev_pos : prev_pos;
 
 		__int64 count_matches = 0;
 
 		cls_ix = SATSolver_initializePowJump(me);
 
-		if (cls_ix == -1) {
-			zero_jump = true;
+		if (cls_ix == -1)
 			break;
-		}
 		else
 			jump_occurred = true;
 
-		crossed_boundary = SATSolver_add(me, cls_ix);
+		crossed_boundary = SATSolver_add(me, cls_ix, prev);
+
+		prev = cls_ix;
 
 		count++;
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (true) {
+		if (!true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
@@ -594,15 +604,15 @@ bool* SATSolver_create_boundary(bool begin, __int64 chop, __int64 offs, __int64 
 			pow2 *= 2;
 
 		if (offs >= pow2) {
-			ret[i] = true;
+			ret[n - 1 - i] = true;
 			offs -= pow2;
 		}
 		else
-			ret[i] = false;
+			ret[n - 1 - i] = false;
 	}
 
 	for (__int64 i = chop; i < n; i++)
-		ret[i] = begin ? false : true;
+		ret[n - 1 - i] = begin ? false : true;
 
 	return ret;
 
