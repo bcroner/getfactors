@@ -2191,16 +2191,16 @@ char* dec_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
 
     for (__int64 i = 0; i < k; i++) {
 
-        __int64 a = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 b = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 c = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 x1 = input[i][1] < 0 ? -input[i][1] : input[i][1];
+        __int64 x2 = input[i][2] < 0 ? -input[i][2] : input[i][2];
 
-        if (a > counted)
-            counted = a;
-        if (b > counted)
-            counted = b;
-        if (c > counted)
-            counted = c;
+        if (x0 > counted)
+            counted = x0;
+        if (x1 > counted)
+            counted = x1;
+        if (x2 > counted)
+            counted = x2;
 
     }
 
@@ -2334,8 +2334,8 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
     for (__int64 i = 0; i < k; i++) {
 
         __int64 x0 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 x1 = input[i][0] < 0 ? -input[i][0] : input[i][0];
-        __int64 x2 = input[i][0] < 0 ? -input[i][0] : input[i][0];
+        __int64 x1 = input[i][1] < 0 ? -input[i][1] : input[i][1];
+        __int64 x2 = input[i][2] < 0 ? -input[i][2] : input[i][2];
 
         if (x0 > counted)
             counted = x0;
