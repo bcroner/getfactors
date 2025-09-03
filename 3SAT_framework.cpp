@@ -81,7 +81,7 @@ char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
     sprintf_s(lst[1], 64, "%lld %lld %lld", a->id, -(*c)->id, (__int64) FALSE_3SAT);
     sprintf_s(lst[2], 64, "%lld %lld %lld", b->id, -(*c)->id, (__int64) FALSE_3SAT);
 
-    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + (__int64) 1;
+    __int64 ret_len = (__int64)strnlen_s(lst[0], 64) + (__int64)strnlen_s(lst[1], 64) + (__int64)strnlen_s(lst[2], 64) + 3 * (__int64)strnlen_s("\n", 2) + 1 ;
     char* ret = new char[ret_len];
 
     __int64 len = 0;
@@ -91,7 +91,7 @@ char* and_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __int
         delete lst[i];
     }
 
-    *len_para = ret_len - 1;
+    *len_para = len;
 
     delete [] lst;
 
@@ -375,7 +375,7 @@ char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
     for (__int64 i = 0; i < 4; i++) {
         sprintf_s(&(ret[len]), ret_len-len, "%s\n", lst[i]);
         len += (__int64) strnlen_s(lst[i], 64) + (__int64) strnlen_s("\n", 2);
-        delete [] lst[i];
+        delete lst[i];
     }
 
     *len_para = len;
