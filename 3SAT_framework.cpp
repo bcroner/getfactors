@@ -375,7 +375,7 @@ char* xnor_3sat(__int64 * num_para, bit_3sat** c, bit_3sat* a, bit_3sat* b, __in
     for (__int64 i = 0; i < 4; i++) {
         sprintf_s(&(ret[len]), ret_len-len, "%s\n", lst[i]);
         len += (__int64) strnlen_s(lst[i], 64) + (__int64) strnlen_s("\n", 2);
-        delete lst[i];
+        delete [] lst[i];
     }
 
     *len_para = len;
