@@ -15,4 +15,4 @@ we skip over arbitrary swaths of the search space with each jump of some arbitra
 
 This source code is not 100% debugged, as the nat_get_factors function returns erroneous results. But the core is debugged, consisting of the SAT solver and the addition and multiplication functions nat_add and nat_mul.
 
-I have to put this down for a while before I pick it back up again and resume work.
+Update 09-10-2025: As you can tell, I've been tinkering with this. I feel like there are two main bugs to fix, and then I'm factoring large integers. Exciting times.
