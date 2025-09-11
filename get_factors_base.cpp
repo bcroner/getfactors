@@ -377,6 +377,8 @@ char* nat_test_equals(__int64 * len_para) {
     __int64 equals_str_len = 0;
     char* equals_str = nat_equals(&num_para, a, b, true, &equals_str_len);
 
+    printf_s("%s\n", equals_str);
+
     __int64 buf_3sat_sz = equals_str_len + 1;
     char* buf_3sat = new char[buf_3sat_sz];
     strcpy_s(buf_3sat, buf_3sat_sz, equals_str);
@@ -386,6 +388,10 @@ char* nat_test_equals(__int64 * len_para) {
     __int64 k = 0;
     __int64** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
     bool* sln = new bool[num_para - 1];
+
+    for (__int64 i = 0; i < k; i++)
+        printf_s("%lld: %lld %lld %lld\n", i, input[i][0], input[i][1], input[i][2]);
+    printf_s("\n");
 
     delete[] buf_3sat;
 
