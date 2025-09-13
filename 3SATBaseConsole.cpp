@@ -385,11 +385,11 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 			max_jump = temp_jump;
 			max_limit = temp_limit;
 			cls_ix = i;
-			//printf_s("%lld: %lld ", i, max_jump);
+			printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
-	//printf_s("\n");
+	printf_s("\n");
 
 	return cls_ix;
 
@@ -430,8 +430,11 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	__int64 cls_ix = SATSolver_initializePowJump(me);
 	
-	if (cls_ix == -1)
-		return false;
+	if (cls_ix == -1) {
+		for (__int64 i = 0; i < me->master->n; i++)
+			arr[me->master->decoding[i]] = !me->Z[i];
+		return true;
+	}
 	else
 		jump_occurred = true;
 
