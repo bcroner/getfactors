@@ -213,7 +213,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	__int64 pow = me->master->powers[cls_ix];
 	__int64 abs_pow = pow < 0 ? -pow - 1: pow - 1;
 	bool sign = me->Z[abs_pow];
-	__int64 top = 0;
+	__int64 top = abs_pow;
 
 	if (!sign) {
 		me->Z[abs_pow] = true;
@@ -244,7 +244,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 
 	// zero out all lower bits of Z
 
-	for (__int64 j = abs_pow - 1; j >= 0; j--)
+	for (__int64 j = top - 1; j >= 0; j--)
 		if (me->Z[j]) {
 			me->Z[j] = false;
 			SATSolver_updateTF(me, j, false);
