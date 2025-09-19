@@ -256,8 +256,6 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 		}
 
 	return top >= me->master->n - me->master->chops;
-
-	//*/
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me) {
