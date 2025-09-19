@@ -223,13 +223,22 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 
 		__int64 jump = 0;
 
-		if (me->master->powers[prev] < 0 && -me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[prev], me->master->limits[pow])) {
-			jump = me->master->limits[prev];
-			top = jump;
-		}
-		else if ((me->master->powers[prev] < 0 && -me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[pow], me->master->limits[prev]))) {
-			jump = me->master->limits[pow];
-			top = jump;
+		if (me->master->powers[prev] < 0 && -me->master->powers[prev] == me->master->powers[pow]) {
+
+
+			if (SATSolver_less_than(me->master->limits[prev], me->master->limits[pow])) {
+				jump = me->master->limits[prev];
+				top = jump;
+			}
+			else if (SATSolver_less_than(me->master->limits[pow], me->master->limits[prev])) {
+				jump = me->master->limits[pow];
+				top = jump;
+			}
+
+			// reset the implies arrays because the stored exploit has been utilized and therefore consumed
+
+			me->neg_implies_arr[abs_pow] = abs_pow;
+			me->pos_implies_arr[abs_pow] = -(abs_pow + 1);
 		}
 
 		while ( top < me->master->n ) {
