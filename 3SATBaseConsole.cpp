@@ -221,14 +221,18 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	}
 	else {
 
-		//if (me->master->powers[prev] < 0 && -me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[prev], me->master->limits[pow]))
-		//	abs_pow = me->master->limits[prev];
-		//else
-		//	abs_pow = me->master->limits[pow];
+		__int64 jump = 0;
 
-		//abs_pow = abs_pow < 0 ? -abs_pow - 1 : abs_pow - 1;
+		if (me->master->powers[prev] < 0 && -me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[prev], me->master->limits[pow])) {
+			jump = me->master->limits[prev];
+			top = jump;
+		}
+		else if ((me->master->powers[prev] < 0 && -me->master->powers[prev] == me->master->powers[pow] && SATSolver_less_than(me->master->limits[pow], me->master->limits[prev]))) {
+			jump = me->master->limits[pow];
+			top = jump;
+		}
 
-		for (top = abs_pow; top < me->master->n; top++) {
+		while ( top < me->master->n ) {
 			if (me->Z[top]) {
 				me->Z[top] = false;
 				SATSolver_updateTF(me, top, false);
@@ -238,6 +242,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 				SATSolver_updateTF(me, top, true);
 				break;
 			}
+			top++;
 		}
 
 	}
@@ -251,111 +256,6 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 		}
 
 	return top >= me->master->n - me->master->chops;
-
-	//*/
-
-	/*
-
-	bool crossed_boundary = false;
-
-	__int64 temp_pow_jump = me->master->powers[cls_ix];
-	__int64 abs_temp_pow_jump = temp_pow_jump < 0 ? -temp_pow_jump : temp_pow_jump;
-	__int64 pos_parm = temp_pow_jump < 0 ? -temp_pow_jump - 1 : temp_pow_jump - 1;
-	__int64 pos = pos_parm < 0 ? -pos_parm : pos_parm;
-
-	__int64 temp_limit = me->master->limits[cls_ix];
-	__int64 abs_temp_limit = temp_limit < 0 ? -temp_limit : temp_limit;
-
-	__int64 abs_next = 0;
-	__int64 bottom = 0;
-
-	bool sign = me->Z[pos];
-
-	if (!sign) {
-		me->Z[pos] = true;
-		SATSolver_updateTF(me, pos, true);
-		bottom = pos;
-		if (pos >= me->master->n - me->master->chops)
-			crossed_boundary = true;
-
-		me->neg_implies_arr[pos] = me->master->limits[cls_ix];
-
-		//for (int i = pos; i < abs_temp_limit; i++)
-		//	if (me->Z [i] && SATSolver_less_than (temp_limit, me->neg_implies_arr [i]))
-		//		me->neg_implies_arr[i] = temp_limit;
-	}
-	else {
-
-		me->pos_implies_arr[pos] = me->master->limits[cls_ix];
-
-		__int64 neg_limit = me->neg_implies_arr[pos];
-		__int64 abs_neg_limit = neg_limit < 0 ? -neg_limit - 1 : neg_limit - 1;
-		__int64 pos_limit = me->pos_implies_arr[pos];
-		__int64 abs_pos_limit = pos_limit < 0 ? -pos_limit - 1 : pos_limit - 1;
-		__int64 limit;
-		__int64 abs_limit;
-
-		if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && neg_limit < 0)) {
-			limit = neg_limit;
-			abs_limit = abs_neg_limit;
-		}
-		else if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && pos_limit < 0)) {
-			limit = pos_limit;
-			abs_limit = abs_pos_limit;
-		}
-		else if (abs_neg_limit < abs_pos_limit || (abs_neg_limit == abs_pos_limit && (neg_limit > 0 && pos_limit > 0))) {
-			limit = neg_limit;
-			abs_limit = abs_neg_limit;
-		}
-		else if (abs_neg_limit > abs_pos_limit || (abs_neg_limit == abs_pos_limit && (pos_limit < 0))) {
-			limit = pos_limit;
-			abs_limit = abs_pos_limit;
-		}
-		else if (abs_neg_limit > abs_pos_limit || (abs_neg_limit == abs_pos_limit && (neg_limit < 0))) {
-			limit = neg_limit;
-			abs_limit = abs_neg_limit;
-		}
-		else {
-			limit = pos_limit;
-			abs_limit = abs_pos_limit;
-		}
-
-		for (abs_next = abs_limit; abs_next < me->master->n; abs_next++) {
-			if (me->Z[abs_next]) {
-				me->Z[abs_next] = false;
-				SATSolver_updateTF(me, abs_next, false);
-				if (abs_next >= me->master->n - me->master->chops)
-					crossed_boundary = true;
-			}
-			else {
-				me->Z[abs_next] = true;
-				SATSolver_updateTF(me, abs_next, true);
-				if (abs_next >= me->master->n - me->master->chops)
-					crossed_boundary = true;
-				break;
-			}
-		}
-
-		//me->neg_implies_arr[pos] = pos;
-		//me->pos_implies_arr[pos] = -(pos + 1);
-
-
-		bottom = abs_limit;
-
-		//me->pos_implies_arr[pos] = -(pos + 2);
-		//me->neg_implies_arr[pos] = pos + 1;
-
-	}
-	
-	// zero out all lower bits of Z
-
-	for (__int64 j = bottom - 1; j >= 0; j--)
-		if (me->Z[j]) {
-			me->Z[j] = false;
-			SATSolver_updateTF(me, j, false);
-		}
-	
-	return crossed_boundary;
 
 	//*/
 }
