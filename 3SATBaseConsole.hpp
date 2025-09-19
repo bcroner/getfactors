@@ -28,7 +28,6 @@ typedef struct SATSolverMaster_TAG {
 	__int64 n;				// number of variables
 	__int64 chops;			// number of equal-sized partitions chopping up search space: 2^chops 
 	bool** begin;			// first element begin of search space
-	bool** end;				// last element end of search space
 
 } SATSolverMaster;
 
