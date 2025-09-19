@@ -43,8 +43,6 @@ typedef struct SATSolver_TAG {
 	bool* Z;					// current position in permutation space
 } SATSolver;
 
-
-//__int64 MyQSort_partition(__int64 arr_parm[], __int64 low_parm, __int64 high_parm);
 void MyQSort(__int64 arr[], __int64 low_parm, __int64 high_parm);
 void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
 bool SATSolver_less_than(__int64 a, __int64 b);
@@ -54,10 +52,10 @@ bool SATSolver_GreaterThan(bool* a, bool* b, __int64 n);
 bool SATSolver_isSat(SATSolver* me, __int64 chop, bool *arr);
 bool * SATSolver_bool_pow(bool* base, __int64 pow, __int64 n);
 bool * SATSolver_bool_add(bool *a, bool *b, __int64 n);
-bool* SATSolver_bool_prepare_end(bool* a, bool* b, __int64 n);
+bool * SATSolver_bool_prepare_end(bool* a, bool* b, __int64 n);
 bool * SATSolver_bool_mul(bool *a, bool *b, __int64 n);
-bool* SATSolver_int2bool(__int64 a, __int64 n_parm);
-bool* SATSolver_create_boundary(bool begin, __int64 chop, __int64 offs, __int64 n);
+bool * SATSolver_int2bool(__int64 a, __int64 n_parm);
+bool * SATSolver_create_boundary(bool begin, __int64 chop, __int64 offs, __int64 n);
 void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_parm, __int64 n_parm, __int64 chops_parm);
 void SATSolver_create(SATSolver* me, SATSolverMaster * master, __int64** lst, __int64 k_parm, __int64 n_parm, __int64 chop);
 void SATSolverMaster_destroy(SATSolverMaster* master);
