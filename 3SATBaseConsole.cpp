@@ -731,16 +731,11 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		search_sz *= 2;
 
 	master->begin = new bool* [search_sz];
-	master->end = new bool* [search_sz];
 
-	for (__int64 chop = 0; chop < search_sz; chop++) {
+	// set up first element to check: me->begin
 
-		// set up first and last element to check: me->begin, me->end
-
+	for (__int64 chop = 0; chop < search_sz; chop++)
 		master->begin[chop] = SATSolver_create_boundary(true, master->chops, chop, n_parm);
-		master->end[chop] = SATSolver_create_boundary(false, master->chops, chop, n_parm);
-
-	}
 
 	// populate histogram of the variables
 
@@ -1026,15 +1021,9 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 	for (__int64 i = 0; i < master->chops; i++)
 		count_chops *= 2;
 
-	for (__int64 i = 0; i < count_chops; i++) {
-
+	for (__int64 i = 0; i < count_chops; i++)
 		delete[] master->begin[i];
-		delete[] master->end[i];
-
-	}
-
 	delete[] master->begin;
-	delete[] master->end;
 
 	delete[] master->decoding;
 	delete[] master->encoding;
