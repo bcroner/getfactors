@@ -13,6 +13,11 @@ This assigns an order to the bits so that each is a unique power of two. Select 
 This provides the power of 2 that you jump forward through the search space represented by the permutations of Z. Now, instead of checking every single permutation of n bits in the number Z in the worst case,
 we skip over arbitrary swaths of the search space with each jump of some arbitrary power of 2. We call this 3SAT by Coverage of False Clauses, where we check if the entire search space is covered by clauses evaluating to false.
 
+An additional exploit is utilized. Observe that when a jump of -x is immediately followed by a jump of x, they together cover for all possibilities up to the lower of the two corresponding clauses' middle-magnitude numbers. In
+the source code, I refer to the lowest-magnitude number as the jump and the middle-magnitude number as the limit, and I store the limits corresponding to selected jumps in the implies arrays, with the negative implies array
+representing jumps where the jump test produces a jump literal of a given magnitude going from false to true, and the positive implies array is the same but for going from true to false.
+I obtained a provisional patent on this part of the process. If there are performance shortcomings to this algorithm, it's just a matter of finding additional exploits like this one and the one above.
+
 This source code is not 100% debugged, as the nat_get_factors function returns erroneous results. But the core is debugged, consisting of the SAT solver and the addition and multiplication functions nat_add and nat_mul.
 
 Update 09-10-2025: As you can tell, I've been tinkering with this. I feel like there are two main bugs to fix, and then I'm factoring large integers. Exciting times.
