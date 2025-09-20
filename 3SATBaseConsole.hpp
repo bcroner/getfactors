@@ -47,7 +47,7 @@ void MyQSort(__int64 arr[], __int64 low_parm, __int64 high_parm);
 void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
 bool SATSolver_less_than(__int64 a, __int64 b);
 bool SATSolver_add(SATSolver* me, __int64 cls_ix, __int64 prev);
-__int64 SATSolver_initializePowJump(SATSolver* me);
+__int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev);
 bool SATSolver_GreaterThan(bool* a, bool* b, __int64 n);
 bool SATSolver_isSat(SATSolver* me, __int64 chop, bool *arr);
 bool * SATSolver_bool_pow(bool* base, __int64 pow, __int64 n);
