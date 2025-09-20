@@ -267,7 +267,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	return top >= me->master->n - me->master->chops;
 }
 
-__int64 SATSolver_initializePowJump(SATSolver* me) {
+__int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 
 	//printf_s("initializePowJump prev_pos: %lld ", (__int64)prev_pos);
 
@@ -287,7 +287,10 @@ __int64 SATSolver_initializePowJump(SATSolver* me) {
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool temp_limit_is_larger = (abs_temp_limit > abs_max_limit) || (abs_temp_limit == abs_max_limit && temp_limit > 0);
-		if ((me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump) || (me->cls_tly[i] == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger))
+		__int64 prcsd_limit = prev < 0 ? 0 : SATSolver_less_than(me->master->limits[prev], temp_limit) ? me->master->limits[prev] : temp_limit;
+		if ((me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump) ||
+			(me->cls_tly[i] == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger) ||
+			(me->cls_tly[i] == 3 && me->master->powers[prev] < 0 && - temp_jump == me->master->powers[prev] && SATSolver_less_than(max_jump, prcsd_limit)))
 		{
 			max_jump = temp_jump;
 			max_limit = temp_limit;
@@ -320,7 +323,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	bool jump_occurred = false;
 	bool crossed_boundary = false;
-	__int64 prev = 0;
+	__int64 prev = -1;
 		
 	printf_s("chop: %lld\n", chop);
 
@@ -335,7 +338,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	__int64 count = 0;
 
-	__int64 cls_ix = SATSolver_initializePowJump(me);
+	__int64 cls_ix = SATSolver_initializePowJump(me, prev);
 	
 	if (cls_ix == -1) {
 		for (__int64 i = 0; i < me->master->n; i++)
@@ -363,7 +366,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		jump_occurred = false;
 
-		cls_ix = SATSolver_initializePowJump(me);
+		cls_ix = SATSolver_initializePowJump(me, prev);
 
 		if (cls_ix == -1)
 			break;
