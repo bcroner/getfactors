@@ -23,3 +23,5 @@ This source code is not 100% debugged, as the nat_get_factors function returns e
 Update 09-10-2025: As you can tell, I've been tinkering with this. I feel like there are two main bugs to fix, and then I'm factoring large integers. Exciting times.
 
 To get this to build, remove btc3sat.cpp and btc3sat.hpp from the project.
+
+Your mother.
