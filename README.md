@@ -24,4 +24,4 @@ Update 09-10-2025: As you can tell, I've been tinkering with this. I feel like t
 
 To get this to build, remove btc3sat.cpp and btc3sat.hpp from the project.
 
-Your mother.
+Your mother. (not you, Brent)
