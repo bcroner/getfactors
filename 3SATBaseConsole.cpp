@@ -241,6 +241,14 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 			me->pos_implies_arr[abs_pow] = -(abs_pow + 1);
 		}
 
+		/*
+						Bug Alert
+		*/
+		// because of the above section of code, top can be negative, and I use it to index into Z
+		// And because here we can EITHER go -x, x or x, -x, the resulting carry may make a mismatch
+		// when you take the limit. If the limit doesn't match the value in Z, then just use
+		// pow and abs_pow instead.
+
 		while ( top < me->master->n ) {
 			if (me->Z[top]) {
 				me->Z[top] = false;
