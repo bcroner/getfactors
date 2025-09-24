@@ -710,9 +710,14 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 	master->lst = new __int64* [k_parm];
 	for (__int64 i = 0; i < k_parm; i++) {
 		master->lst[i] = new __int64[3];
-		for (__int64 j = 0; j < 3; j++)
+		for (__int64 j = 0; j < 3; j++) {
+
+			__int64 abs_lij = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
+			__int64 lij = lst[i][j] < 0 ? lst[i][j] + 2 : lst[i][j] - 2;
+			__int64 lij_enc = lst[i][j] < 0 ? -master->encoding[abs_lij] : master->encoding[abs_lij];
 			master->lst[i][j] = lst[i][j] == FALSE_3SAT ? FALSE_3SAT :
-			lst[i][j] == TRUE_3SAT ? TRUE_3SAT : lst[i][j] < 0 ? lst[i][j] + 1 : lst[i][j] - 1;
+				lij == TRUE_3SAT ? TRUE_3SAT : lij_enc;
+		}
 
 	}
 
