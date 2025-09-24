@@ -27,6 +27,7 @@ typedef struct SATSolverMaster_TAG {
 	__int64 k;				// original number of clauses
 	__int64 n;				// number of variables
 	__int64 chops;			// number of equal-sized partitions chopping up search space: 2^chops 
+	__int64** lst;			// the original list of tuples
 	bool** begin;			// first element begin of search space
 
 } SATSolverMaster;
@@ -34,13 +35,13 @@ typedef struct SATSolverMaster_TAG {
 typedef struct SATSolver_TAG {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
-	__int64 * cls_tly;			// running tallies of the number of literals matched in clauses
+	//__int64 * cls_tly;			// running tallies of the number of literals matched in clauses
 	bool* Z;					// current position in permutation space
 
 } SATSolver;
 
 void MyQSort(__int64 arr[], __int64 low_parm, __int64 high_parm);
-void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
+//void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
 bool SATSolver_less_than(__int64 a, __int64 b);
 bool SATSolver_add(SATSolver* me, __int64 cls_ix, __int64 prev);
 __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev);
