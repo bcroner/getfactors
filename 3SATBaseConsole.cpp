@@ -152,6 +152,8 @@ void MyQSort(__int64 arr [] , __int64 low_parm, __int64 high_parm)
 * 
 */
 
+/*
+
 void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 
 	if (target) {
@@ -187,6 +189,8 @@ void SATSolver_updateTF(SATSolver* me, __int64 zpos, bool target) {
 
 	}
 }
+
+*/
 
 bool SATSolver_less_than(__int64 a, __int64 b) {
 
@@ -241,11 +245,11 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	while ( abs_top < me->master->n ) {
 		if (me->Z[abs_top]) {
 			me->Z[abs_top] = false;
-			SATSolver_updateTF(me, abs_top, false);
+			//SATSolver_updateTF(me, abs_top, false);
 		}
 		else {
 			me->Z[abs_top] = true;
-			SATSolver_updateTF(me, abs_top, true);
+			//SATSolver_updateTF(me, abs_top, true);
 			break;
 		}
 		abs_top++;
@@ -256,7 +260,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	for (__int64 j = top - 1; j >= 0; j--)
 		if (me->Z[j]) {
 			me->Z[j] = false;
-			SATSolver_updateTF(me, j, false);
+			//SATSolver_updateTF(me, j, false);
 		}
 
 	return abs_top >= me->master->n - me->master->chops;
@@ -275,6 +279,16 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
 	for (__int64 i = 0; i < me->master->k; i++) {
+		
+		__int64 count_matches = 0;
+		for (__int64 j = 0; j < 3; j++) {
+			__int64 lst[3];
+			__int64 abs_lst[3];
+			lst[j] = me->master->lst[i][j];
+			abs_lst[j] = lst[j] < 0 ? -lst[j] - 1 : lst[j] - 1;
+			if ((lst[j] < 0 && !me->Z[abs_lst[j]]) || (lst[j] > 0 && me->Z[abs_lst[j]]))
+				count_matches++;
+		}
 		__int64 temp_limit = me->master->limits[i];
 		__int64 abs_temp_limit = temp_limit < 0 ? -temp_limit : temp_limit;
 		__int64 abs_max_limit = max_limit < 0 ? -max_limit : max_limit;
@@ -283,9 +297,13 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool temp_limit_is_larger = (abs_temp_limit > abs_max_limit) || (abs_temp_limit == abs_max_limit && temp_limit > 0);
 		__int64 prcsd_limit = prev < 0 ? 0 : SATSolver_less_than(me->master->limits[prev], temp_limit) ? me->master->limits[prev] : temp_limit;
-		if ((me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump) ||
+		/*if ((me->cls_tly[i] == 3 && abs_temp_jump > abs_max_jump) ||
 			(me->cls_tly[i] == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger) ||
 			(me->cls_tly[i] == 3 && -temp_jump == me->master->powers[prev] && SATSolver_less_than(max_jump, prcsd_limit)))
+			*/
+		if ((count_matches == 3 && abs_temp_jump > abs_max_jump) ||
+			(count_matches == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger) ||
+			(count_matches == 3 && -temp_jump == me->master->powers[prev] && SATSolver_less_than(max_jump, prcsd_limit)))
 		{
 			max_jump = temp_jump;
 			max_limit = temp_limit;
@@ -354,7 +372,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	if (true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
-		printf_s(" clause: %I64d jump: %I64d\n", cls_ix, me->master->powers[cls_ix]);
+		printf_s(" clause: %lld jump: %lld\n", cls_ix, me->master->powers[cls_ix]);
 	}
 
 	while ( ! crossed_boundary && jump_occurred) {
@@ -380,14 +398,20 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
-			printf_s(" clause: %I64d jump: %I64d\n", cls_ix, me->master->powers[cls_ix]);
+			printf_s(" clause: %lld jump: %lld\n", cls_ix, me->master->powers[cls_ix]);
 		}
 
 	}
 
+	if (true && jump_occurred) {
+		for (__int64 i = 0; i < me->master->n; i++)
+			printf_s("%lld", (__int64)me->Z[i]);
+		printf_s(" clause: %lld jump: %lld\n", cls_ix, me->master->powers[cls_ix]);
+	}
+
 	printf_s("count: %lld\n", (__int64)count);
 
-	if (crossed_boundary)
+	if (crossed_boundary || jump_occurred)
 		return false;
 
 	for (__int64 i = 0; i < me->master->n; i++)
@@ -576,6 +600,8 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 			lst_t[i]++;
 	}
 
+	/*
+
 	// create the running clause tally cls_tly
 
 	me->cls_tly = new __int64[k_parm];
@@ -605,6 +631,8 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 				me->cls_tly[cls_ix] = old_val + 1;
 			}
 	}
+
+	*/
 
 	// delete
 
@@ -677,6 +705,15 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		master->decoding[n_parm - 1 - i] = pos;
 		master->encoding[pos] = n_parm - 1 - i;
 		histogram[pos] = -1;
+	}
+
+	master->lst = new __int64* [k_parm];
+	for (__int64 i = 0; i < k_parm; i++) {
+		master->lst[i] = new __int64[3];
+		for (__int64 j = 0; j < 3; j++)
+			master->lst[i][j] = lst[i][j] == FALSE_3SAT ? FALSE_3SAT :
+			lst[i][j] == TRUE_3SAT ? TRUE_3SAT : lst[i][j] < 0 ? lst[i][j] + 1 : lst[i][j] - 1;
+
 	}
 
 	/*
@@ -815,7 +852,7 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 			master->limits[i] = md;
 		}
 
-		// create the map looking __int64o running tally based on literals pos_map
+		// create the map looking into running tally based on literals pos_map
 
 		master->pos_map = new __int64* [n_parm];
 		master->neg_map = new __int64* [n_parm];
@@ -941,7 +978,7 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 
 void SATSolver_destroy(SATSolver * me) {
 
-	delete[] me->cls_tly;
+	//delete[] me->cls_tly;
 	delete[] me->Z;
 
 }
