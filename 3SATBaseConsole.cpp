@@ -213,51 +213,42 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	__int64 pow = me->master->powers[cls_ix];
 	__int64 abs_pow = pow < 0 ? -pow - 1: pow - 1;
 	bool sign = me->Z[abs_pow];
-	__int64 top = abs_pow;
+	__int64 top = 0;
+	__int64 abs_top = 0;
+	__int64 jump = 0;
+	__int64 abs_jump = 0;
 
-	if (!sign) {
-		me->Z[abs_pow] = true;
-		SATSolver_updateTF(me, abs_pow, true);
+	if (-me->master->powers[prev] == me->master->powers[pow]) {
+
+		if (SATSolver_less_than(me->master->limits[prev], me->master->limits[pow]))
+			jump = me->master->limits[prev];
+		else if (SATSolver_less_than(me->master->limits[pow], me->master->limits[prev]))
+			jump = me->master->limits[pow];
+
+		abs_jump = jump < 0 ? -jump : jump;
+
+	}
+
+	if ((jump == 0) || (jump < 0 && me->Z[abs_jump]) || (jump > 0 && !me->Z[abs_jump])) {
+		top = pow;
+		abs_top = abs_pow;
 	}
 	else {
+		top = jump;
+		abs_top = abs_jump;
+	}
 
-		__int64 jump = 0;
-
-		if (/*me->master->powers[prev] < 0 && */-me->master->powers[prev] == me->master->powers[pow]) {
-
-
-			if (SATSolver_less_than(me->master->limits[prev], me->master->limits[pow])) {
-				jump = me->master->limits[prev];
-				top = jump;
-			}
-			else if (SATSolver_less_than(me->master->limits[pow], me->master->limits[prev])) {
-				jump = me->master->limits[pow];
-				top = jump;
-			}
-
+	while ( abs_top < me->master->n ) {
+		if (me->Z[abs_top]) {
+			me->Z[abs_top] = false;
+			SATSolver_updateTF(me, abs_top, false);
 		}
-
-		/*
-						Bug Alert
-		*/
-		// because of the above section of code, top can be negative, and I use it to index into Z
-		// And because here we can EITHER go -x, x or x, -x, the resulting carry may make a mismatch
-		// when you take the limit. If the limit doesn't match the value in Z, then just use
-		// pow and abs_pow instead.
-
-		while ( top < me->master->n ) {
-			if (me->Z[top]) {
-				me->Z[top] = false;
-				SATSolver_updateTF(me, top, false);
-			}
-			else {
-				me->Z[top] = true;
-				SATSolver_updateTF(me, top, true);
-				break;
-			}
-			top++;
+		else {
+			me->Z[abs_top] = true;
+			SATSolver_updateTF(me, abs_top, true);
+			break;
 		}
-
+		abs_top++;
 	}
 
 	// zero out all lower bits of Z
@@ -268,7 +259,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 			SATSolver_updateTF(me, j, false);
 		}
 
-	return top >= me->master->n - me->master->chops;
+	return abs_top >= me->master->n - me->master->chops;
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
