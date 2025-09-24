@@ -548,13 +548,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 
 	me->master = master;
 	me->Z = new bool [n_parm];
-	me->pos_implies_arr = new __int64 [n_parm];
-	me->neg_implies_arr = new __int64 [n_parm];
-
-	for (__int64 i = 0; i < n_parm; i++) {
-		me->pos_implies_arr[i] = -(i + 1);
-		me->neg_implies_arr[i] = i;
-	}
 
 	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
 
@@ -950,8 +943,7 @@ void SATSolver_destroy(SATSolver * me) {
 
 	delete[] me->cls_tly;
 	delete[] me->Z;
-	delete[] me->neg_implies_arr;
-	delete[] me->pos_implies_arr;
+
 }
 
 std::mutex m;
