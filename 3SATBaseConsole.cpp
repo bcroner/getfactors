@@ -235,10 +235,6 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 				top = jump;
 			}
 
-			// reset the implies arrays because the stored exploit has been utilized and therefore consumed
-
-			me->neg_implies_arr[abs_pow] = abs_pow;
-			me->pos_implies_arr[abs_pow] = -(abs_pow + 1);
 		}
 
 		/*
