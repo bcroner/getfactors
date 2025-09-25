@@ -19,7 +19,7 @@ selected jumps in the implies arrays, with the negative implies array representi
 but for going from true to false. I obtained a provisional patent on this part of the process.
 
 A third exploit involves the highest-order member of a 3CNF clause which I refer to as the base in the source code. If you are looking for a jump in the InitializePowJump () function and you find a clause that compares with the
-previously chosen clause by (-x, x) or (x, -x) (meaning the literals are inverses of each other) in the jump values and (-y, -y) or (y, y) (meaning, by contrast, the literals are the same) in the limit values,
+previously chosen clause by (-x, x) or (x, -x) (meaning the literals are inverses of each other) in the jump values and (-y, y) or (y, -y) (meaning, again, the literals are inverses of each other) in the limit values,
 you may replace the jump you take with the lower order of the bases of the two clauses.
 
 This source code is not 100% debugged, as the nat_get_factors function returns erroneous results. But the core is debugged, consisting of the SAT solver and the addition and multiplication functions nat_add and nat_mul.
