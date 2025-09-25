@@ -308,7 +308,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 		if ((count_matches == 3 && abs_temp_jump > abs_max_jump) ||
 			(count_matches == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger) ||
 			(count_matches == 3 && -temp_jump == me->master->powers[prev] && SATSolver_less_than(max_jump, prcsd_limit)) || 
-			(count_matches == 3 && -temp_jump == me->master->powers[prev] && -temp_limit == me->master->limits[prev] && SATSolver_less_than(max_base, me->master->bases[prev]))
+			(count_matches == 3 && -temp_jump == me->master->powers[prev] && temp_limit == me->master->limits[prev] && SATSolver_less_than(max_base, me->master->bases[prev]))
 		{
 			max_jump = temp_jump;
 			max_limit = temp_limit;
