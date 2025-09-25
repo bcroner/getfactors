@@ -24,6 +24,7 @@ typedef struct SATSolverMaster_TAG {
 	__int64* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	__int64* powers;		// powers to jump forward by
 	__int64* limits;		// second power limiting second operation (which is adding to Z)
+	__int64* bases;			// the third number of a tuple, the golden target
 	__int64 k;				// original number of clauses
 	__int64 n;				// number of variables
 	__int64 chops;			// number of equal-sized partitions chopping up search space: 2^chops 
