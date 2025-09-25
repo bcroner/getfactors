@@ -551,8 +551,8 @@ int main()
         cf909a12a7"); // https://gmail.com
     //*/
 
-    char* nat_add_str = nat_test_add(&len_para);
-    printf_s("%s\n", nat_add_str);
+    //char* nat_add_str = nat_test_add(&len_para);
+    //printf_s("%s\n", nat_add_str);
 
     //char* nat_mul_str = nat_test_mul(&len_para);
     //printf_s("%s\n", nat_mul_str);
@@ -560,7 +560,7 @@ int main()
     //char* equals_str = nat_test_equals(&len_para);
     //printf_s("%s\n", equals_str);
 
-    /*
+    ///*
     char c_str[2000];
     //strcpy_s(c_str, 2000, "4");
     //strcpy_s(c_str, 2000, "5");
