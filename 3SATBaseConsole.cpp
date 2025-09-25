@@ -285,7 +285,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 			__int64 lst[3];
 			__int64 abs_lst[3];
 			lst[j] = me->master->lst[i][j];
-			abs_lst[j] = lst[j] < 0 ? -lst[j] - 1 : lst[j] - 1;
+			abs_lst[j] = lst[j] < 0 ? -lst[j] : lst[j] ;
 			if ((lst[j] < 0 && !me->Z[abs_lst[j]]) || (lst[j] > 0 && me->Z[abs_lst[j]]))
 				count_matches++;
 		}
@@ -712,11 +712,15 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		master->lst[i] = new __int64[3];
 		for (__int64 j = 0; j < 3; j++) {
 
+			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT) {
+				master->lst[i][j] = lst[i][j];
+				continue;
+			}
+
 			__int64 abs_lij = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
 			__int64 lij = lst[i][j] < 0 ? lst[i][j] + 2 : lst[i][j] - 2;
 			__int64 lij_enc = lst[i][j] < 0 ? -master->encoding[abs_lij] : master->encoding[abs_lij];
-			master->lst[i][j] = lst[i][j] == FALSE_3SAT ? FALSE_3SAT :
-				lij == TRUE_3SAT ? TRUE_3SAT : lij_enc;
+			master->lst[i][j] = lij_enc;
 		}
 
 	}
