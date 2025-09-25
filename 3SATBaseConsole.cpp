@@ -274,6 +274,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 
 	__int64 max_jump = 0;
 	__int64 max_limit = 0;
+	__int64 max_base = 0;
 	__int64 cls_ix = -1;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
@@ -289,6 +290,9 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 			if ((lst[j] < 0 && !me->Z[abs_lst[j]]) || (lst[j] > 0 && me->Z[abs_lst[j]]))
 				count_matches++;
 		}
+		__int64 temp_base = me->master->bases[i];
+		__int64 abs_temp_base = temp_base < 0 ? -temp_base : temp_base;
+		__int64 abs_max_base = max_base < 0 ? -max_base : max_base;
 		__int64 temp_limit = me->master->limits[i];
 		__int64 abs_temp_limit = temp_limit < 0 ? -temp_limit : temp_limit;
 		__int64 abs_max_limit = max_limit < 0 ? -max_limit : max_limit;
@@ -303,10 +307,12 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
 			*/
 		if ((count_matches == 3 && abs_temp_jump > abs_max_jump) ||
 			(count_matches == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger) ||
-			(count_matches == 3 && -temp_jump == me->master->powers[prev] && SATSolver_less_than(max_jump, prcsd_limit)))
+			(count_matches == 3 && -temp_jump == me->master->powers[prev] && SATSolver_less_than(max_jump, prcsd_limit)) || 
+			(count_matches == 3 && -temp_jump == me->master->powers[prev] && -temp_limit == me->master->limits[prev] && SATSolver_less_than(max_base, me->master->bases[prev]))
 		{
 			max_jump = temp_jump;
 			max_limit = temp_limit;
+			max_base = temp_base;
 			cls_ix = i;
 			//printf_s("%lld: %lld ", i, max_jump);
 		}
@@ -745,9 +751,11 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 
 	master->powers = new __int64[k_parm];
 	master->limits = new __int64[k_parm];
+	master->bases = new __int64[k_parm];
 	for (__int64 i = 0; i < k_parm; i++) {
 		master->powers[i] = 0;
 		master->limits[i] = 0;
+		master->bases[i] = 0;
 	}
 
 	for (__int64 i = 0; i < k_parm; i++) {
@@ -983,6 +991,8 @@ void SATSolverMaster_destroy(SATSolverMaster* master) {
 	delete [] master->neg_map_szs;
 
 	delete [] master->powers;
+	delete[] master->limits;
+	delete[] master->bases;
 }
 
 void SATSolver_destroy(SATSolver * me) {
