@@ -20,7 +20,7 @@ but for going from true to false. I obtained a provisional patent on this part o
 
 A third exploit involves the highest-order member of a 3CNF clause which I refer to as the base in the source code. Suppose you are looking for a jump in the InitializePowJump () function.
 If you encounter a (-x, x) or (x, -x) with a -y in both limits, followed by another (-x’, x’) or (x’, -x’) with a y in both limits (with both x and x’ being lower in order than y), or the other way around with the y followed by a -y,
-then you select the minimum base among all 4 clause possibilities.
+then you select the minimum base among all 4 clause possibilities. Condensed, (-x, x)->-y immediately succeeded by (-x’, x’)->y yields base literal access.
 
 This source code is not 100% debugged, as the nat_get_factors function returns erroneous results. But the core is debugged, consisting of the SAT solver and the addition and multiplication functions nat_add and nat_mul.
 
