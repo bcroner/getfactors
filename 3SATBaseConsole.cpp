@@ -336,9 +336,6 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 	// initialize return value
 
 	__int64 max_effective_jump = 0;
-	__int64 max_jump = 0;
-	__int64 max_limit = 0;
-	__int64 max_base = 0;
 	__int64 cls_ix = -1;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
@@ -378,44 +375,28 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 		min_base = SATSolver_less_than(min_base, temp_base) ? min_base : temp_base;
 
 		if (count_matches == 3 && SATSolver_less_than (max_effective_jump, temp_jump)) {
-			max_jump = temp_jump;
-			max_limit = temp_limit;
-			max_base = temp_base;
 			cls_ix = i;
 			max_effective_jump = temp_jump;
 		}
-		else if (count_matches == 3 && temp_jump == max_effective_jump && temp_limit_is_larger) {
-			max_jump = temp_jump;
-			max_limit = temp_limit;
-			max_base = temp_base;
+		if (count_matches == 3 && temp_jump == max_effective_jump && temp_limit_is_larger) {
 			cls_ix = i;
 			max_effective_jump = temp_jump;
 		}
-		else if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->powers[prev[2]] && SATSolver_less_than(max_effective_jump, prcsd_limit)) {
-			max_jump = temp_jump;
-			max_limit = temp_limit;
-			max_base = temp_base;
+		if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->powers[prev[2]] && SATSolver_less_than(max_effective_jump, prcsd_limit)) {
 			cls_ix = i;
 			max_effective_jump = temp_limit;
 		}
-		else if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->powers[prev[2]] &&
+		if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->powers[prev[2]] &&
 			-temp_limit == me->master->limits[prev[2]] && SATSolver_less_than(max_effective_jump, me->master->bases[prev[2]])) {
-			max_jump = temp_jump;
-			max_limit = temp_limit;
-			max_base = temp_base;
 			cls_ix = i;
 			max_effective_jump = temp_limit;
 
 		}
-		else if (count_matches == 3 && !base_has_void && - me->master->powers[prev[0]] == me->master->powers[prev[1]] && - me->master->powers[prev[2]] == temp_jump &&
+		if (count_matches == 3 && !base_has_void && - me->master->powers[prev[0]] == me->master->powers[prev[1]] && - me->master->powers[prev[2]] == temp_jump &&
 				- limit_0 == limit_1 && SATSolver_less_than (max_effective_jump, min_base))
 		{
-			max_jump = temp_jump;
-			max_limit = temp_limit;
-			max_base = temp_base;
 			cls_ix = i;
 			max_effective_jump = min_base;
-			//printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
 
