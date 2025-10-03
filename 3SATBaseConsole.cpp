@@ -222,12 +222,81 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 	__int64 jump = 0;
 	__int64 abs_jump = 0;
 
-	if (-me->master->powers[prev] == me->master->powers[pow]) {
+	bool base_access = false;
+	bool limit_access = false;
 
-		if (SATSolver_less_than(me->master->limits[prev], me->master->limits[pow]))
-			jump = me->master->limits[prev];
-		else if (SATSolver_less_than(me->master->limits[pow], me->master->limits[prev]))
-			jump = me->master->limits[pow];
+
+	// base access variables
+
+	__int64 limit_0 = 0;
+	__int64 limit_1 = 0;
+
+	__int64 base_min = 0;
+	__int64 limit_min = 0;
+
+	// check for base access
+
+	bool base_has_void = false;
+	for (__int64 i = 0; i < 3; i++)
+		if (prev[i] == -1)
+			base_has_void = true;
+
+	if (! base_has_void ) {
+
+		// grab first and second limits
+
+		if (SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]))
+			limit_0 = me->master->limits[prev[0]];
+		else if (SATSolver_less_than(me->master->limits[prev[1]], me->master->limits[prev[0]]))
+			limit_0 = me->master->limits[prev[1]];
+
+		if (SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[pow]))
+			limit_1 = me->master->limits[prev[2]];
+		else if (SATSolver_less_than(me->master->limits[pow], me->master->limits[prev[2]]))
+			limit_1 = me->master->limits[pow];
+
+		// check if we can do this
+
+		if (-me->master->powers[prev[0]] == me->master->powers[prev[1]] && -me->master->powers[prev[2]] == me->master->powers[pow] && -limit_0 == limit_1)
+			base_access = true;
+	}
+
+	// check for limit access
+
+	bool limit_has_void = false;
+	if (prev[2] == -1)
+		limit_has_void = true;
+
+	if (!limit_has_void) {
+		if (-me->master->powers[prev[2]] == me->master->powers[pow])
+			limit_access = true;
+	}
+
+	if (base_access) {
+
+		// determine the minimum base among the four clauses
+
+		base_min = SATSolver_less_than(me->master->bases[prev[0]], me->master->bases[prev[1]]) ? me->master->bases[prev[0]] : me->master->bases[prev[1]];
+
+		for (__int64 i = 1; i < 3; i++) {
+			base_min = SATSolver_less_than(base_min, me->master->bases[prev[i]]) ? base_min : me->master->bases[prev[i]];
+		}
+
+		// clear prev
+
+		for (__int64 i = 0; i < 3; i++)
+			prev[i] = -1;
+
+		jump = base_min;
+
+		abs_jump = jump < 0 ? -jump : jump;
+		
+	}
+	else if (limit_access) {
+
+		limit_min = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[pow]) ? me->master->limits[prev[2]] : me->master->limits[pow];
+
+		jump = limit_min;
 
 		abs_jump = jump < 0 ? -jump : jump;
 
