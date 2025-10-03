@@ -210,11 +210,11 @@ bool SATSolver_less_than(__int64 a, __int64 b) {
 * 
 */
 
-bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
+bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 
 	///*
 
-	__int64 pow = me->master->powers[cls_ix];
+	__int64 pow = me->master->powers[*cls_ix];
 	__int64 abs_pow = pow < 0 ? -pow - 1: pow - 1;
 	bool sign = me->Z[abs_pow];
 	__int64 top = 0;
@@ -276,6 +276,10 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 		for (__int64 i = 0; i < 3; i++)
 			prev[i] = -1;
+
+		// reset clause index
+
+		*cls_ix = -1;
 
 		jump = base_min;
 
@@ -430,7 +434,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	else
 		jump_occurred = true;
 
-	crossed_boundary = SATSolver_add(me, cls_ix, prev);
+	crossed_boundary = SATSolver_add(me, & cls_ix, prev);
 
 	for (__int64 i = 0; i < 2; i++)
 		prev[i] = prev[i + 1];
@@ -458,7 +462,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		else
 			jump_occurred = true;
 
-		crossed_boundary = SATSolver_add(me, cls_ix, prev);
+		crossed_boundary = SATSolver_add(me, & cls_ix, prev);
 
 		for (__int64 i = 0; i < 2; i++)
 			prev[i] = prev[i + 1];
