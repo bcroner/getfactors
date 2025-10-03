@@ -337,6 +337,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 
 	__int64 max_effective_jump = 0;
 	__int64 cls_ix = -1;
+	bool limit_has_void = prev[2] == -1;
+	bool base_has_void = prev[0] == -1 || prev[1] == -1 || prev[2] == -1;
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
@@ -353,18 +355,11 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 		}
 		__int64 temp_base = me->master->bases[i];
 		__int64 abs_temp_base = temp_base < 0 ? -temp_base : temp_base;
-		__int64 abs_max_base = max_base < 0 ? -max_base : max_base;
 		__int64 temp_limit = me->master->limits[i];
 		__int64 abs_temp_limit = temp_limit < 0 ? -temp_limit : temp_limit;
-		__int64 abs_max_limit = max_limit < 0 ? -max_limit : max_limit;
 		__int64 temp_jump = me->master->powers[i];
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
-		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
-		bool temp_limit_is_larger = (abs_temp_limit > abs_max_limit) || (abs_temp_limit == abs_max_limit && temp_limit > 0);
 		__int64 prcsd_limit = prev[2] < 0 ? 0 : SATSolver_less_than(me->master->limits[prev[2]], temp_limit) ? me->master->limits[prev[2]] : temp_limit;
-
-		bool limit_has_void = prev[2] == -1;
-		bool base_has_void = prev[0] == -1 || prev[1] == -1 || prev[2] == -1;
 
 		__int64 limit_0 = SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];
 		__int64 limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[i]) ? me->master->limits[prev[2]] : me->master->limits[i];
@@ -378,7 +373,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			cls_ix = i;
 			max_effective_jump = temp_jump;
 		}
-		if (count_matches == 3 && temp_jump == max_effective_jump && temp_limit_is_larger) {
+		if (count_matches == 3 && temp_jump == max_effective_jump && SATSolver_less_than(max_effective_jump, temp_limit)) {
 			cls_ix = i;
 			max_effective_jump = temp_jump;
 		}
