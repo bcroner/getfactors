@@ -267,11 +267,10 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 		// determine the minimum base among the four clauses
 
-		base_min = SATSolver_less_than(me->master->bases[prev[0]], me->master->bases[prev[1]]) ? me->master->bases[prev[0]] : me->master->bases[prev[1]];
+		base_min = me->master->bases[prev[0]];
 
-		for (__int64 i = 1; i < 3; i++) {
+		for (__int64 i = 1; i < 3; i++)
 			base_min = SATSolver_less_than(base_min, me->master->bases[prev[i]]) ? base_min : me->master->bases[prev[i]];
-		}
 
 		// clear prev
 
