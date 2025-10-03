@@ -335,6 +335,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 
 	// initialize return value
 
+	__int64 max_effective_jump = 0;
 	__int64 max_jump = 0;
 	__int64 max_limit = 0;
 	__int64 max_base = 0;
@@ -363,17 +364,57 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 abs_max_jump = max_jump < 0 ? -max_jump : max_jump;
 		bool temp_limit_is_larger = (abs_temp_limit > abs_max_limit) || (abs_temp_limit == abs_max_limit && temp_limit > 0);
-		__int64 prcsd_limit = prev < 0 ? 0 : SATSolver_less_than(me->master->limits[prev], temp_limit) ? me->master->limits[prev] : temp_limit;
+		__int64 prcsd_limit = prev[2] < 0 ? 0 : SATSolver_less_than(me->master->limits[prev[2]], temp_limit) ? me->master->limits[prev[2]] : temp_limit;
 
-		if ((count_matches == 3 && abs_temp_jump > abs_max_jump) ||
-			(count_matches == 3 && abs_temp_jump == abs_max_jump && temp_limit_is_larger) ||
-			(count_matches == 3 && -temp_jump == me->master->powers[prev[2]] && SATSolver_less_than(max_jump, prcsd_limit)) || 
-			(count_matches == 3 && -temp_jump == me->master->powers[prev[2]] && temp_limit == me->master->limits[prev] && SATSolver_less_than(max_base, me->master->bases[prev]))
+		bool limit_has_void = prev[2] == -1;
+		bool base_has_void = prev[0] == -1 || prev[1] == -1 || prev[2] == -1;
+
+		__int64 limit_0 = SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];
+		__int64 limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[i]) ? me->master->limits[prev[2]] : me->master->limits[i];
+
+		__int64 min_base = me->master->bases[prev[0]];
+		for (__int64 i = 1; i < 3; i++)
+			min_base = SATSolver_less_than(min_base, me->master->bases[prev[i]]) ? min_base: me->master->bases[prev[i]];
+		min_base = SATSolver_less_than(min_base, temp_base) ? min_base : temp_base;
+
+		if (count_matches == 3 && SATSolver_less_than (max_effective_jump, temp_jump)) {
+			max_jump = temp_jump;
+			max_limit = temp_limit;
+			max_base = temp_base;
+			cls_ix = i;
+			max_effective_jump = temp_jump;
+		}
+		else if (count_matches == 3 && temp_jump == max_effective_jump && temp_limit_is_larger) {
+			max_jump = temp_jump;
+			max_limit = temp_limit;
+			max_base = temp_base;
+			cls_ix = i;
+			max_effective_jump = temp_jump;
+		}
+		else if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->powers[prev[2]] && SATSolver_less_than(max_effective_jump, prcsd_limit)) {
+			max_jump = temp_jump;
+			max_limit = temp_limit;
+			max_base = temp_base;
+			cls_ix = i;
+			max_effective_jump = temp_limit;
+		}
+		else if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->powers[prev[2]] &&
+			-temp_limit == me->master->limits[prev[2]] && SATSolver_less_than(max_effective_jump, me->master->bases[prev[2]])) {
+			max_jump = temp_jump;
+			max_limit = temp_limit;
+			max_base = temp_base;
+			cls_ix = i;
+			max_effective_jump = temp_limit;
+
+		}
+		else if (count_matches == 3 && !base_has_void && - me->master->powers[prev[0]] == me->master->powers[prev[1]] && - me->master->powers[prev[2]] == temp_jump &&
+				- limit_0 == limit_1 && SATSolver_less_than (max_effective_jump, min_base))
 		{
 			max_jump = temp_jump;
 			max_limit = temp_limit;
 			max_base = temp_base;
 			cls_ix = i;
+			max_effective_jump = min_base;
 			//printf_s("%lld: %lld ", i, max_jump);
 		}
 	}
