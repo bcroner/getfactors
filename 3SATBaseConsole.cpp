@@ -388,8 +388,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 
 		}
 		if (count_matches == 3 && !base_has_void && - me->master->powers[prev[0]] == me->master->powers[prev[1]] && - me->master->powers[prev[2]] == temp_jump &&
-				- limit_0 == limit_1 && SATSolver_less_than (max_effective_jump, min_base))
-		{
+				- limit_0 == limit_1 && SATSolver_less_than (max_effective_jump, min_base)) {
 			cls_ix = i;
 			max_effective_jump = min_base;
 		}
