@@ -210,7 +210,7 @@ bool SATSolver_less_than(__int64 a, __int64 b) {
 * 
 */
 
-bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
+bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 	///*
 
@@ -266,7 +266,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 prev) {
 	return abs_top >= me->master->n - me->master->chops;
 }
 
-__int64 SATSolver_initializePowJump(SATSolver* me, __int64 prev) {
+__int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 
 	//printf_s("initializePowJump prev_pos: %lld ", (__int64)prev_pos);
 
@@ -342,7 +342,11 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	bool jump_occurred = false;
 	bool crossed_boundary = false;
-	__int64 prev = -1;
+
+	__int64* prev = new __int64[3];
+
+	for (__int64 i = 0; i < 3; i++)
+		prev[i] = -1;
 		
 	printf_s("chop: %lld\n", chop);
 
@@ -369,7 +373,10 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	crossed_boundary = SATSolver_add(me, cls_ix, prev);
 
-	prev = cls_ix;
+	for (__int64 i = 0; i < 2; i++)
+		prev[i] = prev[i + 1];
+
+	prev [2] = cls_ix;
 
 	count++;
 
@@ -394,7 +401,10 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		crossed_boundary = SATSolver_add(me, cls_ix, prev);
 
-		prev = cls_ix;
+		for (__int64 i = 0; i < 2; i++)
+			prev[i] = prev[i + 1];
+
+		prev[2] = cls_ix;
 
 		count++;
 
