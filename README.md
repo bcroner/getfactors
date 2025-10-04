@@ -19,13 +19,9 @@ selected jumps in the implies arrays, with the negative implies array representi
 but for going from true to false. I obtained a provisional patent on this part of the process.
 
 A third exploit involves the highest-order member of a 3CNF clause which I refer to as the base in the source code. Suppose you are looking for a jump in the InitializePowJump (...) function.
-If you encounter a (-x, x) or (x, -x) with a -y in the lowest-order limit, followed by another (-x’, x’) or (x’, -x’) with a y in the lowest-order limit (with both x and x’ being lower in order than y), or the other way around with the y followed by a -y,
-then you select the minimum base among all 4 clause possibilities. Condensed, (-x, x)->-y immediately succeeded by (-x’, x’)->y yields base literal access.
+If you encounter a (-x, x) or (x, -x) with a -y in the lowest-order limit, followed by another (-x’, x’) or (x’, -x’) with a y in the lowest-order limit (with both x and x’ being lower in order than y, obviously),
+or the other way around with the y followed by a -y, then you select the minimum base among all 4 clause possibilities. Condensed, (-x, x)->-y immediately succeeded by (-x’, x’)->y yields base literal access.
 
-This source code is not 100% debugged, as the nat_get_factors function returns erroneous results. But the core is debugged, consisting of the SAT solver and the addition and multiplication functions nat_add and nat_mul.
-
-Update 09-10-2025: As you can tell, I've been tinkering with this. I feel like there are two main bugs to fix, and then I'm factoring large integers. Exciting times.
-
-To get this to build, remove btc3sat.cpp and btc3sat.hpp from the project.
+This source code is currently a work in progress.
 
 Your mother. (not you, Brent)
