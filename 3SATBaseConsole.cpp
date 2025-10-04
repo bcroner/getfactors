@@ -345,11 +345,18 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 	for (__int64 i = 0; i < me->master->k; i++) {
 		
 		__int64 count_matches = 0;
+		__int64 lst[3];
+		__int64 abs_lst[3];
+
 		for (__int64 j = 0; j < 3; j++) {
-			__int64 lst[3];
-			__int64 abs_lst[3];
-			lst[j] = me->master->lst[i][j];
-			abs_lst[j] = lst[j] < 0 ? -lst[j] : lst[j] ;
+
+			if (me->master->lst[i][j] == FALSE_3SAT) {
+				count_matches++;
+				continue;
+			}
+
+			abs_lst [j] = me->master->encoding[me->master->lst[i][j] < 0 ? -me->master->lst[i][j] - 2 : me->master->lst[i][j] - 2];
+			lst[j] = me->master->lst[i][j] < 0 ? -abs_lst[j] - 1 : abs_lst[j] + 1;
 			if ((lst[j] < 0 && !me->Z[abs_lst[j]]) || (lst[j] > 0 && me->Z[abs_lst[j]]))
 				count_matches++;
 		}
