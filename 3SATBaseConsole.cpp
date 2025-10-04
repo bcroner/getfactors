@@ -348,9 +348,14 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 
 		for (__int64 j = 0; j < 3; j++) {
 
+			if (me->master->lst[i][j] == FALSE_3SAT) {
+				count_matches++;
+				continue;
+			}
+
 			__int64 abs_lst = me->master->encoding[me->master->lst[i][j] < 0 ? -me->master->lst[i][j] - 2 : me->master->lst[i][j] - 2];
 			__int64 lst = me->master->lst[i][j] < 0 ? -abs_lst - 1 : abs_lst + 1;
-			if (me->master->lst[i][j] == FALSE_3SAT || (lst < 0 && !me->Z[abs_lst]) || (lst > 0 && me->Z[abs_lst]))
+			if ((lst < 0 && !me->Z[abs_lst]) || (lst > 0 && me->Z[abs_lst]))
 				count_matches++;
 		}
 		__int64 temp_base = me->master->bases[i];
