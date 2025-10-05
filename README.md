@@ -8,6 +8,10 @@ Not only do I introduce a new class of world-best 3SAT logic solvers that uses m
 
 The function that sets up the integer factorization operation is nat_get_factors (...). It uses Tseytin Transformations to represent the factoring operation as a 3SAT instance, which it then solves and interprets the results.
 
+This logic solver evaluates the coverage of clauses that evaluate to false. If you can jump forward through the search space from at least one false clause to another through the entire search space, then the instance is not
+satisfiable. If you encounter an n-bit number that has no clauses evaluating to false, then this number is represents a satisfying assignment of truth values to the variables. What is this search space? What is this n-bit number?
+Continue reading below.
+
 The first exploit used by the logic solver is to notice that a 3CNF tuple has up to 3 optionally-inverted boolean variables, and you can order them so that each variable has a position in an n-bit whole number we'll call Z.
 This assigns an order to the bits so that each is a unique power of two. Select the lowest-order variable in a 3CNF tuple that evaluates to false according to the truth value assignments in the current value of Z.
 This provides the power of 2 that you jump forward through the search space represented by the permutations of Z. Now, instead of checking every single permutation of n bits in the number Z in the worst case,
