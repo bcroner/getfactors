@@ -25,6 +25,4 @@ A third exploit involves the highest-order member of a 3CNF clause which I refer
 If you encounter a (-x, x) or (x, -x) with a -y in the lowest-order limit, followed by another (-x’, x’) or (x’, -x’) with a y in the lowest-order limit (with both x and x’ being lower in order than y, obviously),
 or the other way around with the y followed by a -y, then you select the minimum base among all 4 clause possibilities. Condensed, (-x, x)->-y immediately succeeded by (-x’, x’)->y yields base literal access.
 
-This source code is currently a work in progress.
-
-Your mother. (not you, Brent)
+Your mother. (not you, Brent) Here's 23 years, bitch.
