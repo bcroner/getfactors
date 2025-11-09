@@ -395,8 +395,6 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 		}
 	}
 
-	//printf_s("\n");
-
 	return cls_ix;
 
 }
