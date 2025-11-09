@@ -389,7 +389,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			max_effective_jump = temp_limit;
 		}
 		if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->powers[prev[2]] &&
-			-temp_limit == me->master->limits[prev[2]] && SATSolver_less_than(max_effective_jump, me->master->bases[prev[2]])) {
+			-temp_limit == me->master->limits[prev[2]] && SATSolver_less_than(max_effective_jump, me->master->limits[prev[2]])) {
 			cls_ix = i;
 			max_effective_jump = temp_limit;
 
