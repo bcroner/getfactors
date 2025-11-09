@@ -2223,7 +2223,7 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
     for (strln = 0; strln < c_str_buf_sz && c_str[strln] != '\0'; strln++)
         ;
 
-    // transform hex input __int64o bool buffer
+    // transform hex input into bool buffer
 
     __int64 inbuffer_sz = strln * 4;
     bool* inbuffer = hex2bool(c_str, inbuffer_sz);
