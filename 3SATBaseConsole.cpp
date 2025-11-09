@@ -250,7 +250,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 
 		// check if we can do this
 
-		if (-me->master->powers[prev[0]] == me->master->powers[prev[1]] && -me->master->powers[prev[2]] == me->master->powers[pow] && -limit_0 == limit_1)
+		if (-limit_0 == limit_1)
 			base_access = true;
 	}
 
