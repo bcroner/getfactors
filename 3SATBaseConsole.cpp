@@ -306,13 +306,10 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 	}
 
 	while ( abs_top < me->master->n ) {
-		if (me->Z[abs_top]) {
+		if (me->Z[abs_top])
 			me->Z[abs_top] = false;
-			//SATSolver_updateTF(me, abs_top, false);
-		}
 		else {
 			me->Z[abs_top] = true;
-			//SATSolver_updateTF(me, abs_top, true);
 			break;
 		}
 		abs_top++;
@@ -321,10 +318,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 	// zero out all lower bits of Z
 
 	for (__int64 j = top - 1; j >= 0; j--)
-		if (me->Z[j]) {
-			me->Z[j] = false;
-			//SATSolver_updateTF(me, j, false);
-		}
+		me->Z[j] = false;
 
 	return abs_top >= me->master->n - me->master->chops;
 }
