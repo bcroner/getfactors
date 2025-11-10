@@ -457,7 +457,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	//if (count % (1 * 1048576) == 0) {
 
-	if (!true) {
+	if (true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
 		printf_s(" clause: %lld jump: %lld\n", cls_ix, me->master->powers[cls_ix]);
@@ -485,7 +485,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 		//if (count % (1 * 1048576) == 0) {
 
-		if (!true) {
+		if (true) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
@@ -494,7 +494,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 	}
 
-	if (!true && jump_occurred) {
+	if (true && jump_occurred) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64)me->Z[i]);
 		printf_s(" clause: %lld jump: %lld\n", cls_ix, me->master->powers[cls_ix]);
