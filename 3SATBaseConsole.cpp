@@ -336,8 +336,6 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
-	// bug- some of prev[i] have -1, which is used to index into arrays
-
 	for (__int64 i = 0; i < me->master->k; i++) {
 		
 		__int64 count_matches = 0;
@@ -364,12 +362,12 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 		__int64 abs_temp_jump = temp_jump < 0 ? -temp_jump : temp_jump;
 		__int64 prcsd_limit = prev[2] < 0 ? 0 : SATSolver_less_than(me->master->limits[prev[2]], temp_limit) ? me->master->limits[prev[2]] : temp_limit;
 
-		__int64 limit_0 = SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];
-		__int64 limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[i]) ? me->master->limits[prev[2]] : me->master->limits[i];
+		__int64 limit_0 = (prev[0] < 0 || prev[1] < 0) ? 0 : SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];
+		__int64 limit_1 = (prev[2] < 0) ? 0 : SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[i]) ? me->master->limits[prev[2]] : me->master->limits[i];
 
-		__int64 min_base = me->master->bases[prev[0]];
+		__int64 min_base = prev[0] < 0 ? 0 : me->master->bases[prev[0]];
 		for (__int64 i = 1; i < 3; i++)
-			min_base = SATSolver_less_than(min_base, me->master->bases[prev[i]]) ? min_base: me->master->bases[prev[i]];
+			min_base = prev[i] < 0 ? 0 : SATSolver_less_than(min_base, me->master->bases[prev[i]]) ? min_base: me->master->bases[prev[i]];
 		min_base = SATSolver_less_than(min_base, temp_base) ? min_base : temp_base;
 
 		if (count_matches == 3 && SATSolver_less_than (max_effective_jump, temp_jump)) {
