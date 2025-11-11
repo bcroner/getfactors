@@ -18,10 +18,6 @@ typedef struct SATSolverMaster_TAG {
 
 	__int64* decoding;		// forward decoding of variables: from Z to original input ("lst" in create)
 	__int64* encoding;		// reverse decoding of variables: from original input ("lst" in create) to Z
-	__int64** pos_map;		// map of non-negated literals to clauses for tallying
-	__int64** neg_map;		// map of negated literals to clauses for tallying
-	__int64* pos_map_szs;	// list of sizes of each literal mapped in pos map
-	__int64* neg_map_szs;	// list of sizes of each literal mapped in neg map
 	__int64* powers;		// powers to jump forward by
 	__int64* limits;		// second power limiting second operation (which is adding to Z)
 	__int64* bases;			// the third number of a tuple, the golden target
@@ -36,13 +32,12 @@ typedef struct SATSolverMaster_TAG {
 typedef struct SATSolver_TAG {
 
 	SATSolverMaster* master;	// master data that can be separated out for memory space conservation in multithreading
-	//__int64 * cls_tly;			// running tallies of the number of literals matched in clauses
 	bool* Z;					// current position in permutation space
 
 } SATSolver;
 
+__int64 partition(__int64 arr_parm[], __int64 low_parm, __int64 high_parm);
 void MyQSort(__int64 arr[], __int64 low_parm, __int64 high_parm);
-//void SATSolver_updateTF(SATSolver* me, __int64 lit, bool target);
 bool SATSolver_less_than(__int64 a, __int64 b);
 bool SATSolver_add(SATSolver* me, __int64 * cls_ix, __int64 * prev);
 __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev);
