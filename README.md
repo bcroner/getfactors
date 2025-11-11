@@ -2,17 +2,21 @@
 System and Method for Solving Logic Instances
 </h1>
 
-Abstract:
+Background of the Invention
+
+**\[0001\]** 
+
+Abstract
 
 We introduce a method of solving boolean 3-satisfiability logic instances by testing for the coverage of clauses that evaluate to false. We show how to set up a search space that represents a logic instance and identify 3 ways to advance forward through this search space, each corresponding to one of the 3 literals of the clause that we label the “jump”, the “limit”, and the “base”.
 
-Claims:
+We Claim
 
-1. We chop the search space into a number of equal-sized partitions, a number that is equal to 2 raised to the power p, where p is greater than or equal to 2, and we encode each permutation of the bits of p into the uppermost bits of the highest order of the said permutation’s corresponding (matching) partition.   
-2. We identify where a jump offered by a jump literal (a jump literal being the lowest-order literal of a clause) is immediately succeeded by a jump offered by its inverse in the immediately-succeeding cycle and replace the second jump with jump offered by the lower-order of the limit literals of the two clauses as a new effective jump (a limit literal being the second-lowest-order literal of a clause).  
-3. We identify where four successive jumps were replaced by two effective jumps offered by limit literals, as described above in claim 2, where these limit literals are inverses of each other, and replace the effective jump offered by the second limit literal by an effective jump offered by the lowest-order of the base literals of the four clauses (a base literal being the highest-order literal of a clause).
+1. The process of chopping (dividing) the search space into a number of equal-sized partitions, a number that is equal to 2 raised to the power p, where p is greater than or equal to 2, and the encoding each permutation of the bits of p into the uppermost bits of the highest order of the said permutation’s corresponding (matching) partition.  
+2. The identification of where a jump offered by a jump literal (a jump literal being the lowest-order literal of a clause) is immediately succeeded by a jump offered by its inverse in the immediately-succeeding cycle and the replacement of the second jump with jump offered by the lower-order of the limit literals of the two clauses as a new effective jump (a limit literal being the second-lowest-order literal of a clause).  
+3. The identification of where four successive jumps were replaced by two effective jumps offered by limit literals, as described above in claim 2, where these limit literals are inverses of each other, and the replacement of the effective jump offered by the second limit literal by an effective jump offered by the lowest-order of the base literals of the four clauses (a base literal being the highest-order literal of a clause).
 
-Specification:
+Specification
 
 **\[0001\]** For a logic instance having n binary variables and k clauses we create an n-bit number Z and assign each binary variable to a unique bit location on Z. Starting with the beginning of the portion of the search space, we advance Z forward through the search space by what we’ll call “jumps” whereby for each jump a bit is identified that can be inverted. We continue identifying these bits and inverting them until either the entirety of all portions of the search space are found to have coverage of clauses evaluating to false or a value of Z is found not to have any available jumps, whereby the truth values of the bits of Z represent a satisfying assignment of truth values for the logic instance. We label the lowest-order literal of a given clause the “jump” literal, we label the second-lowest-order literal of that clause the “limit” literal, and we label the highest-order literal of that clause the “base” literal. Below we also show the conditions under which a jump can be replaced by a limit or a base to create a new effective jump of a higher order.
 
@@ -25,3 +29,6 @@ Specification:
 **\[0005\]** When we modify a bit in the uppermost bits that have been permuted as a result of chopping (partitioning) the search space into at least 2^p equal partitions where p is greater than or equal to 2, as described in claim 1, either by the effective jump offered by the limit literal as described in claim 2 or by the base literal as described in claim 3, or otherwise by the carry operation of the effective addition that occurs as a result of inverting a bit set to true upon discovering a jump offered by a jump literal that cannot be replaced with an effective jump of higher order, we terminate the search of this chop (partition) and we conclude that clauses evaluating to false cover the entire partition.
 
 **\[0006\]** When we look for a jump offered by the bits of a value of Z and discover that no clauses evaluate to false, we have discovered a corresponding satisfying assignment of truth values to the variables of the instance. In this case, we return these values of Z back to the function that invoked the call to the function that determines whether a partition is satisfiable.
+
+References
+
