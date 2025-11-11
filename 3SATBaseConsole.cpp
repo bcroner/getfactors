@@ -336,6 +336,8 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 
 	// check if any clauses are satisfied and find jump powers corresponding to clauses
 
+	// bug- some of prev[i] have -1, which is used to index into arrays
+
 	for (__int64 i = 0; i < me->master->k; i++) {
 		
 		__int64 count_matches = 0;
