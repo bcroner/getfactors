@@ -18,7 +18,7 @@ typedef struct SATSolverMaster_TAG {
 
 	__int64* decoding;		// forward decoding of variables: from Z to original input ("lst" in create)
 	__int64* encoding;		// reverse decoding of variables: from original input ("lst" in create) to Z
-	__int64* powers;		// powers to jump forward by
+	__int64* jumps;			// powers to jump forward by
 	__int64* limits;		// second power limiting second operation (which is adding to Z)
 	__int64* bases;			// the third number of a tuple, the golden target
 	__int64 k;				// original number of clauses
