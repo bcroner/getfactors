@@ -106,8 +106,8 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 	bool sign = me->Z[abs_pow];
 	__int64 top = 0;
 	__int64 abs_top = 0;
-	__int64 jump = 0;
-	__int64 abs_jump = 0;
+	__int64 jump = me->master->powers[*cls_ix];
+	__int64 abs_jump = jump < 0 ? -jump - 1 : jump - 1;
 
 	bool base_access = false;
 	bool limit_access = false;
@@ -168,7 +168,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 
 		*cls_ix = -1;
 
-		jump = base_min;
+		jump = base_min < 0 ? base_min + 1 : base_min - 1;
 
 		abs_jump = jump < 0 ? -jump : jump;
 		
@@ -177,7 +177,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 
 		limit_min = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[*cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[*cls_ix];
 
-		jump = limit_min;
+		jump = limit_min < 0 ? limit_min + 1 : limit_min - 1;
 
 		abs_jump = jump < 0 ? -jump : jump;
 
