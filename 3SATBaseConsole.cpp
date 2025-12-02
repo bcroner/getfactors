@@ -133,7 +133,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 		// grab first and second limits
 
 		limit_0 = SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];
-		limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[pow]) ? me->master->limits[prev[2]] : me->master->limits[pow];
+		limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[*cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[*cls_ix];
 
 		// check if we can do this
 
@@ -148,7 +148,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 		limit_has_void = true;
 
 	if (!limit_has_void)
-		limit_access = -me->master->powers[prev[2]] == me->master->powers[pow];
+		limit_access = -me->master->powers[prev[2]] == me->master->powers[*cls_ix];
 	
 	if (base_access) {
 
@@ -175,7 +175,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 	}
 	else if (limit_access) {
 
-		limit_min = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[pow]) ? me->master->limits[prev[2]] : me->master->limits[pow];
+		limit_min = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[*cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[*cls_ix];
 
 		jump = limit_min;
 
@@ -211,8 +211,6 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 }
 
 __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
-
-	//printf_s("initializePowJump prev_pos: %lld ", (__int64)prev_pos);
 
 	// initialize return value
 
