@@ -629,43 +629,7 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 		histogram[pos] = -1;
 	}
 
-	/*
-	master->lst = new __int64* [k_parm];
-	for (__int64 i = 0; i < k_parm; i++) {
-		master->lst[i] = new __int64[3];
-		for (__int64 j = 0; j < 3; j++) {
-
-			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT) {
-				master->lst[i][j] = lst[i][j];
-				continue;
-			}
-
-			__int64 abs_lij = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
-			__int64 lij = lst[i][j] < 0 ? lst[i][j] + 2 : lst[i][j] - 2;
-			__int64 lij_enc = lst[i][j] < 0 ? -master->encoding[abs_lij] : master->encoding[abs_lij];
-			master->lst[i][j] = lij_enc;
-		}
-
-	}
-	*/
-
 	master->lst = lst;
-
-	/*
-	for (__int64 i = 0; i < k_parm; i++) {
-		printf_s("%lld: ", i);
-		for (int j = 0; j < 3; j++) {
-			if (lst[i][j] == FALSE_3SAT || lst[i][j] == TRUE_3SAT)
-				printf_s("%lld ", lst[i][j]);
-			else {
-				__int64 codeword = lst[i][j] < 0 ? -lst[i][j] - 2 : lst[i][j] - 2;
-				printf_s("%lld ", lst[i][j] < 0 ? -(master->encoding[codeword]) : (master->encoding[codeword]));
-			}
-		}
-		printf_s("\n");
-	}
-	printf_s("\n");
-	//*/
 
 	// order list of k clauses in cls_tly (clause tally) by lowest-order literal of each clause
 
