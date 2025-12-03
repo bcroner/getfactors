@@ -195,8 +195,8 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 
 	// zero out all lower bits of Z
 
-	//for (__int64 j = abs_top - 1; j >= 0; j--)
-	//	me->Z[j] = false;
+	for (__int64 j = abs_top - 1; j >= 0; j--)
+		me->Z[j] = false;
 
 	return abs_top >= me->master->n - me->master->chops;
 }
