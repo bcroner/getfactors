@@ -97,13 +97,13 @@ bool SATSolver_less_than(__int64 a, __int64 b) {
 * 
 */
 
-bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
+bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 	///*
 
 	__int64 top = 0;
 	__int64 abs_top = 0;
-	__int64 jump = me->master->jumps[*cls_ix] < 0 ? me->master->jumps[*cls_ix] + 1 : me->master->jumps[*cls_ix] - 1;
+	__int64 jump = me->master->jumps[cls_ix] < 0 ? me->master->jumps[cls_ix] + 1 : me->master->jumps[cls_ix] - 1;
 	__int64 abs_jump = jump < 0 ? -jump : jump;
 
 	bool base_access = false;
@@ -130,7 +130,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 		// grab first and second limits
 
 		limit_0 = SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];
-		limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[*cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[*cls_ix];
+		limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[cls_ix];
 
 		// check if we can do this
 
@@ -145,7 +145,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 		limit_has_void = true;
 
 	if (!limit_has_void)
-		limit_access = -me->master->jumps[prev[2]] == me->master->jumps[*cls_ix];
+		limit_access = -me->master->jumps[prev[2]] == me->master->jumps[cls_ix];
 	
 	if (base_access) {
 
@@ -163,7 +163,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 
 		// reset clause index
 
-		*cls_ix = -1;
+		//*cls_ix = -1;
 
 		jump = base_min < 0 ? base_min + 1 : base_min - 1;
 
@@ -172,7 +172,7 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 	}
 	else if (limit_access) {
 
-		limit_min = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[*cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[*cls_ix];
+		limit_min = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[cls_ix];
 
 		jump = limit_min < 0 ? limit_min + 1 : limit_min - 1;
 
@@ -311,7 +311,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	else
 		jump_occurred = true;
 
-	crossed_boundary = SATSolver_add(me, & cls_ix, prev);
+	crossed_boundary = SATSolver_add(me, cls_ix, prev);
 
 	for (__int64 i = 0; i < 2; i++)
 		prev[i] = prev[i + 1];
@@ -339,7 +339,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 		else
 			jump_occurred = true;
 
-		crossed_boundary = SATSolver_add(me, & cls_ix, prev);
+		crossed_boundary = SATSolver_add(me, cls_ix, prev);
 
 		for (__int64 i = 0; i < 2; i++)
 			prev[i] = prev[i + 1];
