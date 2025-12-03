@@ -195,8 +195,8 @@ bool SATSolver_add(SATSolver * me , __int64 * cls_ix, __int64 * prev) {
 
 	// zero out all lower bits of Z
 
-	for (__int64 j = abs_top - 1; j >= 0; j--)
-		me->Z[j] = false;
+	//for (__int64 j = abs_top - 1; j >= 0; j--)
+	//	me->Z[j] = false;
 
 	return abs_top >= me->master->n - me->master->chops;
 }
@@ -254,7 +254,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			max_effective_jump = prcsd_limit;
 		}
 		if (count_matches == 3 && !base_has_void && - me->master->jumps[prev[0]] == me->master->jumps[prev[1]] && - me->master->jumps[prev[2]] == temp_jump &&
-				- limit_0 == limit_1 && SATSolver_less_than (max_effective_jump, min_base)) {
+				temp_jump != me->master->jumps[prev[0]] && temp_jump != me->master->jumps[prev[1]] && - limit_0 == limit_1 && SATSolver_less_than(max_effective_jump, min_base)) {
 			cls_ix = i;
 			max_effective_jump = min_base;
 		}
