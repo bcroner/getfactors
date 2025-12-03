@@ -99,7 +99,7 @@ bool SATSolver_less_than(__int64 a, __int64 b) {
 
 bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
-	///*
+	printf_s("cls %-3lld ", cls_ix);
 
 	__int64 top = 0;
 	__int64 abs_top = 0;
@@ -168,7 +168,9 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 		jump = base_min < 0 ? base_min + 1 : base_min - 1;
 
 		abs_jump = jump < 0 ? -jump : jump;
-		
+
+		printf_s("%-6s %-5lld ", "base", jump);
+
 	}
 	else if (limit_access) {
 
@@ -178,7 +180,11 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 		abs_jump = jump < 0 ? -jump : jump;
 
+		printf_s("%-6s %-5lld ", "limit", jump);
+
 	}
+	else
+		printf_s("%-6s %-5lld ", "jump", jump);
 
 	top = jump;
 	abs_top = abs_jump;
@@ -293,8 +299,9 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	for (__int64 i = 0; i < me->master->n; i++)
 		me->Z[i] = me->master->begin[chop][i];
 
-	for (__int64 i = 0; i < me->master->n; i++)
-		printf_s("%lld", (__int64)me->Z[i]);
+	if (!true)
+		for (__int64 i = 0; i < me->master->n; i++)
+			printf_s("%lld", (__int64)me->Z[i]);
 	printf_s("\n");
 
 	// main loop- until end condition
@@ -325,7 +332,7 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 	if (true) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64) me->Z[i]);
-		printf_s(" clause: %lld jump: %lld\n", cls_ix, cls_ix == -1 ? 0 : me->master->jumps[cls_ix]);
+		printf_s("\n");
 	}
 
 	while ( ! crossed_boundary && jump_occurred) {
@@ -354,15 +361,15 @@ bool SATSolver_isSat(SATSolver* me, __int64 chop, bool* arr) {
 
 			for (__int64 i = 0; i < me->master->n; i++)
 				printf_s("%lld", (__int64) me->Z[i]);
-			printf_s(" clause: %lld jump: %lld\n", cls_ix, cls_ix == -1 ? 0 : me->master->jumps[cls_ix]);
+			printf_s("\n");
 		}
 
 	}
 
-	if (true && jump_occurred) {
+	if (!true && jump_occurred) {
 		for (__int64 i = 0; i < me->master->n; i++)
 			printf_s("%lld", (__int64)me->Z[i]);
-		printf_s(" clause: %lld jump: %lld\n", cls_ix, cls_ix == -1 ? 0 : me->master->jumps[cls_ix]);
+		printf_s("\n");
 	}
 
 	printf_s("count: %lld\n", (__int64)count);
