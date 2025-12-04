@@ -260,7 +260,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			max_effective_jump = prcsd_limit;
 		}
 		if (count_matches == 3 && !base_has_void && - me->master->jumps[prev[0]] == me->master->jumps[prev[1]] && - me->master->jumps[prev[2]] == temp_jump &&
-				temp_jump != me->master->jumps[prev[0]] && temp_jump != me->master->jumps[prev[1]] && - limit_0 == limit_1 && SATSolver_less_than(max_effective_jump, min_base)) {
+				- limit_0 == limit_1 && SATSolver_less_than(max_effective_jump, min_base)) {
 			cls_ix = i;
 			max_effective_jump = min_base;
 		}
