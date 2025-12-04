@@ -14,7 +14,7 @@ We Claim
 
 1. The process of chopping (dividing) the search space into multiple partitions,with each partition no larger than ¼ of the entire search space..  
 2. The identification of where a jump offered by a jump literal (a jump literal being the lowest-order literal of a clause) is immediately succeeded by a jump offered by its inverse in the immediately-succeeding cycle and the replacement of the second jump with jump offered by the lower-order of the limit literals of the two clauses as a new effective jump (a limit literal being the second-lowest-order literal of a clause).  
-3. The identification of where four successive jumps were replaced by two effective jumps offered by limit literals, as described above in claim 2, where these limit literals are inverses of each other, and the replacement of the effective jump offered by the second limit literal by an effective jump offered by the lowest-order of the base literals of the four clauses (a base literal being the highest-order literal of a clause).
+3. The identification of where four successive jumps were replaced by two effective jumps offered by limit literals, as described above in claim 2, where the jump literals underlying the limit literals don’t represent the same variable, and where these limit literals are inverses of each other, and the replacement of the effective jump offered by the second limit literal by an effective jump offered by the lowest-order of the base literals of the four clauses (a base literal being the highest-order literal of a clause).
 
 Specification
 
