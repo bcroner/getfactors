@@ -112,8 +112,8 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 	// base access variables
 
-	__int64 limit_0 = 0;
-	__int64 limit_1 = 0;
+	__int64 limit_0 = SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];;
+	__int64 limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[cls_ix];;
 
 	__int64 base_min = 0;
 	__int64 limit_min = 0;
@@ -127,11 +127,6 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 	if (! base_has_void ) {
 
-		// grab first and second limits
-
-		limit_0 = SATSolver_less_than(me->master->limits[prev[0]], me->master->limits[prev[1]]) ? me->master->limits[prev[0]] : me->master->limits[prev[1]];
-		limit_1 = SATSolver_less_than(me->master->limits[prev[2]], me->master->limits[cls_ix]) ? me->master->limits[prev[2]] : me->master->limits[cls_ix];
-
 		// check if we can do this
 
 		if (-limit_0 == limit_1)
@@ -144,7 +139,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 	if (prev[2] == -1)
 		limit_has_void = true;
 
-	if (!limit_has_void)
+	if (!limit_has_void && limit_1 != FALSE_3SAT)
 		limit_access = -me->master->jumps[prev[2]] == me->master->jumps[cls_ix];
 	
 	if (base_access) {
@@ -536,37 +531,6 @@ void SATSolver_create(SATSolver * me, SATSolverMaster * master , __int64** lst, 
 	me->master = master;
 	me->Z = new bool [n_parm];
 
-	// identify clauses having a true TRUE_3SAT value or a false FALSE_3SAT value
-
-	__int64* lst_t = new __int64[k_parm];
-	__int64* lst_f = new __int64[k_parm];
-
-	for (__int64 i = 0; i < k_parm; i++) {
-		lst_t [i] = 0;
-		lst_f [i] = 0;
-	}
-
-	for (__int64 i = 0; i < k_parm; i++) {
-
-		if (lst[i][0] == FALSE_3SAT)
-			lst_f[i]++;
-		if (lst[i][1] == FALSE_3SAT)
-			lst_f[i]++;
-		if (lst[i][2] == FALSE_3SAT)
-			lst_f[i]++;
-
-		if (lst[i][0] == TRUE_3SAT)
-			lst_t[i]++;
-		if (lst[i][1] == TRUE_3SAT)
-			lst_t[i]++;
-		if (lst[i][2] == TRUE_3SAT)
-			lst_t[i]++;
-	}
-
-	// delete
-
-	delete[] lst_t;
-	delete[] lst_f;
 }
 
 void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_parm, __int64 n_parm, __int64 chops_parm) {
@@ -723,6 +687,7 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 
 			master->jumps[i] = lo == a ? mylst[0] < 0 ? -lo : lo : mylst[1] < 0 ? -lo : lo;
 			master->limits[i] = hi == a ? mylst[0] < 0 ? -hi : hi : mylst[1] < 0 ? -hi : hi;
+			master->bases[i] = master->limits[i];
 		}
 		else { // count_tf = 2
 
@@ -733,6 +698,8 @@ void SATSolverMaster_create(SATSolverMaster* master, __int64** lst, __int64 k_pa
 			__int64 lo = a;
 
 			master->jumps[i] = mylst[0] < 0 ? -lo : lo;
+			master->limits[i] = master->jumps[i];
+			master->bases[i] = master->limits[i];
 
 		}
 	}

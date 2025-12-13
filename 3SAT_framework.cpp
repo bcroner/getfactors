@@ -2291,6 +2291,44 @@ char* nat_get_factors(char* c_str, __int64 c_str_buf_sz, __int64 * len_para) {
     __int64** input = input_from_char_buf(buf_3sat, buf_3sat_sz, &k, false);
     bool* sln = new bool[num_para - 1];
 
+    /*
+
+    printf_s("p cnf %lld %lld\n", num_para - 1, k);
+
+    for (__int64 i = 0; i < k; i++) {
+        char a[6];
+        char b[6];
+        char c[6];
+        
+        if (input[i][0] == -1)
+            sprintf_s(a, 6, "%s", "");
+        else if (input[i][0] == 1)
+            sprintf_s(a, 6, "%s", "T");
+        else
+            sprintf_s(a, 6, "%lld", input[i][0] < 0 ? input[i][0] + 1 : input[i][0] - 1);
+
+        if (input[i][1] == -1)
+            sprintf_s(b, 6, "%s", "");
+        else if (input[i][1] == 1)
+            sprintf_s(b, 6, "%s", "T");
+        else
+            sprintf_s(b, 6, "%lld", input[i][1] < 0 ? input[i][1] + 1 : input[i][1] - 1);
+
+        if (input[i][2] == -1)
+            sprintf_s(c, 6, "%s", "");
+        else if (input[i][2] == 1)
+            sprintf_s(c, 6, "%s", "T");
+        else
+            sprintf_s(c, 6, "%lld", input[i][2] < 0 ? input[i][2] + 1 : input[i][2] - 1);
+
+        printf_s("%s %s %s 0\n", a, b, c);
+
+    }
+
+    return NULL;
+
+    //*/
+
     delete[] buf_3sat;
 
     SATSolverMaster* master = new SATSolverMaster();
