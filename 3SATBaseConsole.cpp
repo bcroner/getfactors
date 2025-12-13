@@ -153,8 +153,8 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 		// clear prev
 
-		for (__int64 i = 0; i < 3; i++)
-			prev[i] = -1;
+		//for (__int64 i = 0; i < 3; i++)
+		//	prev[i] = -1;
 
 		// reset clause index
 
