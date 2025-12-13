@@ -230,6 +230,10 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			if ((me->master->lst[i][j] < 0 && !me->Z[abs_lst]) || (me->master->lst[i][j] > 0 && me->Z[abs_lst]))
 				count_matches++;
 		}
+
+		if (count_matches < 3)
+			continue;
+
 		__int64 temp_base = me->master->bases[i];
 		__int64 abs_temp_base = temp_base < 0 ? -temp_base : temp_base;
 		__int64 temp_limit = me->master->limits[i];
@@ -246,15 +250,15 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			min_base = prev[i] < 0 ? 0 : SATSolver_less_than(min_base, me->master->bases[prev[i]]) ? min_base: me->master->bases[prev[i]];
 		min_base = SATSolver_less_than(min_base, temp_base) ? min_base : temp_base;
 
-		if (count_matches == 3 && SATSolver_less_than (max_effective_jump, temp_jump)) {
+		if (SATSolver_less_than (max_effective_jump, temp_jump)) {
 			cls_ix = i;
 			max_effective_jump = temp_jump;
 		}
-		if (count_matches == 3 && !limit_has_void && -temp_jump == me->master->jumps[prev[2]] && SATSolver_less_than(max_effective_jump, prcsd_limit)) {
+		if (!limit_has_void && -temp_jump == me->master->jumps[prev[2]] && SATSolver_less_than(max_effective_jump, prcsd_limit)) {
 			cls_ix = i;
 			max_effective_jump = prcsd_limit;
 		}
-		if (count_matches == 3 && !base_has_void && - me->master->jumps[prev[0]] == me->master->jumps[prev[1]] && - me->master->jumps[prev[2]] == temp_jump &&
+		if (!base_has_void && - me->master->jumps[prev[0]] == me->master->jumps[prev[1]] && - me->master->jumps[prev[2]] == temp_jump &&
 				- limit_0 == limit_1 && SATSolver_less_than(max_effective_jump, min_base)) {
 			cls_ix = i;
 			max_effective_jump = min_base;
