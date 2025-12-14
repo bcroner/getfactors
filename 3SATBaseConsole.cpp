@@ -223,8 +223,6 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 				count_matches++;
 				continue;
 			}
-			else if (me->master->lst[i][j] == TRUE_3SAT)
-				break;
 
 			__int64 abs_lst = me->master->encoding[me->master->lst[i][j] < 0 ? -me->master->lst[i][j] - 2 : me->master->lst[i][j] - 2];
 			if ((me->master->lst[i][j] < 0 && !me->Z[abs_lst]) || (me->master->lst[i][j] > 0 && me->Z[abs_lst]))
