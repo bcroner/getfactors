@@ -1,6 +1,6 @@
 On 12-13-2025 at 6:22 pm Pacific Time I became convinced that P != NP. After over 23 years I'm immediately suspending work on this project.
 
-1. Effective jumps via base literal access are required because there could be an arbitrary difference between the highest order among the limit literals and n (eg, 100 or 1000), resulting in an exponential number of effective jumps offered by limit literals.
+1. For the presented 3SAT solver algorithm to be polynomial, effective jumps via base literal access are required because there could be an arbitrary difference between the highest order among the limit literals and n (eg, 100 or 1000), resulting in an exponential number of effective jumps offered by limit literals.
 
 2. Effective jumps via base literal access are not possible. Suppose you have 4 successive jumps resulting in two limit literals that are inverses of each other. You may now replace the final jump with the 2nd-lowest-ordered limit literal, leaving one more limit literal to clear before base access can be achieved. In order to do this, you must have another 2 jumps, which creates 2 additional limit literals that must be cleared. To do this, you must create an addition 4 successive jumps, resulting in 4 more limit literals that must be cleared to achieve base literal access. This sequence repeats indefinitely.
 
