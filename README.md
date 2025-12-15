@@ -1,17 +1,3 @@
-On 12-13-2025 at 6:22 pm Pacific Time I became convinced that P != NP. After over 23 years I'm immediately suspending work on this project.
-
-1. For the presented 3SAT solver algorithm to be polynomial, effective jumps via base literal access are required because there could be an arbitrary difference between the highest order among the limit literals and n (eg, 100 or 1000), resulting in an exponential number of effective jumps offered by limit literals.
-
-2. Effective jumps offered by base literal access are not possible. Suppose you have 4 successive jumps resulting in two limit literals that are inverses of each other. You may now replace the final jump with the 2nd-lowest-ordered limit literal, leaving one more limit literal to clear before base access can be achieved. In order to do this, you must have another 2 jumps, which creates 2 additional limit literals that must be cleared. To do this, you must create an addition 4 successive jumps, resulting in 4 more limit literals that must be cleared to achieve base literal access. This sequence repeats indefinitely.
-
-3. We view a 3SAT solver as an algorithm that traverses the search space in some organized fashion. Advances through the search space of magnitude 2<sup>y</sup> where y is an arbitrary number, featuring constant-size logic to identify said advancements, is the best you can do as n grows large. Assume not. Assume there is a heuristic-based algorithm like DPLL or one of its variants. Because no heuristic applies to all logic instances, when the heuristic fails, in the worst case all possibilities must be exhaustively tried. In this case, we advance through the search space with jumps of magnitude 2<sup>0</sup>, which is worse than jumps of magnitude 2<sup>y</sup> where y is an arbitrary number. What about a constant number c of advances through the search space? Not polynomial. Assume there is some technique to develop the logic to advance through the entire search space of n variables by a constant number of times, c. Now increase n by 1: n+1. In the worst case, the complexity of the logic doubles, so the technique to advance through the search space c times doubles in logical complexity, which is exponential. What about advances through the search space by 2<sup>x</sup> where x = f(n), where f(n) != n - c' (which would also necessarily employ a technique that doubles in logical complexity when n is increased by 1)? As n grows large, these all become exponential.
-
-4. This shows that 3SAT is not polynomial in the worst case, proving P != NP.
-
-I began this journey in the fall of 2002. I spent over 23 years attempting to constructively prove P = NP. On Saturday 12-13-2025 I ran into a brick wall that left me with an insight. Below you'll find the partially written regular utility patent application that explains what I was trying to accomplish with the reference source code. It explains the theory of operation so you'll understand what I'm talking about above in my four-point proof.
-
-Interestingly, the algorithm used in this proof may also prove that IMSAT is polynomial because the one variable shared by all clauses would be the base literal in each clause and it's only a distance of 1 above the highest limit variable.
-
 <h1 align="center">
 System and Method for Solving Logic Instances
 </h1>
@@ -28,7 +14,7 @@ We Claim
 
 1. The process of chopping (dividing) the search space into multiple partitions,with each partition no larger than ¼ of the entire search space..  
 2. The identification of where a jump offered by a jump literal (a jump literal being the lowest-order literal of a clause) is immediately succeeded by a jump offered by its inverse in the immediately-succeeding cycle and the replacement of the second jump with jump offered by the lower-order of the limit literals of the two clauses as a new effective jump (a limit literal being the second-lowest-order literal of a clause).  
-3. The identification of where four successive jumps were replaced by two effective jumps offered by limit literals, as described above in claim 2, and where these limit literals are inverses of each other, and the replacement of the effective jump offered by the second limit literal by an effective jump offered by the lowest-order of the base literals of the four clauses (a base literal being the highest-order literal of a clause).
+3. The identification of where four successive jumps were replaced by two effective jumps offered by limit literals, as described above in claim 2, and where these limit literals are inverses of each other, and all limit literals use the same variable, and the replacement of the effective jump offered by the second limit literal by an effective jump offered by the lowest-order of the base literals of the four clauses (a base literal being the highest-order literal of a clause).
 
 Specification
 
