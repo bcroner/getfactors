@@ -274,6 +274,12 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			max_effective_jump = prcsd_limit;
 			abs_m_efftive_jump = max_effective_jump < 0 ? -max_effective_jump : max_effective_jump;
 		}
+		if (!limit_has_void && -temp_jump == me->master->jumps[prev[2]] && (abs_temp_limit == l1 || abs_temp_limit == l2) &&
+			(abs_m_efftive_jump != abs_temp_limit || (abs_m_efftive_jump == abs_temp_limit && SATSolver_less_than (me->master->bases[cls_ix], me->master->bases[i])))) {
+			cls_ix = i;
+			max_effective_jump = prcsd_limit;
+			abs_m_efftive_jump = max_effective_jump < 0 ? -max_effective_jump : max_effective_jump;
+		}
 		if (!base_has_void && - me->master->jumps[prev[0]] == me->master->jumps[prev[1]] && - me->master->jumps[prev[2]] == temp_jump &&
 			(me->master->limits[prev[0]] == -me->master->limits[prev[2]] ||
 				me->master->limits[prev[0]] == -me->master->limits[i] ||
