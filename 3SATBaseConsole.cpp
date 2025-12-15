@@ -217,6 +217,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 	// initialize return value
 
 	__int64 max_effective_jump = 0;
+	__int64 abs_m_efftive_jump = 0;
 	__int64 cls_ix = -1;
 	bool limit_has_void = prev[2] == -1;
 	bool base_has_void = prev[0] == -1 || prev[1] == -1 || prev[2] == -1;
@@ -266,10 +267,12 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 		if (SATSolver_less_than (max_effective_jump, temp_jump)) {
 			cls_ix = i;
 			max_effective_jump = temp_jump;
+			abs_m_efftive_jump = max_effective_jump < 0 ? - max_effective_jump : max_effective_jump ;
 		}
-		if (!limit_has_void && -temp_jump == me->master->jumps[prev[2]] && SATSolver_less_than(max_effective_jump, prcsd_limit)) {
+		if (!limit_has_void && -temp_jump == me->master->jumps[prev[2]] && abs_m_efftive_jump != l1 && abs_m_efftive_jump != l2 && SATSolver_less_than(max_effective_jump, prcsd_limit)) {
 			cls_ix = i;
 			max_effective_jump = prcsd_limit;
+			abs_m_efftive_jump = max_effective_jump < 0 ? -max_effective_jump : max_effective_jump;
 		}
 		if (!base_has_void && - me->master->jumps[prev[0]] == me->master->jumps[prev[1]] && - me->master->jumps[prev[2]] == temp_jump &&
 			(me->master->limits[prev[0]] == -me->master->limits[prev[2]] ||
@@ -279,6 +282,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			(l0 == l2 && l0 == l3) && (l1 == l2 && l1 == l3) && SATSolver_less_than(max_effective_jump, min_base)) {
 			cls_ix = i;
 			max_effective_jump = min_base;
+			abs_m_efftive_jump = max_effective_jump < 0 ? -max_effective_jump : max_effective_jump;
 		}
 	}
 
