@@ -134,7 +134,7 @@ bool SATSolver_add(SATSolver * me , __int64 cls_ix, __int64 * prev) {
 
 		// check if we can do this
 
-		if (-limit_0 == limit_1 && (l0 == l2 || l0 == l3) && (l1 == l2 || l1 == l3))
+		if (-limit_0 == limit_1 && (l0 == l2 && l0 == l3) && (l1 == l2 && l1 == l3))
 			base_access = true;
 	}
 
@@ -268,7 +268,7 @@ __int64 SATSolver_initializePowJump(SATSolver* me, __int64 * prev) {
 			max_effective_jump = prcsd_limit;
 		}
 		if (!base_has_void && - me->master->jumps[prev[0]] == me->master->jumps[prev[1]] && - me->master->jumps[prev[2]] == temp_jump &&
-				- limit_0 == limit_1 && (l0 == l2 || l0 == l3) && (l1 == l2 || l1 == l3) && SATSolver_less_than(max_effective_jump, min_base)) {
+				- limit_0 == limit_1 && (l0 == l2 && l0 == l3) && (l1 == l2 && l1 == l3) && SATSolver_less_than(max_effective_jump, min_base)) {
 			cls_ix = i;
 			max_effective_jump = min_base;
 		}
