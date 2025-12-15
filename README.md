@@ -10,6 +10,8 @@ On 12-13-2025 at 6:22 pm Pacific Time I became convinced that P != NP. After ove
 
 I began this journey in the fall of 2002. I spent over 23 years attempting to constructively prove P = NP. On Saturday 12-13-2025 I ran into a brick wall that left me with an insight. Below you'll find the partially written regular utility patent application that explains what I was trying to accomplish with the reference source code. It explains the theory of operation so you'll understand what I'm talking about above in my four-point proof.
 
+Interestingly, the algorithm used in this proof may also prove that IMSAT is polynomial because the one variable shared by all clauses would be the base literal in each clause and it's only a distance of 1 above the highest limit variable.
+
 <h1 align="center">
 System and Method for Solving Logic Instances
 </h1>
