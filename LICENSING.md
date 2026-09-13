@@ -15,7 +15,7 @@ That license also grants a patent license for noncommercial use of this software
 ## Commercial use requires a license
 
 Any commercial use needs a separate written license. For licensing inquiries,
-visit https://rznai.com/?page_id=49.
+visit https://rznai.com/?page_id=40 (RZN AI Licensing Inquiries). Product page: https://rznai.com/?page_id=49.
 
 ## Patents
 
